@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>DEVSTACK_ACCOUNT_DOMAIN</key>
+	<string>Default</string>
+	<key>DEVSTACK_ACCOUNT_PROJECTORTENANT</key>
+	<string>demo</string>
+	<key>DEVSTACK_ACCOUNT_LOGINADMIN</key>
+	<string>admin</string>
+	<key>DEVSTACK_ACCOUNT_LOGINDEMO</key>
+	<string>demo</string>
+	<key>DEVSTACK_ACCOUNT_PASSWORDADMIN</key>
+	<string>password</string>
+	<key>DEVSTACK_ACCOUNT_PASSWORDDEMO</key>
+	<string>password</string>
+	<key>DEVSTACK_IDENTITY_ROOT</key>
+	<string>http://10.211.55.8:5000</string>
+	<key>DEVSTACK_IMAGE_ROOT</key>
+	<string>http://10.211.55.8:8774</string>
+	<key>DEVSTACK_COMPUTE_ROOT</key>
+	<string>http://10.211.55.8:8774</string>
+	<key>DEVSTACK_OBJECTSTORAGE_ROOT</key>
+	<string>http://10.211.55.8:8080</string>
+	<key>DEVSTACK_OBJECTSTORAGE_ACCOUNT</key>
+	<string>AUTH_</string>
+</dict>
+</plist>
