@@ -1,0 +1,22 @@
+0- Setuper 3 interface dans VBox
+1- Installer Ubuntu avec au moins 2Go de RAM
+2- Installer git
+3- puller les sources de devstack
+	git clone https://github.com/openstack-dev/devstack.git
+4- pousser le local.conf
+(si EFI boot : faire
+“fs0:”
+“edit startup.nsh”
+and on the opened window add these 2 lines:
+
+FS0:
+\EFI\ubuntu\grubx64.efi
+Ctrl+S + Enter
+Ctrl+Q
+Reboot
+
+5- Installer Spice :
+sudo apt-get install spice-html5
+6- install noVNC depuis les sources (github)
+7- configurer le local.conf
+8- ./stack
