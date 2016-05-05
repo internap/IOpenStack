@@ -67,7 +67,7 @@
 
 - ( void ) testAuthGiveValidToken
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - token is valid"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - token is valid"];
 
     [authV2Session authenticateWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
                              andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]
@@ -89,7 +89,7 @@
 
 - ( void ) testTenantsGiveAtLeastOneID
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant list is valid"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant list is valid"];
     [authV2Session listProjectsOrTenantsWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
                                       andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]
                                         forDomain:nil
@@ -108,7 +108,7 @@
 
 - ( void ) testFirstTenantIsAuthorized
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant is authorized"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant is authorized"];
     
     [authV2Session listProjectsOrTenantsWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
                                       andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]
@@ -137,7 +137,7 @@
 
 - ( void ) testTenantsDemoGotServices
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - demo project got services"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - demo project got services"];
     
     [authV2Session authenticateWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
                              andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]
@@ -173,7 +173,7 @@
 
 - ( void ) testImageListExtensions
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Image - extensions exist"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Image - extensions exist"];
     
     [authV2Session listExtensionsThenDo:^(NSArray * _Nullable arrExtensions)
     {

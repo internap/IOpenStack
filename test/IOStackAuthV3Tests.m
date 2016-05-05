@@ -65,7 +65,7 @@
 
 - ( void ) testAuthGiveValidToken
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - token is valid"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - token is valid"];
     
     [authV3Session authenticateWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
                              andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]
@@ -88,7 +88,7 @@
 
 - ( void ) testProjectsGiveAtLeastOneID
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - project list is valid"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - project list is valid"];
     
     [authV3Session authenticateWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINADMIN" ]
                              andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDADMIN" ]
@@ -114,7 +114,7 @@
 
 - ( void ) testFirstProjectIsAuthorized
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - project is authorized"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - project is authorized"];
     
     [authV3Session authenticateWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINADMIN" ]
                              andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDADMIN" ]
@@ -143,7 +143,7 @@
 
 - ( void ) testProjectDemoGotServices
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - project got service"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - project got service"];
     
     [authV3Session authenticateWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
                              andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]

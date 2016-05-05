@@ -41,7 +41,7 @@
     XCTAssertNotNil( dicSettingsTests[ @"DREAM_ACCOUNT_DOMAIN" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DREAM_ACCOUNT_PROJECTORTENANT" ] );
     
-    XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
+    __weak XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
     
     authDream = [IOStackAuth_Dream initWithIdentityURL:dicSettingsTests[ @"DREAM_IDENTITY_ROOT" ]
                                               andLogin:dicSettingsTests[ @"DREAM_ACCOUNT_LOGIN" ]
@@ -82,7 +82,7 @@
 
 - ( void ) testDreamBStorageCreateListAndDeleteVolume
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
     
     [bstorageV2Test createVolumeWithSize:@1
                     waitUntilIsAvailable:YES
@@ -115,7 +115,7 @@
 
 - ( void ) testDreamBStorageCreateListAndDeleteVolumeWithDetails
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
     NSString * nameVolume       = [NSString stringWithFormat:@"%@-%@", @"testvolume - ", [[NSUUID UUID] UUIDString]];
     NSString * descVolume       = @"this is an automated test volume description";
     NSDictionary * dicMetadata  = @{ @"metadata1" : @"test metadata value", @"metadata2" : @"another test metadata value"};
@@ -180,7 +180,7 @@
 
 - ( void ) testDreamBStorageCreateUpdateMetadataThenDestroyVolume
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume metadata exist"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume metadata exist"];
     NSDictionary * dicMetadata  = @{ @"metadata1" : @"test metadata value", @"metadata2" : @"another test metadata value"};
     
     [bstorageV2Test createVolumeWithSize:@1
@@ -238,7 +238,7 @@
 
 - ( void ) testDreamBStorageCreateExtendThenDestroyVolume
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
     
     [bstorageV2Test createVolumeWithSize:@1
                     waitUntilIsAvailable:YES
@@ -286,7 +286,7 @@
 - ( void ) testBStorageCreateSetAndUnsetMetadataThenDestroyVolume
 {
     __weak IOStackBlockStorageV2 * weakBStorageForTest = bstorageV2Test;
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - metadata set unset"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - metadata set unset"];
     NSDictionary * dicMetadata  = @{ @"metadata1" : @"test metadata value", @"metadata2" : @"another test metadata value"};
     
     [bstorageV2Test createVolumeWithSize:@1
@@ -342,7 +342,7 @@
 
 - ( void ) testDreamBStorageCreateListAndDeleteBackup
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - backup exist"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - backup exist"];
     
     [bstorageV2Test createVolumeWithSize:@1
                     waitUntilIsAvailable:YES
@@ -397,7 +397,7 @@
 */
 - ( void ) testDreamBStorageCreateListAndDeleteSnapshot
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - snapshot exist"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - snapshot exist"];
     
     [bstorageV2Test createVolumeWithSize:@1
                     waitUntilIsAvailable:YES

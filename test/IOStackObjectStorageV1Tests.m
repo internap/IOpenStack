@@ -42,7 +42,7 @@
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_OBJECTSTORAGE_ROOT" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_OBJECTSTORAGE_ACCOUNT" ] );
     
-    XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
+    __weak XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
     
     authV3Session = [IOStackAuthV3 initWithIdentityURL:dicSettingsTests[ @"DEVSTACK_IDENTITY_ROOT" ]
                                               andLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
@@ -79,7 +79,7 @@
 
 - ( void ) testOStorageCreateListAndDeleteContainer
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Image - images exist"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Image - images exist"];
     NSString * nameContainer            = [NSString stringWithFormat:@"%@-%@", @"testcontainer", [[NSUUID UUID] UUIDString]];
     NSDictionary * dicContainerMetadata = @{ @"testmeta" : @"testvalue" };
     
@@ -110,7 +110,7 @@
 
 - ( void ) testOStorageCreateListAndDeleteObjectInContainer
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Object Storage - upload file"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Object Storage - upload file"];
     NSString * nameContainer            = [NSString stringWithFormat:@"%@-%@", @"testcontainer", [[NSUUID UUID] UUIDString]];
     NSString * nameObject               = [NSString stringWithFormat:@"%@-%@", @"testobject", [[NSUUID UUID] UUIDString]];
     NSDictionary * dicContainerMetadata = @{ @"testmeta" : @"testvalue" };
@@ -163,7 +163,7 @@
 
 - ( void ) testOStorageUploadListAndDeleteObjectInContainer
 {
-    XCTestExpectation * expectation     = [self expectationWithDescription:@"Object Storage - upload file"];
+    __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Object Storage - upload file"];
     NSString * nameContainer            = [NSString stringWithFormat:@"%@-%@", @"testcontainer", [[NSUUID UUID] UUIDString]];
     NSString * nameObject               = [NSString stringWithFormat:@"%@-%@", @"testobject", [[NSUUID UUID] UUIDString]];
     NSString * currentTestFilePath      = @__FILE__;

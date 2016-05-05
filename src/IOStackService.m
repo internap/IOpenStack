@@ -567,7 +567,7 @@
     NSString * uidTaskSession = [self taskUUIDForTask:taskData inSession:session];
     NSMutableData * cachedResponseDataForSession = [_cacheResponseData valueForKey:uidTaskSession];
     
-    NSLog(@"%@", [[NSString alloc] initWithData:cachedResponseDataForSession encoding:NSUTF8StringEncoding]);
+    //NSLog(@"%@", [[NSString alloc] initWithData:cachedResponseDataForSession encoding:NSUTF8StringEncoding]);
     if( !cachedResponseDataForSession )
     {
         cachedResponseDataForSession = [NSMutableData dataWithData:data];
@@ -592,7 +592,7 @@
             [idDelegate onServiceFailure:uidTaskSession
                                withError:error
                        andResponseStatus:[response statusCode]];
-        NSLog(@"%@ failed: %@", taskSession.originalRequest.URL, error);
+        //NSLog(@"%@ failed: %@", taskSession.originalRequest.URL, error);
         return;
     }
     
@@ -663,7 +663,7 @@
         }
     }
     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
+        //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
         if( doWithReadResults != nil )
             doWithReadResults( nil, nil );
     }];
@@ -715,7 +715,7 @@
             doWithListResults( nil, nil );
     }
     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
+        //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
         if( doWithListResults != nil )
             doWithListResults( nil, nil );
     }];
@@ -748,7 +748,7 @@
              doWithCreateResults( dicResponseHeader, responseObject );
      }
      onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
+         //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
          if( doWithCreateResults != nil )
              doWithCreateResults( nil, nil );
      }];
@@ -768,7 +768,7 @@
              doWithCreateResults( dicResponseHeader, responseObject );
      }
      onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
+         //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
          if( doWithCreateResults != nil )
              doWithCreateResults( nil, nil );
      }];
@@ -788,7 +788,7 @@
             doWithCreateResults( dicResponseHeader, responseObject );
     }
     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"task not valid : %@", error );
+        //NSLog( @"task not valid : %@", error );
         if( doWithCreateResults != nil )
             doWithCreateResults( nil, nil );
     }];
@@ -808,7 +808,7 @@
             doWithCreateResults( dicResponseHeader, responseObject );
     }
     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"task not valid : %@", error );
+        //NSLog( @"task not valid : %@", error );
         if( doWithCreateResults != nil )
             doWithCreateResults( nil, nil );
     }];
@@ -826,7 +826,7 @@
                doWithDeleteResults( dicResponseHeaders, responseObject );
        }
        onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-           NSLog( @"task not valid : %@", error );
+           //NSLog( @"task not valid : %@", error );
            if( doWithDeleteResults != nil )
                doWithDeleteResults( nil, nil );
        }];
@@ -838,7 +838,6 @@
                withResponse:( nonnull id ) idResponse
          andResponseHeaders:( NSDictionary * ) dicReponseHeaders
 {
-    //onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
     void ( ^ doOnSuccess ) ( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) = [_dicActiveSuccessBlocks valueForKey:uidServiceTask];
     
     if( doOnSuccess != nil )
@@ -849,7 +848,6 @@
                   withError:( nonnull NSError * ) error
           andResponseStatus:( NSUInteger ) nHTTPStatus
 {
-    //onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
     void ( ^ doOnFailure ) ( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) = [_dicActiveFailureBlocks valueForKey:uidServiceTask];
     
     if( doOnFailure != nil )
@@ -900,15 +898,6 @@
     [localRunLoop addTimer:timerLoopServerRefresh
                    forMode:NSRunLoopCommonModes];
     [localRunLoop run];
-    /*
-     [self performSelector:@selector(loopRefreshServer:)
-     withObject:@{ @"idServer" : uidServer,
-     @"statusToWaitFor": statusServer,
-     @"dateStartedLooping" : [NSDate date],
-     @"tiFrequency" : [NSNumber numberWithDouble:tiFinalFrequency],
-     @"tiTimeout" : [NSNumber numberWithDouble:tiFinalTimeout],
-     @"blockAfterWait" : doAfterWait }
-     afterDelay:tiFinalFrequency];*/
 }
 
 - ( void ) waitResource:( NSString * ) urlResource
@@ -930,7 +919,6 @@
                 thenDo:doAfterWait];
 }
 
-//old footprint with performSelector
 - ( void ) loopRefreshResource:( NSTimer * ) timerLoopServerRefresh
 {
     

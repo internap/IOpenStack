@@ -24,7 +24,6 @@ FOUNDATION_EXPORT const unsigned char IOpenStackVersionString[];
 #import <IOpenStack/IOStackAuthV3.h>
 #import <IOpenStack/IOStackAuth_INAP.h>
 #import <IOpenStack/IOStackAuth_Dream.h>
-#import <IOpenStack/IOStackAuth_OVH.h>
 
 #import <IOpenStack/IOStackImageObjectV2.h>
 #import <IOpenStack/IOStackImageV2.h>

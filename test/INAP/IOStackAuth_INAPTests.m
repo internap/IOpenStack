@@ -63,7 +63,7 @@
 
 - ( void ) testAuthINAPAuthGiveValidToken
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"INAP - token is valid"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"INAP - token is valid"];
     
     [authINAPSession authenticateWithLogin:dicSettingsTests[ @"INAP_ACCOUNT_LOGIN" ]
                                andPassword:dicSettingsTests[ @"INAP_ACCOUNT_PASSWORD" ]
@@ -85,7 +85,7 @@
 
 - ( void ) testAuthINAPProjectGiveAtLeastOneID
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"INAP - project list is valid"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"INAP - project list is valid"];
     
     [authINAPSession authenticateWithLogin:dicSettingsTests[ @"INAP_ACCOUNT_LOGIN" ]
                                andPassword:dicSettingsTests[ @"INAP_ACCOUNT_PASSWORD" ]
@@ -111,7 +111,7 @@
 
 - ( void ) testAuthINAPFirstProjectIsAuthorized
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"INAP - project is authorized"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"INAP - project is authorized"];
     
     [authINAPSession listProjectsOrTenantsWithLogin:dicSettingsTests[ @"INAP_ACCOUNT_LOGIN" ]
                                         andPassword:dicSettingsTests[ @"INAP_ACCOUNT_PASSWORD" ]
@@ -132,7 +132,7 @@
 
 - ( void ) testAuthINAPProjectDemoGotServices
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"INAP - project has services"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"INAP - project has services"];
     
     [authINAPSession authenticateWithLogin:dicSettingsTests[ @"INAP_ACCOUNT_LOGIN" ]
                                andPassword:dicSettingsTests[ @"INAP_ACCOUNT_PASSWORD" ]

@@ -47,7 +47,7 @@
     XCTAssertNotNil( dicSettingsTests[ @"INAP_ACCOUNT_PASSWORD" ] );
     XCTAssertNotNil( dicSettingsTests[ @"INAP_COMPUTE_ROOT" ] );
     
-    XCTestExpectation * exp = [self expectationWithDescription:@"Setuping Auth"];
+    __weak XCTestExpectation * exp = [self expectationWithDescription:@"Setuping Auth"];
     
     authINAP = [IOStackAuth_INAP initWithIdentityURL:dicSettingsTests[ @"INAP_IDENTITY_ROOT" ]
                                             andLogin:dicSettingsTests[ @"INAP_ACCOUNT_LOGIN" ]
@@ -93,7 +93,7 @@
 
 - ( void ) testINAPComputeListFlavors
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - flavors exists"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - flavors exists"];
     
     [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors )
      {
@@ -113,7 +113,7 @@
 
 - ( void ) testINAPComputeListNetworks
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - flavors exists"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - flavors exists"];
     
     [computeV2_1Test listNetworksThenDo:^(NSDictionary * _Nullable dicNetworks, id  _Nullable idFullResponse)
      {
@@ -139,7 +139,7 @@
 
 - ( void ) testINAPComputeCreateServerListAndDeleteIt
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance succeed"];
     
     [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors ) {
         XCTAssertTrue( dicFlavors );
@@ -193,7 +193,7 @@
 
 - ( void ) testINAPComputeCreateServerListActionsAndDeleteIt
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance and list actions succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance and list actions succeed"];
     
     [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors ) {
         XCTAssertTrue( dicFlavors );
@@ -247,7 +247,7 @@
 
 - ( void ) testINAPComputeCreateKeypairListAndDeleteIt
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create keypair succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create keypair succeed"];
     NSString * strKeypairNameRandom = [NSString stringWithFormat:@"%@-%@", @"testkeypair", [[NSUUID UUID] UUIDString]];
     NSString * currentTestFilePath = @__FILE__;
     NSString * currentKeyDataFilePath = [NSString stringWithFormat:@"%@/../testkey-id_rsa.pub", [currentTestFilePath stringByDeletingLastPathComponent]];
@@ -284,7 +284,7 @@
 
 - ( void ) testINAPComputeCreateKeypairFromFileListAndDeleteIt
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create keypair from file succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create keypair from file succeed"];
     NSString * strKeypairNameRandom = [NSString stringWithFormat:@"%@-%@", @"testkeypair", [[NSUUID UUID] UUIDString]];
     NSString * currentTestFilePath  = @__FILE__;
     NSString * currentKeyDataFilePath = [NSString stringWithFormat:@"%@/../testkey-id_rsa.pub", [currentTestFilePath stringByDeletingLastPathComponent]];
@@ -316,7 +316,7 @@
 
 - ( void ) testINAPComputeCreateSecurityGroupListAndDeleteIt
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group succeed"];
     NSString * strTestSecName       = [NSString stringWithFormat:@"%@ - %@", @"test Security", [[NSUUID UUID] UUIDString]];
     
     [computeV2_1Test createSecurityGroupWithName:strTestSecName
@@ -348,7 +348,7 @@
 {
     //to avoid some precompiler buggy warning...
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
     NSString * strTestSecName       = [NSString stringWithFormat:@"%@ - %@", @"test Security", [[NSUUID UUID] UUIDString]];
     NSString * strTestProto         = @"tcp";
     NSNumber * nTestPort            = @443;
@@ -392,7 +392,7 @@
 - ( void ) testINAPComputeCreateServerWithKeypairAndSecurityGroupAndDeleteIt
 {
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
     
     NSString * strKeypairNameRandom = [NSString stringWithFormat:@"%@-%@", @"testkeypair", [[NSUUID UUID] UUIDString]];
     NSString * currentTestFilePath = @__FILE__;
@@ -492,7 +492,7 @@
 - ( void ) testINAPComputeCreateServerKeypairSecurityGroupUserDataAndDeleteIt
 {
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
     
     NSString * strKeypairNameRandom = [NSString stringWithFormat:@"%@-%@", @"testkeypair", [[NSUUID UUID] UUIDString]];
     NSString * currentTestFilePath  = @__FILE__;
@@ -589,7 +589,7 @@
 - ( void ) testINAPComputeCreateServerListIPsAndDeleteIt
 {
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
     
     NSString * strKeypairNameRandom = [NSString stringWithFormat:@"%@-%@", @"testkeypair", [[NSUUID UUID] UUIDString]];
     NSString * currentTestFilePath  = @__FILE__;
@@ -690,7 +690,7 @@
 
 - ( void ) testINAPComputeAllocatedIPPoolStartsEmpty
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - list IPs from pool"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - list IPs from pool"];
     
     [computeV2_1Test listIPFromPoolWithStatus:nil
                             excludingFixedIPs:NO
@@ -709,7 +709,7 @@
 
 - ( void ) testINAPComputeAllocateFloatingIPFromPoolThenRemove
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - Allocate IPs from pool"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - Allocate IPs from pool"];
     
     [computeV2_1Test createIPAllocationFromPool:nil
                                          thenDo:^(IOStackComputeIPAllocationV2_1 * _Nullable fipCreated, id  _Nullable idFullResponse)
@@ -748,7 +748,7 @@
 
 - ( void ) testINAPComputeAddFloatingIPToServerThenDeleteAll
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance and list actions succeed"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance and list actions succeed"];
     
     [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors ) {
         XCTAssertTrue( dicFlavors );

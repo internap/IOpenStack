@@ -64,7 +64,7 @@
 
 - ( void ) testAuthDreamAuthGiveValidToken
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Dream - token is valid"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Dream - token is valid"];
     
     [authDreamSession authenticateWithLogin:dicSettingsTests[ @"DREAM_ACCOUNT_LOGIN" ]
                                 andPassword:dicSettingsTests[ @"DREAM_ACCOUNT_PASSWORD" ]
@@ -86,7 +86,7 @@
 
 - ( void ) testAuthDreamProjectGiveAtLeastOneID
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant list is valid"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant list is valid"];
     [authDreamSession listProjectsOrTenantsWithLogin:dicSettingsTests[ @"DREAM_ACCOUNT_LOGIN" ]
                                          andPassword:dicSettingsTests[ @"DREAM_ACCOUNT_PASSWORD" ]
                                            forDomain:nil
@@ -106,7 +106,7 @@
 
 - ( void ) testAuthDreamFirstProjectIsAuthorized
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Dream - project is authorized"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Dream - project is authorized"];
     
     [authDreamSession listProjectsOrTenantsWithLogin:dicSettingsTests[ @"DREAM_ACCOUNT_LOGIN" ]
                                          andPassword:dicSettingsTests[ @"DREAM_ACCOUNT_PASSWORD" ]
@@ -135,7 +135,7 @@
 
 - ( void ) testAuthDreamGotServices
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant got services"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant got services"];
     
     [authDreamSession authenticateWithLogin:dicSettingsTests[ @"DREAM_ACCOUNT_LOGIN" ]
                                 andPassword:dicSettingsTests[ @"DREAM_ACCOUNT_PASSWORD" ]

@@ -42,7 +42,7 @@
     XCTAssertNotNil( dicSettingsTests[ @"INAP_ACCOUNT_PASSWORD" ] );
     XCTAssertNotNil( dicSettingsTests[ @"INAP_IMAGE_ROOT" ] );
     
-    XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
+    __weak XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
     
     authV3Session = [IOStackAuth_INAP initWithLogin:dicSettingsTests[ @"INAP_ACCOUNT_LOGIN" ]
                                         andPassword:dicSettingsTests[ @"INAP_ACCOUNT_PASSWORD" ]
@@ -79,7 +79,7 @@
 
 - ( void ) testImageINAPListFlavors
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Image - images exist"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Image - images exist"];
     
     [imageV2_1Test listImagesThenDo:^( NSDictionary * _Nullable dicImages ){
         XCTAssertNotNil( dicImages );

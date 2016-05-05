@@ -514,27 +514,29 @@
     
    [self listProjectsOrTenantsWithTokenID:strTokenID
                              andUrlParams:dicUrlParams
-                                   thenDo:^(NSArray * _Nullable arrProjectResponse) {
-                                       if( arrProjectResponse != nil )
-                                           doAfterList( arrProjectResponse );
-                              
-                                       else
-                                           [self authenticateWithTokenID:strTokenID
-                                                               forDomain:strDomainName
-                                                      andProjectOrTenant:nil
-                                                                  thenDo:^(NSString * _Nullable strTokenIDResponse, NSDictionary * _Nullable dicFullResponse) {
-                                                                      if( strTokenIDResponse != nil && strTokenIDResponse != strTokenID )
-                                                                          [self listProjectsOrTenantsWithTokenID:strTokenIDResponse
-                                                                                                    andUrlParams:dicUrlParams
-                                                                                                          thenDo:doAfterList];
-                                                                      else
-                                                                      {
-                                                                          NSLog( @"Unauthorized for domain : %@", strDomainName );
-                                                                          if( doAfterList != nil )
-                                                                              doAfterList( nil );
-                                                                      }
-                                                                  }];
-                          }];
+                                   thenDo:^(NSArray * _Nullable arrProjectResponse)
+    {
+        if( arrProjectResponse != nil )
+            doAfterList( arrProjectResponse );
+        
+        else
+            [self authenticateWithTokenID:strTokenID
+                                forDomain:strDomainName
+                       andProjectOrTenant:nil
+                                   thenDo:^(NSString * _Nullable strTokenIDResponse, NSDictionary * _Nullable dicFullResponse)
+             {
+                 if( strTokenIDResponse != nil && strTokenIDResponse != strTokenID )
+                     [self listProjectsOrTenantsWithTokenID:strTokenIDResponse
+                                               andUrlParams:dicUrlParams
+                                                     thenDo:doAfterList];
+                 else
+                 {
+                     NSLog( @"Unauthorized for domain : %@", strDomainName );
+                     if( doAfterList != nil )
+                         doAfterList( nil );
+                 }
+             }];
+    }];
 }
 
 - ( void ) listProjectsOrTenantsWithLogin:( NSString * ) strLogin

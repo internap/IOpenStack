@@ -41,7 +41,7 @@
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_IMAGE_ROOT" ] );
     
-    XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
+    __weak XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
     
     authV3Session = [IOStackAuthV3 initWithIdentityURL:dicSettingsTests[ @"DEVSTACK_IDENTITY_ROOT" ]
                                               andLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
@@ -78,7 +78,7 @@
 
 - ( void ) testImageListFlavors
 {
-    XCTestExpectation * expectation = [self expectationWithDescription:@"Image - images exist"];
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"Image - images exist"];
     
     [imageV2_1Test listImagesThenDo:^( NSDictionary * _Nullable dicImages ){
         XCTAssertNotNil( dicImages );
