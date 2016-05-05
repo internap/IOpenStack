@@ -1,3 +1,5 @@
+ [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
 IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenStack.
 
 It currently support most of the Core Services (Keystone, Glance, Nova, Swift, Cinder). Neutron to come.
