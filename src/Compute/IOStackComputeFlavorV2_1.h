@@ -12,7 +12,7 @@
 #define IOStackObjectTypeFlavor         @"flavor"
 
 
-@interface IOStackServerFlavorsV2_1 : IOStackObject<IOStackObjectParsable>
+@interface IOStackComputeFlavorV2_1 : IOStackObject<IOStackObjectParsable>
 
 
 @property (readonly, nonatomic) NSString * _Nonnull                         name;

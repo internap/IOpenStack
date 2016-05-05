@@ -27,8 +27,10 @@
 #define     IOStackServerStatusSuspended        @"SUSPENDED" //The server is suspended, either by request or necessity. This status appears for only the following hypervisors //XenServer/XCP, KVM, and ESXi. Administrative users may suspend an instance if it is infrequently used or to perform system maintenance. When you suspend an instance, its VM state is stored on disk, all memory is written to disk, and the virtual machine is stopped. Suspending an instance is similar to placing a device in hibernation; memory and vCPUs become available to create other instances.
 #define     IOStackServerStatusVerifyResize     @"VERIFY_RESIZE"
 
+#define IOStackServerStatusErrorArray       @[ IOStackServerStatusUnknown, IOStackServerStatusError ]
 
-@interface IOStackServerObjectV2_1 : IOStackObject<IOStackObjectParsable>
+
+@interface IOStackComputeServerV2_1 : IOStackObject<IOStackObjectParsable>
 
 
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         adminPassword;

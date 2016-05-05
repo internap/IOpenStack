@@ -12,7 +12,7 @@
 #define IOStackObjectTypeSecurityGroupRule @"securitygrouprule"
 
 
-@interface IOStackServerSecurityGroupRuleV2_1  : IOStackObject<IOStackObjectParsable>
+@interface IOStackComputeSecurityGroupRuleV2_1  : IOStackObject<IOStackObjectParsable>
 
 
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         parentGroupID;

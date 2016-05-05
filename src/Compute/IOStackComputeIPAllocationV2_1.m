@@ -6,7 +6,7 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import "IOStackServerIPAllocationV2_1.h"
+#import "IOStackComputeIPAllocationV2_1.h"
 
 @implementation IOStackServerIPAllocationV2_1
 

@@ -6,7 +6,7 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import "IOStackServerSecurityGroupRuleV2_1.h"
+#import "IOStackComputeSecurityGroupRuleV2_1.h"
 
 @implementation IOStackServerSecurityGroupRuleV2_1
 
@@ -29,7 +29,7 @@
         if( [currentSecurityGroupRule valueForKey:@"id"] == nil )
             break;
         
-        IOStackServerSecurityGroupRuleV2_1 * securityGroupRule = [[IOStackServerSecurityGroupRuleV2_1 alloc] initFromAPIResponse:currentSecurityGroupRule];
+        IOStackServerSecurityGroupRuleV2_1 * securityGroupRule = [[IOStackComputeSecurityGroupRuleV2_1 alloc] initFromAPIResponse:currentSecurityGroupRule];
         
         [parsedSecurityGroupRules setObject:securityGroupRule
                                      forKey:securityGroupRule.uniqueID];

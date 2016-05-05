@@ -12,7 +12,7 @@
 #define IOStackObjectTypeSecurityGroup      @"securitygroup"
 
 
-@interface IOStackServerSecurityGroupV2_1 : IOStackObject<IOStackObjectParsable>
+@interface IOStackComputeSecurityGroupV2_1 : IOStackObject<IOStackObjectParsable>
 
 
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         groupDescription;

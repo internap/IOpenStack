@@ -6,7 +6,7 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import "IOStackServerObjectV2_1.h"
+#import "IOStackComputeServerV2_1.h"
 
 @implementation IOStackServerObjectV2_1
 
@@ -57,7 +57,7 @@
         if( [currentServer valueForKey:@"id"] == nil )
             break;
         
-        IOStackServerObjectV2_1 * server = [[IOStackServerObjectV2_1 alloc] initFromAPIResponse:currentServer];
+        IOStackServerObjectV2_1 * server = [[IOStackComputeServerV2_1 alloc] initFromAPIResponse:currentServer];
         
         [parsedServers setObject:server
                           forKey:server.uniqueID];
@@ -73,7 +73,7 @@
 
 + ( instancetype ) initFromAPIGETResponse:( NSDictionary * ) dicAPIGETResponse
 {
-    IOStackServerObjectV2_1 * servResult = [[self alloc] init];
+    IOStackComputeServerV2_1 * servResult = [[self alloc] init];
     
     [servResult refreshServerFromAPIGETResponse:dicAPIGETResponse andCheckConsistency:NO];
     

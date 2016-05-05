@@ -6,8 +6,14 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import <IOpenStack/IOpenStack.h>
+#import <Foundation/Foundation.h>
 
-@interface IOStackNetwork : IOStackService
+
+#import "IOStackAuth.h"
+
+
+@interface IOStackNetworkV2 : IOStackService
+
+
 
 @end

@@ -6,8 +6,8 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import "IOStackNetwork.h"
+#import "IOStackNetworkV2.h"
 
-@implementation IOStackNetwork
+@implementation IOStackNetworkV2
 
 @end

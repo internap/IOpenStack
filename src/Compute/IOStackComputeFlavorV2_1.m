@@ -6,7 +6,7 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import "IOStackServerFlavorsV2_1.h"
+#import "IOStackComputeFlavorV2_1.h"
 
 
 @implementation IOStackServerFlavorsV2_1
@@ -27,7 +27,7 @@
         if( [currentFlavor valueForKey:@"id"] == nil )
             break;
         
-        IOStackServerFlavorsV2_1 * flavor = [[IOStackServerFlavorsV2_1 alloc] initFromAPIResponse:currentFlavor];
+        IOStackServerFlavorsV2_1 * flavor = [[IOStackComputeFlavorV2_1 alloc] initFromAPIResponse:currentFlavor];
         
         [parsedFlavors setObject:flavor
                           forKey:flavor.uniqueID];
@@ -49,7 +49,7 @@
     
     for( NSString * currentFlavorID in dicFlavors )
     {
-        IOStackServerFlavorsV2_1 * currentFlavor = [dicFlavors valueForKey:currentFlavorID];
+        IOStackComputeFlavorV2_1 * currentFlavor = [dicFlavors valueForKey:currentFlavorID];
         if( [currentFlavor.name containsString:strFlavorName] )
             foundID = currentFlavor.uniqueID;
     }

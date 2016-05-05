@@ -6,7 +6,8 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import "IOStackServerKeypairV2_1.h"
+#import "IOStackComputeKeypairV2_1.h"
+
 
 @implementation IOStackServerKeypairV2_1
 
@@ -29,7 +30,7 @@
             ![[currentKeypair valueForKey:@"keypair"] isKindOfClass:[NSDictionary class]] )
             break;
         
-        IOStackServerKeypairV2_1 * keypair = [[IOStackServerKeypairV2_1 alloc] initFromAPIResponse:[currentKeypair valueForKey:@"keypair"]];
+        IOStackServerKeypairV2_1 * keypair = [[IOStackComputeKeypairV2_1 alloc] initFromAPIResponse:[currentKeypair valueForKey:@"keypair"]];
         
         [parsedKeypairs setObject:keypair
                            forKey:keypair.uniqueID];

@@ -12,7 +12,7 @@
 #define IOStackObjectTypeFloatingIP         @"floatingip"
 
 
-@interface IOStackServerIPAllocationV2_1 : IOStackObject<IOStackObjectParsable>
+@interface IOStackComputeIPAllocationV2_1 : IOStackObject<IOStackObjectParsable>
 
 
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         uidInstance;

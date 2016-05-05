@@ -6,7 +6,7 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import "IOStackServerSecurityGroupV2_1.h"
+#import "IOStackComputeSecurityGroupV2_1.h"
 
 @implementation IOStackServerSecurityGroupV2_1
 
@@ -29,7 +29,7 @@
         if( [currentSecurityGroup valueForKey:@"id"] == nil )
             break;
         
-        IOStackServerSecurityGroupV2_1 * securityGroup = [[IOStackServerSecurityGroupV2_1 alloc] initFromAPIResponse:currentSecurityGroup];
+        IOStackServerSecurityGroupV2_1 * securityGroup = [[IOStackComputeSecurityGroupV2_1 alloc] initFromAPIResponse:currentSecurityGroup];
         
         [parsedSecurityGroups setObject:securityGroup
                                  forKey:securityGroup.uniqueID];

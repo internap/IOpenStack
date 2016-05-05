@@ -12,7 +12,7 @@
 #define IOStackObjectTypeKeypair             @"keypair"
 
 
-@interface IOStackServerKeypairV2_1 : IOStackObject<IOStackObjectParsable>
+@interface IOStackComputeKeypairV2_1 : IOStackObject<IOStackObjectParsable>
 
 
 @property (readonly, nonatomic) NSString * _Nonnull                         fingerprint;
