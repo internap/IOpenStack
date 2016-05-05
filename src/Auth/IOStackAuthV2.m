@@ -502,6 +502,20 @@
     }];
 }
 
+- ( void ) getDetailForExtensionWithAlias:( NSString * ) nameAlias
+                                   thenDo:( void ( ^ ) ( NSDictionary * dicExtension ) ) doAfterGetDetail
+{
+    NSString * urlExtensionAlias =[NSString stringWithFormat:@"%@/%@", IDENTITYV2_EXTENSION_URN, nameAlias];
+    [self readResource:urlExtensionAlias
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"extension"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
 
 
 @end

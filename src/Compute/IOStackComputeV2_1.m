@@ -723,8 +723,8 @@
      }];
 }
 
-- ( void ) getNetworkWithID:( NSString * ) uidNetwork
-                     thenDo:( void ( ^ ) ( IOStackComputeNetworkV2_1 * networkDetails, id idFullResponse ) ) doAfterGet
+- ( void ) getDetailsForNetworkWithID:( NSString * ) uidNetwork
+                               thenDo:( void ( ^ ) ( IOStackComputeNetworkV2_1 * networkDetails, id idFullResponse ) ) doAfterGet
 {
     NSString * urlNetwork = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_NETWORKS_URN, uidNetwork];
     

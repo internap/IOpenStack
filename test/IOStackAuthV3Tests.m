@@ -85,6 +85,84 @@
     }];
 }
 
+- ( void ) testCreateCheckAndDeleteToken
+{
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - project list is valid"];
+    
+    [IOStackAuthV3 initWithIdentityURL:dicSettingsTests[ @"DEVSTACK_IDENTITY_ROOT" ]
+                              andLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
+                           andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]
+                      forDefaultDomain:dicSettingsTests[ @"DEVSTACK_ACCOUNT_DOMAIN" ]
+                    andProjectOrTenant:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PROJECTORTENANT" ]
+                                thenDo:^(NSString * _Nullable strTokenIDResponseDemo, NSDictionary * _Nullable dicFullResponse)
+    {
+        XCTAssertNotNil(strTokenIDResponseDemo);
+        
+        [authV3Session authenticateWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINADMIN" ]
+                                 andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDADMIN" ]
+                                   forDomain:dicSettingsTests[ @"DEVSTACK_ACCOUNT_DOMAIN" ]
+                          andProjectOrTenant:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PROJECTORTENANT" ]
+                                      thenDo:^(NSString * _Nullable strTokenIDResponseAdmin, NSDictionary * _Nullable dicFullResponse)
+         {
+             [authV3Session checkTokenWithID:strTokenIDResponseDemo
+                                      thenDo:^(BOOL isValid)
+             {
+                  XCTAssertTrue( isValid );
+                 
+                 [authV3Session deleteTokenWithID:strTokenIDResponseDemo
+                                           thenDo:^(BOOL isDeleted)
+                 {
+                     XCTAssertTrue( isDeleted );
+                     [expectation fulfill];
+                 }];
+             }];
+         }];
+    }];
+
+    [self waitForExpectationsWithTimeout:5.0 handler:^( NSError *error ) {
+        if( error ) NSLog(@"Timeout Error: %@", error);
+    }];
+}
+
+- ( void ) testCreateListAndDeleteDomain
+{
+    __weak XCTestExpectation * expectation = [self expectationWithDescription:@"V3 - project list is valid"];
+    
+    [IOStackAuthV3 initWithIdentityURL:dicSettingsTests[ @"DEVSTACK_IDENTITY_ROOT" ]
+                              andLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINADMIN" ]
+                           andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDADMIN" ]
+                      forDefaultDomain:dicSettingsTests[ @"DEVSTACK_ACCOUNT_DOMAIN" ]
+                    andProjectOrTenant:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PROJECTORTENANT" ]
+                                thenDo:^(NSString * _Nullable strTokenIDResponseDemo, NSDictionary * _Nullable dicFullResponse)
+     {
+         XCTAssertNotNil(strTokenIDResponseDemo);
+         
+         [authV3Session createDomainWithName:@"test domain"
+                              andDescription:nil
+                                     enabled:YES
+                                      thenDo:^(NSDictionary * _Nullable domainCreated, id  _Nullable dicFullResponse)
+         {
+             XCTAssertNotNil( domainCreated );
+             XCTAssertNotNil( domainCreated[ @"id" ] );
+             
+             [authV3Session listDomainsThenDo:^(NSArray * _Nullable arrDomains, id  _Nullable idFullResponse) {
+                 XCTAssertNotNil( arrDomains );
+                 XCTAssertTrue( [arrDomains count] > 0 );
+
+                 [authV3Session deleteDomainWithID:domainCreated[ @"id" ]
+                                            thenDo:^(bool isDeleted, id  _Nullable idFullResponse)
+                 {
+                     XCTAssertTrue( isDeleted );
+                     [expectation fulfill];
+                 }];
+             }];
+         }];
+     }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^( NSError *error ) {
+        if( error ) NSLog(@"Timeout Error: %@", error);
+    }];
+}
 
 - ( void ) testProjectsGiveAtLeastOneID
 {

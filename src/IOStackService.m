@@ -681,6 +681,35 @@
                 thenDo:doWithReadResults];
 }
 
+- ( void ) metadataResource:( NSString * ) urlResource
+                 withHeader:( NSDictionary * ) dicHeaderFieldValue
+               andUrlParams:( NSDictionary * ) paramsURL
+                     thenDo:( void ( ^ ) ( NSDictionary * headerValues, id dataResponse ) ) doWithMetadata
+{
+    [self setHTTPHeaderWithValues:dicHeaderFieldValue];
+    
+    [self serviceHEAD:urlResource
+     withParams:paramsURL
+     onServiceSuccess:^(NSString * _Nonnull uidTaskService, id  _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders)
+    {
+        if( doWithMetadata != nil )
+        {
+            if( responseObject == nil )
+                doWithMetadata( nil, nil );
+            
+            else
+                doWithMetadata( dicResponseHeaders, responseObject );
+        }
+
+     }
+     onServiceFailure:^(NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus)
+    {
+        //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
+        if( doWithMetadata != nil )
+            doWithMetadata( nil, nil );
+     }];
+}
+
 - ( void ) listResource:( NSString * ) urlResource
              withHeader:( NSDictionary * ) dicHeaderFieldValue
            andUrlParams:( NSDictionary * ) paramsURL

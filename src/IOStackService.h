@@ -151,6 +151,10 @@
              withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
            andUrlParams:( nullable NSDictionary * ) paramsURL
                  thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicObjectFound, id _Nullable dataResponse ) ) doWithReadResults;
+- ( void ) metadataResource:( nonnull NSString * ) urlResource
+                 withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
+               andUrlParams:( nullable NSDictionary * ) paramsURL
+                     thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable headerValues, id _Nullable dataResponse ) ) doWithMetadata;
 - ( void ) listResource:( nonnull NSString * ) urlResource
              withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
            andUrlParams:( nullable NSDictionary * ) paramsURL

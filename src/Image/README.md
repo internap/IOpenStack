@@ -7,7 +7,7 @@ This part describe the Image service support of the library :
 
 + Glance V2
 + + Service versions ![Current Progress](http://progressed.io/bar/0)
-+ + Images ![Current Progress](http://progressed.io/bar230)
++ + Images ![Current Progress](http://progressed.io/bar/30)
 + + Image data ![Current Progress](http://progressed.io/bar/0)
 + + Image tags ![Current Progress](http://progressed.io/bar/0)
 + + Members ![Current Progress](http://progressed.io/bar/0)

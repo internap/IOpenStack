@@ -8,8 +8,7 @@ This part describe the Identity/Authentification service support of the library 
 + Keystone V2
 + + Service versions ![Current Progress](http://progressed.io/bar/0)  
 + + Token and tenants ![Current Progress](http://progressed.io/bar/100)  
-+ + Extensions ![Current Progress](http://progressed.io/bar/0)  
-+ + Service versions ![Current Progress](http://progressed.io/bar/0)  
++ + Extensions ![Current Progress](http://progressed.io/bar/100) 
 
 + Keystone V3
 + + Service versions ![Current Progress](http://progressed.io/bar/0)  

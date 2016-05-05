@@ -67,6 +67,21 @@
               andProjectOrTenant:( nullable NSString * ) strProjectOrTenant
                           thenDo:( nullable void ( ^ ) ( NSString * _Nullable strTokenIDResponse, NSDictionary * _Nullable dicFullResponse ) ) doAfterInit;
 - ( void ) authenticateThenDo:( nullable void ( ^ ) ( NSString * _Nullable strTokenIDResponse, NSDictionary * _Nullable dicFullResponse ) ) doAfterInit;
+- ( void ) getDetailsForTokenWithID:( nonnull NSString * ) strTokenIDToCheck
+                             thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable strTokenDetails ) ) doAfterGetDetails;
+- ( void ) checkTokenWithID:( nonnull NSString * ) strTokenIDToCheck
+                     thenDo:( nullable void ( ^ ) ( BOOL isValid ) ) doAfterCheck;
+- ( void ) deleteTokenWithID:( nonnull NSString * ) strTokenIDToCheck
+                      thenDo:( nullable void ( ^ ) ( BOOL isDeleted ) ) doAfterCheck;
+- ( void ) listDomainsThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrDomains, id _Nullable idFullResponse ) ) doAfterList;
+- ( void ) createDomainWithName:( nonnull NSString * ) nameDomain
+                 andDescription:( nullable NSString * ) strDescription
+                        enabled:( BOOL ) isEnabled
+                         thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable domainCreated, id _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) getDetailForDomainWithID:( nonnull NSString * ) uidDomain
+                             thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicDomain ) ) doAfterGetDetail;
+- ( void ) deleteDomainWithID:( nonnull NSString * ) uidDomain
+                       thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
 - ( void ) listProjectsOrTenantsWithTokenID:( nonnull NSString * ) strTokenID
                                   forDomain:( nullable NSString * ) strDomainName
                                        From:( nullable NSString * ) strStartingFromID

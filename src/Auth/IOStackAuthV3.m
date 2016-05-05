@@ -11,6 +11,7 @@
 
 #define IDENTITYV3_TOKEN_URI            @"v3/auth/tokens"
 #define IDENTITYV3_PROJECT_URN          @"v3/projects"
+#define IDENTITYV3_DOMAIN_URN           @"v3/domains"
 #define IDENTITYV3_DEFAULT_DOMAIN       @"Default"
 
 
@@ -434,8 +435,6 @@
                          thenDo:doAfterAuth];
 }
 
-
-#pragma mark - Token details
 - ( void ) getTokenDomainName:( NSString * ) strTokenID
                        thenDo:( void ( ^ ) ( NSString * strDomainOfToken ) ) doAfterGet
 {
@@ -444,37 +443,155 @@
           andUrlParams:nil
              insideKey:@"token"
                 thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( ![[dicObjectFound objectForKey:@"user"] isKindOfClass:[NSDictionary class]] &&
+            doAfterGet != nil )
+         {
+             doAfterGet( nil );
+             return;
+         }
+         
+         NSDictionary * dicUser       = [dicObjectFound objectForKey:@"user"];
+         
+         if( ![[dicUser objectForKey:@"domain"] isKindOfClass:[NSDictionary class]] &&
+            doAfterGet != nil )
+         {
+             doAfterGet( nil );
+             return;
+         }
+         
+         NSDictionary * dicDomain = [dicUser objectForKey:@"domain"];
+         
+         if( ![[dicDomain objectForKey:@"name"] isKindOfClass:[NSString class]] &&
+            doAfterGet != nil )
+         {
+             doAfterGet( nil );
+             return;
+         }
+         
+         NSString * strDomainName = [dicDomain objectForKey:@"name"];
+         
+         if( doAfterGet != nil )
+             doAfterGet( strDomainName );
+     }];
+}
+
+
+#pragma mark - Token details
+- ( void ) getDetailsForTokenWithID:( NSString * ) strTokenIDToCheck
+                             thenDo:( void ( ^ ) ( NSDictionary * strTokenDetails ) ) doAfterGetDetails
+{
+    [self readResource:IDENTITYV3_TOKEN_URI
+            withHeader:@{@"X-Subject-Token" : strTokenIDToCheck}
+          andUrlParams:nil
+             insideKey:@"token"
+                thenDo:^(NSDictionary * dicObjectFound, id  _Nullable dataResponse)
     {
-        if( ![[dicObjectFound objectForKey:@"user"] isKindOfClass:[NSDictionary class]] &&
-                doAfterGet != nil )
-        {
-            doAfterGet( nil );
-            return;
-        }
-
-        NSDictionary * dicUser       = [dicObjectFound objectForKey:@"user"];
-        
-        if( ![[dicUser objectForKey:@"domain"] isKindOfClass:[NSDictionary class]] &&
-           doAfterGet != nil )
-        {
-            doAfterGet( nil );
-            return;
-        }
-        
-        NSDictionary * dicDomain = [dicUser objectForKey:@"domain"];
-        
-        if( ![[dicDomain objectForKey:@"name"] isKindOfClass:[NSString class]] &&
-           doAfterGet != nil )
-        {
-            doAfterGet( nil );
-            return;
-        }
-
-        NSString * strDomainName = [dicDomain objectForKey:@"name"];
-        
-        if( doAfterGet != nil )
-            doAfterGet( strDomainName );
+        if( doAfterGetDetails != nil )
+            doAfterGetDetails( dicObjectFound );
     }];
+}
+
+- ( void ) checkTokenWithID:( NSString * ) strTokenIDToCheck
+                     thenDo:( void ( ^ ) ( BOOL isValid ) ) doAfterCheck
+{
+    [self metadataResource:IDENTITYV3_TOKEN_URI
+                withHeader:@{@"X-Subject-Token" : strTokenIDToCheck}
+              andUrlParams:nil
+                    thenDo:^(NSDictionary * _Nullable headerValues, id  _Nullable dataResponse)
+    {
+        if( doAfterCheck != nil )
+            doAfterCheck( ( ( dataResponse == nil ) ||
+                           ( dataResponse[ @"response" ] == nil ) ||
+                           ( [dataResponse[ @"response" ] isEqualToString:@""] ) ) &&
+                            ( ( headerValues != nil ) && ( [headerValues[@"X-Subject-Token"] isEqualToString:strTokenIDToCheck] ) ) );
+    }];
+}
+
+- ( void ) deleteTokenWithID:( NSString * ) strTokenIDToCheck
+                      thenDo:( void ( ^ ) ( BOOL isDeleted ) ) doAfterCheck
+{
+    [self deleteResource:IDENTITYV3_TOKEN_URI
+              withHeader:@{@"X-Subject-Token" : strTokenIDToCheck}
+                  thenDo:^(NSDictionary * _Nullable dicResults, id  _Nullable idFullResponse)
+    {
+         if( doAfterCheck != nil )
+             doAfterCheck( ( idFullResponse == nil ) ||
+                            ( idFullResponse[ @"response" ] == nil ) ||
+                            ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+     }];
+}
+
+#pragma mark - Domain management
+- ( void ) listDomainsThenDo:( void ( ^ ) ( NSArray * arrDomains, id idFullResponse ) ) doAfterList
+{
+    [self listResource:IDENTITYV3_DOMAIN_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"domains"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+         
+     }];
+}
+
+- ( void ) createDomainWithName:( NSString * ) nameDomain
+                 andDescription:( NSString * ) strDescription
+                      enabled:( BOOL ) isEnabled
+                         thenDo:( void ( ^ ) ( NSDictionary * domainCreated, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicDomainParam = [NSMutableDictionary dictionaryWithObject:nameDomain
+                                                                               forKey:@"name"];
+    if( strDescription != nil )
+        mdicDomainParam[ @"description" ] = strDescription;
+    
+    mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    if( !isEnabled )
+        mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    [self createResource:IDENTITYV3_DOMAIN_URN
+              withHeader:nil
+            andUrlParams:mdicDomainParam
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalDomain = idFullResponse;
+         if( idFullResponse != nil )
+             finalDomain = idFullResponse[ @"domain" ];
+         
+         if( doAfterCreate != nil )
+             doAfterCreate( finalDomain, idFullResponse );
+     }];
+}
+
+- ( void ) getDetailForDomainWithID:( NSString * ) uidDomain
+                             thenDo:( void ( ^ ) ( NSDictionary * dicDomain ) ) doAfterGetDetail
+{
+    NSString * urlDomain =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_DOMAIN_URN, uidDomain];
+    [self readResource:urlDomain
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"domain"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) deleteDomainWithID:( NSString * ) uidDomain
+                       thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlDomain =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_DOMAIN_URN, uidDomain];
+    [self deleteResource:urlDomain
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( dicObjectFound == nil, idFullResponse );
+     }];
 }
 
 
