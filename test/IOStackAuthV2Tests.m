@@ -171,5 +171,22 @@
 }
 
 
+- ( void ) testImageListExtensions
+{
+    XCTestExpectation * expectation = [self expectationWithDescription:@"Image - extensions exist"];
+    
+    [authV2Session listExtensionsThenDo:^(NSArray * _Nullable arrExtensions)
+    {
+        XCTAssertNotNil( arrExtensions );
+        XCTAssertTrue( [arrExtensions count] > 0 );
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if( error ) NSLog(@"Timeout Error: %@", error);
+    }];
+}
+
 
 @end

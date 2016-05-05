@@ -85,6 +85,7 @@
                                   To:( nullable NSNumber * ) nLimit
                               thenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrProjectResponse ) ) doAfterList;
 - ( void ) listProjectsOrTenantsThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrProjectResponse ) ) doAfterList;
+- ( void ) listExtensionsThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrExtensions ) ) doAfterList;
 
 
 @end

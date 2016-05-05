@@ -3,7 +3,7 @@ IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenS
 Progress : ![Progress](http://progressed.io/bar/20)
 
 
-This part describe the Object Storage component of the library :
+This part describe the Object Storage service support of the library :
 
 + Glance V2
 + + Service versions ![Current Progress](http://progressed.io/bar/0)

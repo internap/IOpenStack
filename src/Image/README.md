@@ -3,11 +3,11 @@ IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenS
 Progress : ![Progress](http://progressed.io/bar/20)
 
 
-This part describe the Image component of the library :
+This part describe the Image service support of the library :
 
 + Glance V2
 + + Service versions ![Current Progress](http://progressed.io/bar/0)
-+ + Images ![Current Progress](http://progressed.io/bar/100)
++ + Images ![Current Progress](http://progressed.io/bar230)
 + + Image data ![Current Progress](http://progressed.io/bar/0)
 + + Image tags ![Current Progress](http://progressed.io/bar/0)
 + + Members ![Current Progress](http://progressed.io/bar/0)

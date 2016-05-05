@@ -11,6 +11,7 @@
 
 #define IDENTITYV2_TOKEN_URI              @"v2.0/tokens"
 #define IDENTITYV2_TENANT_URN             @"v2.0/tenants"
+#define IDENTITYV2_EXTENSION_URN          @"v2.0/extensions"
 
 
 @implementation IOStackAuthV2
@@ -380,7 +381,6 @@
 }
 
 
-
 #pragma mark - tenants methods
 - ( void ) listProjectsOrTenantsWithTokenID:( NSString * ) strTokenID
                                andUrlParams:( NSDictionary * ) dicUrlParams
@@ -480,6 +480,26 @@
     [self listProjectsOrTenantsFrom:nil
                                  To:nil
                              thenDo:doAfterList];
+}
+
+
+#pragma mark - Extensions
+- ( void ) listExtensionsThenDo:( void ( ^ ) ( NSArray * arrExtensions ) ) doAfterList
+{
+    [self readResource:IDENTITYV2_EXTENSION_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"extensions"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+    {
+        NSArray * arrExtensionsFound = nil;
+        if( dicObjectFound != nil &&
+            dicObjectFound[ @"values"] != nil )
+            arrExtensionsFound = dicObjectFound[ @"values"];
+        
+        if( doAfterList != nil )
+            doAfterList( arrExtensionsFound );
+    }];
 }
 
 

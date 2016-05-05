@@ -3,7 +3,7 @@ IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenS
 Progress : ![Progress](http://progressed.io/bar/30)  
 
 
-This part describe the Identity/Authentification component of the library : 
+This part describe the Identity/Authentification service support of the library : 
 
 + Keystone V2
 + + Service versions ![Current Progress](http://progressed.io/bar/0)  
