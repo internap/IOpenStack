@@ -8,8 +8,8 @@
 
 #import <XCTest/XCTest.h>
 
-#include "IOStackAuthV3.h"
-#include "IOStackImageV2.h"
+#import     "IOStackAuthV3.h"
+#import     "IOStackImageV2.h"
 
 
 @interface IOStackImageV2Tests : XCTestCase
@@ -67,7 +67,7 @@
 }
 
 
-- ( void ) testNotASingleton
+- ( void ) testImageNotASingleton
 {
     XCTAssertNotNil(imageV2_1Test.currentTokenID);
     
@@ -76,7 +76,7 @@
     XCTAssertNotEqualObjects( imageV2_1Test, imageV2_1Test2 );
 }
 
-- ( void ) testListFlavors
+- ( void ) testImageListFlavors
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Image - images exist"];
     

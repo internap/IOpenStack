@@ -8,32 +8,89 @@
 
 #import <XCTest/XCTest.h>
 
+
+#import     "IOStackAuth_Dream.h"
+#import     "IOStackImageV2.h"
+
+
 @interface IOStackImage_DreamTests : XCTestCase
 
 @end
 
-@implementation IOStackImage_DreamTests
 
-- (void)setUp {
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+@implementation IOStackImage_DreamTests
+{
+    IOStackAuth_Dream *      authV3Session;
+    IOStackImageV2 *        imageV2_1Test;
+    NSDictionary *          dicSettingsTests;
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+
+- ( void )setUp
+{
+    [super setUp];
+    NSString * currentTestFilePath  = @__FILE__;
+    NSString * currentSettingTests  = [NSString stringWithFormat:@"%@/../SettingsTests.plist", [currentTestFilePath stringByDeletingLastPathComponent]];
+    
+    dicSettingsTests = [NSDictionary dictionaryWithContentsOfFile:currentSettingTests];
+    
+    XCTAssertNotNil( dicSettingsTests );
+    XCTAssertNotNil( dicSettingsTests[ @"DREAM_IDENTITY_ROOT" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DREAM_ACCOUNT_PROJECTORTENANT" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DREAM_ACCOUNT_DOMAIN" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DREAM_ACCOUNT_LOGIN" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DREAM_ACCOUNT_PASSWORD" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DREAM_IMAGE_ROOT" ] );
+    
+    XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
+    
+    authV3Session = [IOStackAuth_Dream initWithLogin:dicSettingsTests[ @"DREAM_ACCOUNT_LOGIN" ]
+                                         andPassword:dicSettingsTests[ @"DREAM_ACCOUNT_PASSWORD" ]
+                                    forDefaultDomain:nil
+                                  andProjectOrTenant:dicSettingsTests[ @"DREAM_ACCOUNT_PROJECTORTENANT" ]
+                                              thenDo:^(NSString * _Nullable strTokenIDResponse, NSDictionary * _Nullable dicFullResponse)
+    {
+        XCTAssertNotNil(strTokenIDResponse);
+        
+        imageV2_1Test = [IOStackImageV2 initWithIdentity:authV3Session];
+        
+        [exp fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if( error ) NSLog(@"Timeout Error: %@", error);
+    }];
+}
+
+- ( void ) tearDown
+{
     [super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+
+- ( void ) testImageDreamNotASingleton
+{
+    XCTAssertNotNil(imageV2_1Test.currentTokenID);
+    
+    IOStackImageV2 *    imageV2_1Test2 = [IOStackImageV2 initWithImageURL:dicSettingsTests[ @"DREAM_IMAGE_ROOT" ]
+                                                               andTokenID:authV3Session.currentTokenID];
+    XCTAssertNotEqualObjects( imageV2_1Test, imageV2_1Test2 );
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
+- ( void ) testImageDreamListFlavors
+{
+    XCTestExpectation * expectation = [self expectationWithDescription:@"Image - images exist"];
+    
+    [imageV2_1Test listImagesThenDo:^( NSDictionary * _Nullable dicImages ){
+        XCTAssertNotNil( dicImages );
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if( error ) NSLog(@"Timeout Error: %@", error);
     }];
 }
+
 
 @end

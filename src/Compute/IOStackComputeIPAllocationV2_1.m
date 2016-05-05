@@ -8,7 +8,7 @@
 
 #import "IOStackComputeIPAllocationV2_1.h"
 
-@implementation IOStackServerIPAllocationV2_1
+@implementation IOStackComputeIPAllocationV2_1
 
 @synthesize uidInstance;
 @synthesize namePool;
@@ -16,7 +16,7 @@
 @synthesize ipAddressFixed;
 
 
-+ ( id ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
++ ( instancetype ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
 {
     return [ [self alloc] initFromAPIResponse:dicAPIResponse ];
 }
@@ -24,6 +24,9 @@
 
 - ( instancetype ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
 {
+    if( dicAPIResponse == nil )
+        return nil;
+    
     if( self = [super init] )
     {
         self.objectType     = IOStackObjectTypeFloatingIP;
@@ -32,7 +35,6 @@
         namePool            = dicAPIResponse[ @"pool" ];
         ipAddress           = dicAPIResponse[ @"ip" ];
         ipAddressFixed      = dicAPIResponse[ @"fixed_ip" ];
-    
     }
     return self;
 }

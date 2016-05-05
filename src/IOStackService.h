@@ -45,7 +45,7 @@
 @property (readonly, strong, nonatomic) NSString * _Nullable                serviceType;
 @property (readonly, strong, nonatomic) NSNumber * _Nullable                versionMajor;
 @property (readonly, strong, nonatomic) NSNumber * _Nullable                versionMinor;
-@property (readonly, strong, nonatomic) NSString * _Nullable                nameProvider;
+@property (strong, nonatomic) NSString * _Nullable                nameProvider;
 @end
 
 
@@ -57,7 +57,6 @@
 @property (strong, nonatomic) NSURL * _Nullable                   urlInternal;
 
 
-- ( nonnull instancetype ) init;
 
 /**
  Initiate service with infos
@@ -91,6 +90,7 @@
                               andInternalURL:( nonnull NSURL * ) urlServiceInternal
                                  andAdminURL:( nonnull NSURL * ) urlServiceAdmin
                              andProviderName:( nullable NSString * ) strProviderName;
+- ( void ) activateDebug:( BOOL ) isActivated;
 - ( void ) setHTTPHeader:( nonnull NSString * ) strHeaderString
                withValue:( nonnull NSString * ) strHeaderValue;
 - ( void ) setHTTPHeaderWithValues:( nullable NSDictionary * ) dicHeaderValues;
@@ -184,6 +184,7 @@
               insideKey:( nullable NSString * ) nameObjectKey
                forField:( nullable NSString * ) strFieldName
            toEqualValue:( nullable id ) valToEqual
+          orErrorValues:( nullable NSArray * ) arrErrorValues
           withFrequency:( NSTimeInterval ) tiFrequency
              andTimeout:( NSTimeInterval ) tiTimeout
                  thenDo:( nullable void ( ^ ) ( bool isWithStatus ) ) doAfterWait;
@@ -192,6 +193,7 @@
               insideKey:( nullable NSString * ) nameObjectKey
                forField:( nullable NSString * ) strFieldName
            toEqualValue:( nullable id ) valToEqual
+          orErrorValues:( nullable NSArray * ) arrErrorValues
                  thenDo:( nullable void ( ^ ) ( bool isWithStatus ) ) doAfterWait;
 
 

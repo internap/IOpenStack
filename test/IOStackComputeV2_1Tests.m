@@ -8,9 +8,9 @@
 
 #import <XCTest/XCTest.h>
 
-#include "IOStackAuthV3.h"
-#include "IOStackImageV2.h"
-#include "IOStackComputeV2_1.h"
+#import     "IOStackAuthV3.h"
+#import     "IOStackImageV2.h"
+#import     "IOStackComputeV2_1.h"
 
 
 @interface IOStackComputeV2_1Tests : XCTestCase
@@ -79,7 +79,7 @@
 }
 
 
-- ( void ) testNotASingleton
+- ( void ) testComputeNotASingleton
 {
     XCTAssertNotNil(computeV2_1Test.currentTokenID);
     XCTAssertNotNil(computeV2_1Test.currentProjectOrTenantID);
@@ -90,7 +90,7 @@
     XCTAssertNotEqualObjects( computeV2_1Test, computeV2_1Test2 );
 }
 
-- ( void ) testListFlavors
+- ( void ) testComputeListFlavors
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - flavors exists"];
     
@@ -98,7 +98,7 @@
     {
         XCTAssertNotNil( dicFlavors );
         XCTAssertTrue( [dicFlavors count] > 0 );
-        NSString * uidFlavorNano = [IOStackServerFlavorsV2_1 findIDForFlavors:dicFlavors
+        NSString * uidFlavorNano = [IOStackComputeFlavorV2_1 findIDForFlavors:dicFlavors
                                                            withNameContaining:@"nano" ];
         XCTAssertNotNil( uidFlavorNano );
         
@@ -110,21 +110,48 @@
     }];
 }
 
-- ( void ) testCreateServerListAndDeleteIt
+- ( void ) testComputeListNetworks
+{
+    XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - flavors exists"];
+    
+    [computeV2_1Test listNetworksThenDo:^(NSDictionary * _Nullable dicNetworks, id  _Nullable idFullResponse)
+    {
+        XCTAssertNotNil( dicNetworks );
+        XCTAssertTrue( [dicNetworks count] > 0 );
+        NSArray * arrUIDNetwork = [IOStackComputeNetworkV2_1 findIDsForNetworks:dicNetworks
+                                                               withExactLabel:@"public" ];
+        XCTAssertNotNil( arrUIDNetwork );
+        XCTAssertTrue( [arrUIDNetwork count] > 0 );
+        
+        IOStackComputeNetworkV2_1 * firstNetwork = [dicNetworks objectForKey:[arrUIDNetwork objectAtIndex:0]];
+        XCTAssertNotNil( firstNetwork );
+        XCTAssertNotNil( firstNetwork.labelNetwork );
+        XCTAssertTrue( [firstNetwork.labelNetwork isEqualToString:@"public"] );
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+        if( error ) NSLog(@"Timeout Error: %@", error);
+    }];
+}
+
+- ( void ) testComputeCreateServerListAndDeleteIt
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance succeed"];
     
     [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors ) {
         XCTAssertTrue( dicFlavors );
         XCTAssertTrue( [dicFlavors count] > 0 );
-        NSString * uidFlavorNano = [IOStackServerFlavorsV2_1 findIDForFlavors:dicFlavors
+        NSString * uidFlavorNano = [IOStackComputeFlavorV2_1 findIDForFlavors:dicFlavors
                                                            withNameContaining:@"nano" ];
         XCTAssertNotNil( uidFlavorNano );
         XCTAssertNotNil( [arrOSImages[ 0 ] valueForKey:@"uniqueID" ] );
         [computeV2_1Test createServerWithName:@"test Instance"
                                   andFlavorID:uidFlavorNano
                                    andImageID:[arrOSImages[ 0 ] valueForKey:@"uniqueID" ]
-                                       thenDo:^(IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse)
+                            waitUntilIsActive:NO
+                                       thenDo:^(IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse)
          {
              XCTAssertNotNil( serverCreated );
              [computeV2_1Test listServersThenDo:^(NSDictionary * dicServers, id idFullResponse) {
@@ -146,21 +173,22 @@
     }];
 }
 
-- ( void ) testCreateServerListActionsAndDeleteIt
+- ( void ) testComputeCreateServerListActionsAndDeleteIt
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance and list actions succeed"];
     
     [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors ) {
         XCTAssertTrue( dicFlavors );
         XCTAssertTrue( [dicFlavors count] > 0 );
-        NSString * uidFlavorNano = [IOStackServerFlavorsV2_1 findIDForFlavors:dicFlavors
+        NSString * uidFlavorNano = [IOStackComputeFlavorV2_1 findIDForFlavors:dicFlavors
                                                            withNameContaining:@"nano" ];
         XCTAssertNotNil( uidFlavorNano );
         XCTAssertNotNil( [arrOSImages[ 0 ] valueForKey:@"uniqueID" ] );
         [computeV2_1Test createServerWithName:@"test Instance"
                                   andFlavorID:uidFlavorNano
                                    andImageID:[arrOSImages[ 0 ] valueForKey:@"uniqueID" ]
-                                       thenDo:^(IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse)
+                            waitUntilIsActive:NO
+                                       thenDo:^(IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse)
          {
              XCTAssertNotNil( serverCreated );
              [computeV2_1Test listActionsForServer:serverCreated.uniqueID
@@ -183,7 +211,7 @@
     }];
 }
 
-- ( void ) testCreateKeypairListAndDeleteIt
+- ( void ) testComputeCreateKeypairListAndDeleteIt
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create keypair succeed"];
     NSString * strKeypairNameRandom = [NSString stringWithFormat:@"%@-%@", @"testkeypair", [[NSUUID UUID] UUIDString]];
@@ -197,7 +225,7 @@
     
     [computeV2_1Test createKeypairWithName:strKeypairNameRandom
                               andPublicKey:nil
-                                    thenDo:^(IOStackServerKeypairV2_1 * keyCreated, id idFullResponse)
+                                    thenDo:^(IOStackComputeKeypairV2_1 * keyCreated, id idFullResponse)
      {
          XCTAssertNotNil( keyCreated );
          XCTAssertTrue( [strKeypairNameRandom isEqualToString:keyCreated.uniqueID] );
@@ -220,7 +248,7 @@
     }];
 }
 
-- ( void ) testCreateKeypairFromFileListAndDeleteIt
+- ( void ) testComputeCreateKeypairFromFileListAndDeleteIt
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create keypair from file succeed"];
     NSString * strKeypairNameRandom = [NSString stringWithFormat:@"%@-%@", @"testkeypair", [[NSUUID UUID] UUIDString]];
@@ -229,7 +257,7 @@
     
     [computeV2_1Test createKeypairWithName:strKeypairNameRandom
                       andPublicKeyFilePath:currentKeyDataFilePath
-                                    thenDo:^(IOStackServerKeypairV2_1 * keyCreated, id idFullResponse)
+                                    thenDo:^(IOStackComputeKeypairV2_1 * keyCreated, id idFullResponse)
      {
          XCTAssertNotNil( keyCreated );
          XCTAssertTrue( [strKeypairNameRandom isEqualToString:keyCreated.uniqueID] );
@@ -252,14 +280,14 @@
     }];
 }
 
-- ( void ) testCreateSecurityGroupListAndDeleteIt
+- ( void ) testComputeCreateSecurityGroupListAndDeleteIt
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group succeed"];
     NSString * strTestSecName       = [NSString stringWithFormat:@"%@ - %@", @"test Security", [[NSUUID UUID] UUIDString]];
     
     [computeV2_1Test createSecurityGroupWithName:strTestSecName
                                   andDescription:nil
-                                          thenDo:^(IOStackServerSecurityGroupV2_1 * secCreated, id idFullResponse)
+                                          thenDo:^(IOStackComputeSecurityGroupV2_1 * secCreated, id idFullResponse)
     {
         XCTAssertNotNil( secCreated );
         XCTAssertTrue( [secCreated.name isEqualToString:strTestSecName ] );
@@ -282,7 +310,7 @@
     }];
 }
 
-- ( void ) testCreateSecurityGroupAddRuleAndDeleteIt
+- ( void ) testComputeCreateSecurityGroupAddRuleAndDeleteIt
 {
     //to avoid some precompiler buggy warning...
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
@@ -294,7 +322,7 @@
     
     [weakComputeForTest createSecurityGroupWithName:strTestSecName
                                      andDescription:nil
-                                             thenDo:^(IOStackServerSecurityGroupV2_1 * secCreated, id idFullResponse)
+                                             thenDo:^(IOStackComputeSecurityGroupV2_1 * secCreated, id idFullResponse)
      {
          XCTAssertNotNil( secCreated );
          XCTAssertTrue( [secCreated.name isEqualToString:strTestSecName ] );
@@ -303,7 +331,7 @@
                                                  FromPort:nTestPort
                                                    ToPort:nTestPort
                                                   AndCIDR:strTestCIDR
-                                                   thenDo:^(IOStackServerSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse)
+                                                   thenDo:^(IOStackComputeSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse)
          {
              XCTAssertNotNil( ruleCreated );
              XCTAssertNotNil( ruleCreated.uniqueID );
@@ -327,7 +355,7 @@
     }];
 }
 
-- ( void ) testCreateServerWithKeypairAndSecurityGroupAndDeleteIt
+- ( void ) testComputeCreateServerWithKeypairAndSecurityGroupAndDeleteIt
 {
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
@@ -342,7 +370,7 @@
     
     [weakComputeForTest createSecurityGroupWithName:strTestSecName
                                      andDescription:nil
-                                             thenDo:^(IOStackServerSecurityGroupV2_1 * secCreated, id idFullResponse)
+                                             thenDo:^(IOStackComputeSecurityGroupV2_1 * secCreated, id idFullResponse)
      {
          XCTAssertNotNil( secCreated );
          if( secCreated == nil )
@@ -354,19 +382,19 @@
                                                  FromPort:nTestPort
                                                    ToPort:nTestPort
                                                   AndCIDR:strTestCIDR
-                                                   thenDo:^(IOStackServerSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse)
+                                                   thenDo:^(IOStackComputeSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse)
           {
               XCTAssertNotNil( ruleCreated );
               XCTAssertNotNil( ruleCreated.uniqueID );
               [weakComputeForTest createKeypairWithName:strKeypairNameRandom
                                    andPublicKeyFilePath:currentKeyDataFilePath
-                                                 thenDo:^(IOStackServerKeypairV2_1 * keyCreated, id idFullResponse)
+                                                 thenDo:^(IOStackComputeKeypairV2_1 * keyCreated, id idFullResponse)
               {
                   [weakComputeForTest listFlavorsThenDo:^( NSDictionary * dicFlavors )
                   {
                       XCTAssertTrue( dicFlavors );
                       XCTAssertTrue( [dicFlavors count] > 0 );
-                      NSString * uidFlavorNano = [IOStackServerFlavorsV2_1 findIDForFlavors:dicFlavors
+                      NSString * uidFlavorNano = [IOStackComputeFlavorV2_1 findIDForFlavors:dicFlavors
                                                                          withNameContaining:@"nano" ];
                       XCTAssertNotNil( uidFlavorNano );
                       XCTAssertNotNil( [arrOSImages[ 0 ] valueForKey:@"uniqueID" ] );
@@ -378,9 +406,11 @@
                                                    andFlavorID:uidFlavorNano
                                                     andImageID:uidImage
                                                 andKeypairName:strKeypairNameRandom
+                                                   andUserData:nil
                                         andSecurityGroupsNames:arrSecGroups
+                                             onNetworksWithIDs:nil
                                              waitUntilIsActive:YES
-                                                        thenDo:^(IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse)
+                                                        thenDo:^(IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse)
                       {
                           XCTAssertNotNil( serverCreated );
                           
@@ -415,7 +445,7 @@
     }];
 }
 
-- ( void ) testCreateServerKeypairSecurityGroupUserDataAndDeleteIt
+- ( void ) testComputeCreateServerKeypairSecurityGroupUserDataAndDeleteIt
 {
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
@@ -430,7 +460,7 @@
     
     [computeV2_1Test createSecurityGroupWithName:strTestSecName
                                   andDescription:nil
-                                          thenDo:^(IOStackServerSecurityGroupV2_1 * secCreated, id idFullResponse)
+                                          thenDo:^(IOStackComputeSecurityGroupV2_1 * secCreated, id idFullResponse)
      {
          XCTAssertNotNil( secCreated );
          XCTAssertTrue( [secCreated.name isEqualToString:strTestSecName ] );
@@ -439,19 +469,19 @@
                                                  FromPort:nTestPort
                                                    ToPort:nTestPort
                                                   AndCIDR:strTestCIDR
-                                                   thenDo:^(IOStackServerSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse)
+                                                   thenDo:^(IOStackComputeSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse)
           {
               XCTAssertNotNil( ruleCreated );
               XCTAssertNotNil( ruleCreated.uniqueID );
               [computeV2_1Test createKeypairWithName:strKeypairNameRandom
                                 andPublicKeyFilePath:currentKeyDataFilePath
-                                              thenDo:^(IOStackServerKeypairV2_1 * keyCreated, id idFullResponse)
+                                              thenDo:^(IOStackComputeKeypairV2_1 * keyCreated, id idFullResponse)
                {
                    [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors )
                     {
                         XCTAssertTrue( dicFlavors );
                         XCTAssertTrue( [dicFlavors count] > 0 );
-                        NSString * uidFlavorNano = [IOStackServerFlavorsV2_1 findIDForFlavors:dicFlavors
+                        NSString * uidFlavorNano = [IOStackComputeFlavorV2_1 findIDForFlavors:dicFlavors
                                                                            withNameContaining:@"nano" ];
                         XCTAssertNotNil( uidFlavorNano );
                         XCTAssertNotNil( [arrOSImages[ 0 ] valueForKey:@"uniqueID" ] );
@@ -465,8 +495,9 @@
                                                andKeypairName:strKeypairNameRandom
                                                   andUserData:@"#!/usr/bin/env bash \necho world"
                                        andSecurityGroupsNames:arrSecGroups
+                                            onNetworksWithIDs:nil
                                             waitUntilIsActive:YES
-                                                       thenDo:^(IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse)
+                                                       thenDo:^(IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse)
                          {
                              XCTAssertNotNil( serverCreated );
                              
@@ -501,7 +532,7 @@
     }];
 }
 
-- ( void ) testCreateServerListIPsAndDeleteIt
+- ( void ) testComputeCreateServerListIPsAndDeleteIt
 {
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create security group rule succeed"];
@@ -516,7 +547,7 @@
     
     [computeV2_1Test createSecurityGroupWithName:strTestSecName
                                   andDescription:nil
-                                          thenDo:^(IOStackServerSecurityGroupV2_1 * secCreated, id idFullResponse)
+                                          thenDo:^(IOStackComputeSecurityGroupV2_1 * secCreated, id idFullResponse)
      {
          XCTAssertNotNil( secCreated );
          XCTAssertTrue( [secCreated.name isEqualToString:strTestSecName ] );
@@ -525,19 +556,19 @@
                                                  FromPort:nTestPort
                                                    ToPort:nTestPort
                                                   AndCIDR:strTestCIDR
-                                                   thenDo:^(IOStackServerSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse)
+                                                   thenDo:^(IOStackComputeSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse)
           {
               XCTAssertNotNil( ruleCreated );
               XCTAssertNotNil( ruleCreated.uniqueID );
               [computeV2_1Test createKeypairWithName:strKeypairNameRandom
                                 andPublicKeyFilePath:currentKeyDataFilePath
-                                              thenDo:^(IOStackServerKeypairV2_1 * keyCreated, id idFullResponse)
+                                              thenDo:^(IOStackComputeKeypairV2_1 * keyCreated, id idFullResponse)
                {
                    [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors )
                     {
                         XCTAssertTrue( dicFlavors );
                         XCTAssertTrue( [dicFlavors count] > 0 );
-                        NSString * uidFlavorNano = [IOStackServerFlavorsV2_1 findIDForFlavors:dicFlavors
+                        NSString * uidFlavorNano = [IOStackComputeFlavorV2_1 findIDForFlavors:dicFlavors
                                                                            withNameContaining:@"nano" ];
                         XCTAssertNotNil( uidFlavorNano );
                         XCTAssertNotNil( [arrOSImages[ 0 ] valueForKey:@"uniqueID" ] );
@@ -551,15 +582,16 @@
                                                andKeypairName:strKeypairNameRandom
                                                   andUserData:@"#!/usr/bin/env bash \necho world"
                                        andSecurityGroupsNames:arrSecGroups
+                                            onNetworksWithIDs:nil
                                             waitUntilIsActive:YES
-                                                       thenDo:^(IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse)
+                                                       thenDo:^(IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse)
                          {
                              XCTAssertNotNil( serverCreated );
                              
                              [computeV2_1Test listIPsForServerWithID:serverCreated.uniqueID
                                                               thenDo:^(NSArray * arrPrivateIPs, NSArray * arrPublicIPs, id idFullResponse)
                               {
-                                  XCTAssertTrue( ( arrPrivateIPs != nil ) || ( arrPublicIPs != nil ) );
+                                  XCTAssertTrue( ( arrPrivateIPs != nil ) && ( [arrPrivateIPs count] > 0 ) || ( arrPublicIPs != nil ) && ( [arrPublicIPs count] > 0 ) );
                                   
                                   [computeV2_1Test deleteKeypairWithName:strKeypairNameRandom
                                                                   thenDo:^(bool isDeleted)
@@ -587,12 +619,13 @@
           }];
      }];
     
-    [self waitForExpectationsWithTimeout:30.0 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:40.0 handler:^(NSError *error) {
         if( error ) NSLog(@"Timeout Error: %@", error);
     }];
 }
 
-- ( void ) testListIPsInPool
+//Internap doesn't allow to allocate IP from Pool
+- ( void ) testComputeAllocatedIPPoolStartsEmpty
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - list IPs from pool"];
     
@@ -601,6 +634,7 @@
                                        thenDo:^(NSDictionary * _Nullable dicIPsFromPool, id  _Nullable idFullResponse)
     {
         XCTAssertNotNil( dicIPsFromPool );
+        XCTAssertTrue( [dicIPsFromPool count] == 0 );
         
         [expectation fulfill];
     }];
@@ -611,30 +645,47 @@
 }
 
 
-- ( void ) testAllocateFloatingIPFromPoolThenRemove
+- ( void ) testComputeAllocateFloatingIPFromPoolThenRemove
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - Allocate IPs from pool"];
     
     [computeV2_1Test createIPAllocationFromPool:nil
-                                         thenDo:^(IOStackServerIPAllocationV2_1 * _Nullable fipCreated, id  _Nullable idFullResponse)
+                                         thenDo:^(IOStackComputeIPAllocationV2_1 * _Nullable fipCreated, id  _Nullable idFullResponse)
     {
         XCTAssertNotNil( fipCreated );
+        [computeV2_1Test listIPFromPoolWithStatus:nil
+                                excludingFixedIPs:NO
+                                           thenDo:^(NSDictionary * _Nullable dicIPsFromPool, id  _Nullable idFullResponse)
+         {
+             XCTAssertNotNil( dicIPsFromPool );
+             XCTAssertNotNil( [dicIPsFromPool valueForKey:fipCreated.uniqueID] );
+             XCTAssertTrue( [[[dicIPsFromPool valueForKey:fipCreated.uniqueID] valueForKey:@"ipAddressFloating"] isEqualToString:fipCreated.ipAddress] );
+             
+             [computeV2_1Test deleteIPAllocationWithID:fipCreated.uniqueID
+                                                thenDo:^(bool isDeleted)
+              {
+                  XCTAssertTrue( isDeleted );
+                  [computeV2_1Test listIPFromPoolWithStatus:nil
+                                          excludingFixedIPs:NO
+                                                     thenDo:^(NSDictionary * _Nullable dicIPsFromPool, id  _Nullable idFullResponse)
+                   {
+                       XCTAssertNotNil( dicIPsFromPool );
+                       XCTAssertTrue( [dicIPsFromPool count] == 0 );
+                       
+                       [expectation fulfill];
+                   }];
+              }];
+
+         }];
         
-        [computeV2_1Test deleteIPAllocationWithID:fipCreated.uniqueID
-                                           thenDo:^(bool isDeleted)
-        {
-            XCTAssertTrue( isDeleted );
-            
-            [expectation fulfill];
-        }];
-    }];
+            }];
     
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:5000.0 handler:^(NSError *error) {
         if( error ) NSLog(@"Timeout Error: %@", error);
     }];
 }
 
-- ( void ) testAddFloatingIPToServerThenDeleteAll
+- ( void ) testComputeAddFloatingIPToServerThenDeleteAll
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Compute - create instance and list actions succeed"];
     __weak IOStackComputeV2_1 * weakComputeForTest = computeV2_1Test;
@@ -642,7 +693,7 @@
     [computeV2_1Test listFlavorsThenDo:^( NSDictionary * dicFlavors ) {
         XCTAssertTrue( dicFlavors );
         XCTAssertTrue( [dicFlavors count] > 0 );
-        NSString * uidFlavorNano = [IOStackServerFlavorsV2_1 findIDForFlavors:dicFlavors
+        NSString * uidFlavorNano = [IOStackComputeFlavorV2_1 findIDForFlavors:dicFlavors
                                                            withNameContaining:@"nano" ];
         XCTAssertNotNil( uidFlavorNano );
         XCTAssertNotNil( [arrOSImages[ 0 ] valueForKey:@"uniqueID" ] );
@@ -650,11 +701,11 @@
                                   andFlavorID:uidFlavorNano
                                    andImageID:[arrOSImages[ 0 ] valueForKey:@"uniqueID" ]
                             waitUntilIsActive:YES
-                                       thenDo:^(IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse)
+                                       thenDo:^(IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse)
          {
              XCTAssertNotNil( serverCreated );
              [computeV2_1Test createIPAllocationFromPool:nil
-                                                  thenDo:^(IOStackServerIPAllocationV2_1 * _Nullable fipCreated, id  _Nullable idFullResponse)
+                                                  thenDo:^(IOStackComputeIPAllocationV2_1 * _Nullable fipCreated, id  _Nullable idFullResponse)
               {
                   XCTAssertNotNil( fipCreated );
                   XCTAssertNotNil( fipCreated.ipAddress );

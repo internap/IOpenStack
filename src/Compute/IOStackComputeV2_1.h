@@ -8,15 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+
 #import "IOStackAuth.h"
-
-
-#import "IOStackServerObjectV2_1.h"
-#import "IOStackServerFlavorsV2_1.h"
-#import "IOStackServerKeypairV2_1.h"
-#import "IOStackServerSecurityGroupV2_1.h"
-#import "IOStackServerSecurityGroupRuleV2_1.h"
-#import "IOStackServerIPAllocationV2_1.h"
+#import "IOStackComputeServerV2_1.h"
+#import "IOStackComputeFlavorV2_1.h"
+#import "IOStackComputeKeypairV2_1.h"
+#import "IOStackComputeSecurityGroupV2_1.h"
+#import "IOStackComputeSecurityGroupRuleV2_1.h"
+#import "IOStackComputeIPAllocationV2_1.h"
+#import "IOStackComputeNetworkV2_1.h"
 
 
 @interface IOStackComputeV2_1 : IOStackService
@@ -41,44 +41,21 @@
 - ( void ) createServerWithUrlParams:( nullable NSDictionary * ) dicUrlParams
                        andServerName:( nullable NSString * ) strServerName
                    waitUntilIsActive:( BOOL ) bWaitActive
-                              thenDo:( nullable void ( ^ ) ( IOStackServerObjectV2_1 * _Nullable serverCreated,  NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
+                              thenDo:( nullable void ( ^ ) ( IOStackComputeServerV2_1 * _Nullable serverCreated,  NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) createServerWithName:( nonnull NSString * ) strServerName
+                    andFlavorID:( nonnull NSString * ) uuidFlavor
+                     andImageID:( nonnull NSString * ) uuidImage
+                 andKeypairName:( nullable NSString * ) strKeypairName
+                    andUserData:( nullable NSString * ) strUserData
+         andSecurityGroupsNames:( nullable NSArray * ) arrSecurityGroupsNames
+              onNetworksWithIDs:( nullable NSArray * ) arrNetworksID
+              waitUntilIsActive:( BOOL ) bWaitActive
+                         thenDo:( nullable void ( ^ ) ( IOStackComputeServerV2_1 * _Nullable serverCreated, NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
 - ( void ) createServerWithName:( nonnull NSString * ) strServerName
                     andFlavorID:( nonnull NSString * ) uuidFlavor
                      andImageID:( nonnull NSString * ) uuidImage
               waitUntilIsActive:( BOOL ) bWaitActive
-                         thenDo:( nullable void ( ^ ) ( IOStackServerObjectV2_1 * _Nullable serverCreated,  NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
-- ( void ) createServerWithName:( nonnull NSString * ) strServerName
-                    andFlavorID:( nonnull NSString * ) uuidFlavor
-                     andImageID:( nonnull NSString * ) uuidImage
-                         thenDo:( nullable void ( ^ ) ( IOStackServerObjectV2_1 * _Nullable serverCreated,  NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
-- ( void ) createServerWithName:( nonnull NSString * ) strServerName
-                    andFlavorID:( nonnull NSString * ) uuidFlavor
-                     andImageID:( nonnull NSString * ) uuidImage
-                 andKeypairName:( nonnull NSString * ) strKeypairName
-         andSecurityGroupsNames:( nullable NSArray * ) arrSecurityGroupsNames
-              waitUntilIsActive:( BOOL ) bWaitActive
-                         thenDo:( nullable void ( ^ ) ( IOStackServerObjectV2_1 * _Nullable serverCreated, NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
-- ( void ) createServerWithName:( nonnull NSString * ) strServerName
-                    andFlavorID:( nonnull NSString * ) uuidFlavor
-                     andImageID:( nonnull NSString * ) uuidImage
-                 andKeypairName:( nonnull NSString * ) strKeypairName
-         andSecurityGroupsNames:( nullable NSArray * ) arrSecurityGroupsNames
-                         thenDo:( nullable void ( ^ ) ( IOStackServerObjectV2_1 * _Nullable serverCreated, NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
-- ( void ) createServerWithName:( nonnull NSString * ) strServerName
-                    andFlavorID:( nonnull NSString * ) uuidFlavor
-                     andImageID:( nonnull NSString * ) uuidImage
-                 andKeypairName:( nonnull NSString * ) strKeypairName
-                    andUserData:( nonnull NSString * ) strUserData
-         andSecurityGroupsNames:( nullable NSArray * ) arrSecurityGroupsNames
-              waitUntilIsActive:( BOOL ) bWaitActive
-                         thenDo:( nullable void ( ^ ) ( IOStackServerObjectV2_1 * _Nullable serverCreated, NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
-- ( void ) createServerWithName:( nonnull NSString * ) strServerName
-                    andFlavorID:( nonnull NSString * ) uuidFlavor
-                     andImageID:( nonnull NSString * ) uuidImage
-                 andKeypairName:( nonnull NSString * ) strKeypairName
-                    andUserData:( nonnull NSString * ) strUserData
-         andSecurityGroupsNames:( nullable NSArray * ) arrSecurityGroupsNames
-                         thenDo:( nullable void ( ^ ) ( IOStackServerObjectV2_1 * _Nullable serverCreated, NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
+                         thenDo:( nullable void ( ^ ) ( IOStackComputeServerV2_1 * _Nullable serverCreated,  NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
 - ( void ) waitServerWithID:( nonnull NSString * ) uidServer
                   forStatus:( nonnull NSString * ) statusServer
                      thenDo:( nullable void ( ^ ) ( bool isWithStatus ) ) doAfterWait;
@@ -93,7 +70,7 @@
                   excludingFixedIPs:( BOOL ) bNoFixedIPs
                              thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicIPsFromPool, id _Nullable idFullResponse ) ) doAfterList;
 - ( void ) createIPAllocationFromPool:( nullable NSString * ) strPoolName
-                               thenDo:( nullable void ( ^ ) ( IOStackServerIPAllocationV2_1 * _Nullable fipCreated, id _Nullable idFullResponse ) ) doAfterCreate;
+                               thenDo:( nullable void ( ^ ) ( IOStackComputeIPAllocationV2_1 * _Nullable fipCreated, id _Nullable idFullResponse ) ) doAfterCreate;
 - ( void ) deleteIPAllocationWithID:( nonnull NSString * ) uidFloatingIPAllocationID
                              thenDo:( nullable void ( ^ ) ( bool isDeleted ) ) doAfterDelete;
 - ( void ) addIPToServerWithID:( nonnull NSString * ) uidServer
@@ -105,10 +82,10 @@
 - ( void ) listKeypairsThenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicKeypairs, id _Nullable idFulleResponse ) ) doAfterList;
 - ( void ) createKeypairWithName:( nonnull NSString * ) strKeypairName
                     andPublicKey:( nullable NSString * ) strPublicKey
-                          thenDo:( nullable void ( ^ ) ( IOStackServerKeypairV2_1 * _Nullable keyCreated, id _Nullable idFullResponse ) ) doAfterCreate;
+                          thenDo:( nullable void ( ^ ) ( IOStackComputeKeypairV2_1 * _Nullable keyCreated, id _Nullable idFullResponse ) ) doAfterCreate;
 - ( void ) createKeypairWithName:( nonnull NSString * ) strKeypairName
             andPublicKeyFilePath:( nonnull NSString * ) strPublicKeyCompleteFilePath
-                          thenDo:( nullable void ( ^ ) ( IOStackServerKeypairV2_1 * _Nullable keyCreated, id _Nullable idFullResponse ) ) doAfterCreate;
+                          thenDo:( nullable void ( ^ ) ( IOStackComputeKeypairV2_1 * _Nullable keyCreated, id _Nullable idFullResponse ) ) doAfterCreate;
 - ( void ) deleteKeypairWithName:( nonnull NSString * ) strKeypairName
                           thenDo:( nullable void ( ^ ) ( bool isDeleted ) ) doAfterDelete;
 - ( void ) listActionsForServer:( nonnull NSString * ) strServerUUID
@@ -116,7 +93,7 @@
 - ( void ) listSecurityGroupsThenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicSecurityGroups, id _Nullable idFullResponse ) ) doAfterList;
 - ( void ) createSecurityGroupWithName:( nonnull NSString * ) strSecurityGroupName
                         andDescription:( nullable NSString * ) strSecurityGroupDescription
-                                thenDo:( nullable void ( ^ ) ( IOStackServerSecurityGroupV2_1 * _Nullable secCreated, id _Nullable idFullResponse ) ) doAfterCreate;
+                                thenDo:( nullable void ( ^ ) ( IOStackComputeSecurityGroupV2_1 * _Nullable secCreated, id _Nullable idFullResponse ) ) doAfterCreate;
 - ( void ) deleteSecurityGroupWithID:( nonnull NSString * ) strSecurityGroupID
                               thenDo:( nullable void ( ^ ) ( bool isDeleted ) ) doAfterDelete;
 - ( void ) addRuleToSecurityGroupWithID:( nonnull NSString * ) uidSecurityGroupID
@@ -124,9 +101,28 @@
                                FromPort:( nonnull NSNumber * ) nPortFrom
                                  ToPort:( nullable NSNumber * ) nPortTo
                                 AndCIDR:( nullable NSString * ) strCIDR
-                                 thenDo:( nullable void ( ^ ) ( IOStackServerSecurityGroupRuleV2_1 * _Nullable ruleCreated, id _Nullable idFullResponse ) ) doAfterCreate;
+                                 thenDo:( nullable void ( ^ ) ( IOStackComputeSecurityGroupRuleV2_1 * _Nullable ruleCreated, id _Nullable idFullResponse ) ) doAfterCreate;
 - ( void ) deleteSecurityGroupRuleWithID:( nonnull NSString * ) uidSecurityGroupRule
                                   thenDo:( nullable void ( ^ ) ( bool isDeleted ) ) doAfterDelete;
+- ( void ) listNetworksThenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicNetworks, id _Nullable idFullResponse ) ) doAfterList;
+- ( void ) createNetworkWithLabel:( nonnull NSString * ) nameNetwork
+                          andCIDR:( nullable NSString * ) ipCIDR
+                           andMTU:( nullable NSNumber * ) nMTU
+                    andDHCPServer:( nullable NSString * ) ipDHCPServer
+                       startingAt:( nullable NSString * ) ipStartingIP
+                         endingAt:( nullable NSString * ) ipEndingIP
+                 isSharingAddress:( BOOL ) isSharing
+                           thenDo:( nullable void ( ^ ) ( IOStackComputeNetworkV2_1 * _Nullable networkCreated, id _Nullable idFullResponse ) ) doAfterCreate;
+- ( void ) getNetworkWithID:( nonnull NSString * ) uidNetwork
+                     thenDo:( nullable void ( ^ ) ( IOStackComputeNetworkV2_1 * _Nullable networkDetails, id _Nullable idFullResponse ) ) doAfterGet;
+- ( void ) addNetworkWithID:( nonnull NSString * ) uidNetwork
+                     thenDo:( nullable void ( ^ ) ( BOOL isAdded, id _Nullable idFullResponse ) ) doAfterAdd;
+- ( void ) deleteNetworkWithID:( nonnull NSString * ) uidNetwork
+                        thenDo:( nullable void ( ^ ) ( bool isDeleted ) ) doAfterDelete;
+- ( void ) findNetworksWithLabelContaining:( nonnull NSString * ) strNetworkLabelPart
+                                    thenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrNetworksWithLabelContaining, id _Nullable idFullResponse ) ) doAfterFind;
+- ( void ) findNetworksWithExactLabel:( nonnull NSString * ) strNetworkLabel
+                               thenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrNetworksWithLabelContaining, id _Nullable idFullResponse ) ) doAfterFind;
 
 
 @end

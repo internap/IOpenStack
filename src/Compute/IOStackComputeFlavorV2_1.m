@@ -9,7 +9,7 @@
 #import "IOStackComputeFlavorV2_1.h"
 
 
-@implementation IOStackServerFlavorsV2_1
+@implementation IOStackComputeFlavorV2_1
 
 
 @synthesize name;
@@ -27,7 +27,7 @@
         if( [currentFlavor valueForKey:@"id"] == nil )
             break;
         
-        IOStackServerFlavorsV2_1 * flavor = [[IOStackComputeFlavorV2_1 alloc] initFromAPIResponse:currentFlavor];
+        IOStackComputeFlavorV2_1 * flavor = [[IOStackComputeFlavorV2_1 alloc] initFromAPIResponse:currentFlavor];
         
         [parsedFlavors setObject:flavor
                           forKey:flavor.uniqueID];
@@ -59,6 +59,9 @@
 
 - ( instancetype ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
 {
+    if( dicAPIResponse == nil )
+        return nil;
+    
     if( self = [super init] )
     {
         self.objectType     = IOStackObjectTypeFlavor;

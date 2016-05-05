@@ -54,6 +54,9 @@
 
 - ( instancetype ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
 {
+    if( dicAPIResponse == nil )
+        return nil;
+    
     if( self = [super init] )
     {
         self.objectType     = IOStackObjectTypeVolumeTransfer;

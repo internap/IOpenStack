@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+
 #import "IOStackService.h"
+
 
 @protocol IOStackIdentityInfos <IOStackServiceInfos>
 
@@ -47,6 +49,7 @@
 - ( void ) listProjectsOrTenantsWithLogin:( nonnull NSString * ) strLogin
                               andPassword:( nullable NSString * ) strPassword
                                 forDomain:( nullable NSString * ) strDomainName
+                       andProjectOrTenant:( nullable NSString * ) strProjectOrTenant
                                      From:( nullable NSString * ) strStartingFromID
                                        To:( nullable NSNumber * ) nLimit
                                    thenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrProjectResponse ) ) doAfterListProject;

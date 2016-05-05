@@ -30,6 +30,10 @@
 @synthesize currentDomainID;
 
 
+#pragma mark - Property accessor nameProvider readonly
+- ( void ) setNameProvider:( NSString * ) nameProvider { return; }
+
+
 + ( instancetype ) initWithIdentityURL:( NSString * ) strIdentityRoot
 {
     return [ [ self alloc ] initWithIdentityURL:strIdentityRoot ];
@@ -65,7 +69,6 @@
 
 
 #pragma mark - Object init
-
 - ( instancetype ) initWithIdentityURL:( NSString * ) strIdentityRoot
 {
     if( self = [super initWithPublicURL:[NSURL URLWithString:strIdentityRoot]
@@ -252,8 +255,12 @@
         
         currentTokenObject       = [dicResponse objectForKey:@"token"];
         
-        NSDictionary * dicTenantInfos = [currentTokenObject valueForKey:@"project"];
-        if( ( dicTenantInfos == nil ||
+        NSDictionary * dicTenantInfos = nil;
+        if( [currentTokenObject valueForKey:@"project"] != nil )
+            dicTenantInfos = [currentTokenObject valueForKey:@"project"];
+        
+        if( currentProjectOrTenantID == nil &&
+           ( dicTenantInfos == nil ||
              ![dicTenantInfos isKindOfClass:[NSDictionary class]]) &&
             doAfterAuth != nil )
         {
@@ -261,14 +268,16 @@
             return;
         }
         
-        if( [dicTenantInfos valueForKey:@"id"] == nil &&
+        if(  currentProjectOrTenantID == nil &&
+            [dicTenantInfos valueForKey:@"id"] == nil &&
             doAfterAuth != nil )
         {
             doAfterAuth( nil, nil );
             return;
         }
         
-        currentProjectOrTenantID = [dicTenantInfos valueForKey:@"id"];
+        if( dicTenantInfos != nil && [dicTenantInfos valueForKey:@"id"] )
+            currentProjectOrTenantID = [dicTenantInfos valueForKey:@"id"];
         
         if( ![[currentTokenObject objectForKey:@"catalog"] isKindOfClass:[NSArray class]] &&
             doAfterAuth != nil )
@@ -430,12 +439,6 @@
 - ( void ) getTokenDomainName:( NSString * ) strTokenID
                        thenDo:( void ( ^ ) ( NSString * strDomainOfToken ) ) doAfterGet
 {
-    /*TODO remove if not necessary
-    [managerIdentity.requestSerializer setValue:strTokenID
-                             forHTTPHeaderField:@"X-Auth-Token"];
-    [managerIdentity.requestSerializer setValue:strTokenID
-                             forHTTPHeaderField:@"X-Subject-Token"];
-     */
     [self readResource:IDENTITYV3_TOKEN_URI
             withHeader:nil
           andUrlParams:nil
@@ -472,52 +475,6 @@
         if( doAfterGet != nil )
             doAfterGet( strDomainName );
     }];
-     
-    
-    /*
-    [self serviceGET:IDENTITYV3_TOKEN_URI
-          withParams:nil
-    onServiceSuccess:^(NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders) {
-        if( ![responseObject isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:@"Method GET /auth/tokens bad return"
-                                    reason:@"response object is not a NSDictionnary"
-                                  userInfo:@{@"tokenID": strTokenID, @"returnedValue": responseObject}];
-        NSDictionary * dicResponse     = responseObject;
-        
-        if( ![[dicResponse objectForKey:@"token"] isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:@"Method GET /auth/tokens bad return"
-                                    reason:@"'token' object is not a NSDictionnary"
-                                  userInfo:@{@"tokenID": strTokenID, @"returnedValue": responseObject}];
-        NSDictionary * dicToken       = [dicResponse objectForKey:@"token"];
-        
-        if( ![[dicToken objectForKey:@"user"] isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:@"Method GET /auth/tokens bad return"
-                                    reason:@"'token.user' object is not a NSDictionnary"
-                                  userInfo:@{@"tokenID": strTokenID, @"returnedValue": responseObject}];
-        NSDictionary * dicUser       = [dicToken objectForKey:@"user"];
-        
-        if( ![[dicUser objectForKey:@"domain"] isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:@"Method GET /auth/tokens bad return"
-                                    reason:@"'token.user.domain' object is not a NSDictionnary"
-                                  userInfo:@{@"tokenID": strTokenID, @"returnedValue": responseObject}];
-        NSDictionary * dicDomain = [dicUser objectForKey:@"domain"];
-        
-        if( ![[dicDomain objectForKey:@"name"] isKindOfClass:[NSString class]] )
-            [NSException exceptionWithName:@"Method GET /auth/tokens bad return"
-                                    reason:@"'token.user.domain.name' object is not a NSDictionnary"
-                                  userInfo:@{@"tokenID": strTokenID, @"returnedValue": responseObject}];
-        NSString * strDomainName = [dicDomain objectForKey:@"name"];
-        
-        if( doAfterGet != nil )
-            doAfterGet( strDomainName );
-    }
-    onServiceFailure:^(NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"token not valid : %@ - task %@", error, uidServiceTask );
-        
-        if( doAfterGet != nil )
-            doAfterGet( nil );
-    }];
-     */
 }
 
 
@@ -583,6 +540,7 @@
 - ( void ) listProjectsOrTenantsWithLogin:( NSString * ) strLogin
                               andPassword:( NSString * ) strPassword
                                 forDomain:( NSString * ) strDomainName
+                       andProjectOrTenant:( NSString * ) strProjectOrTenant
                                      From:( NSString * ) strStartingFromID
                                        To:( NSNumber * ) nLimit
                                    thenDo:( void ( ^ ) ( NSArray * arrProjectResponse ) ) doAfterList
@@ -599,6 +557,8 @@
                                                                        From:strStartingFromID
                                                                          To:nLimit
                                                                      thenDo:doAfterList];
+                                 else if( doAfterList != nil )
+                                     doAfterList( nil );
                              }];
     
     else if( currentTokenID != nil )

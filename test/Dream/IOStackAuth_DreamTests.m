@@ -28,7 +28,7 @@
 {
     [super setUp];
     NSString * currentTestFilePath  = @__FILE__;
-    NSString * currentSettingTests  = [NSString stringWithFormat:@"%@/SettingsTests.plist", [currentTestFilePath stringByDeletingLastPathComponent]];
+    NSString * currentSettingTests  = [NSString stringWithFormat:@"%@/../SettingsTests.plist", [currentTestFilePath stringByDeletingLastPathComponent]];
     
     dicSettingsTests = [NSDictionary dictionaryWithContentsOfFile:currentSettingTests];
     
@@ -47,14 +47,14 @@
     [super tearDown];
 }
 
-- ( void ) testDreamNotASingleton
+- ( void ) testAuthDreamNotASingleton
 {
     IOStackAuth_Dream * auth2dSession = [IOStackAuth_Dream init];
     
     XCTAssertNotEqualObjects( auth2dSession, authDreamSession );
 }
 
-- ( void ) testDreamIsSetupedCorrectly
+- ( void ) testAuthDreamIsSetupedCorrectly
 {
     XCTAssertNotNil( authDreamSession );
     
@@ -62,7 +62,7 @@
     XCTAssertTrue( [[[authDreamSession urlPublic] absoluteString] isEqualToString:dicSettingsTests[ @"DREAM_IDENTITY_ROOT" ]] );
 }
 
-- ( void ) testDreamAuthGiveValidToken
+- ( void ) testAuthDreamAuthGiveValidToken
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Dream - token is valid"];
     
@@ -84,7 +84,7 @@
     }];
 }
 
-- ( void ) testDreamProjectGiveAtLeastOneID
+- ( void ) testAuthDreamProjectGiveAtLeastOneID
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant list is valid"];
     [authDreamSession listProjectsOrTenantsWithLogin:dicSettingsTests[ @"DREAM_ACCOUNT_LOGIN" ]
@@ -104,7 +104,7 @@
     }];
 }
 
-- ( void ) testDreamFirstProjectIsAuthorized
+- ( void ) testAuthDreamFirstProjectIsAuthorized
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Dream - project is authorized"];
     
@@ -133,7 +133,7 @@
     }];
 }
 
-- ( void ) testDreamGotServices
+- ( void ) testAuthDreamGotServices
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"V2 - tenant got services"];
     

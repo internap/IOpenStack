@@ -9,7 +9,7 @@
 #import "IOStackComputeKeypairV2_1.h"
 
 
-@implementation IOStackServerKeypairV2_1
+@implementation IOStackComputeKeypairV2_1
 
 
 @synthesize fingerprint;
@@ -30,7 +30,7 @@
             ![[currentKeypair valueForKey:@"keypair"] isKindOfClass:[NSDictionary class]] )
             break;
         
-        IOStackServerKeypairV2_1 * keypair = [[IOStackComputeKeypairV2_1 alloc] initFromAPIResponse:[currentKeypair valueForKey:@"keypair"]];
+        IOStackComputeKeypairV2_1 * keypair = [[IOStackComputeKeypairV2_1 alloc] initFromAPIResponse:[currentKeypair valueForKey:@"keypair"]];
         
         [parsedKeypairs setObject:keypair
                            forKey:keypair.uniqueID];
@@ -47,6 +47,9 @@
 
 - ( instancetype ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
 {
+    if( dicAPIResponse == nil )
+        return nil;
+    
     if( self = [super init] )
     {
         self.objectType     = IOStackObjectTypeKeypair;

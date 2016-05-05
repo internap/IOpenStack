@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 
-#include "IOStackAuthV2.h"
+#import     "IOStackAuthV2.h"
 
 
 @interface IOStackAuthV2Tests : XCTestCase
@@ -93,6 +93,7 @@
     [authV2Session listProjectsOrTenantsWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
                                       andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]
                                         forDomain:nil
+                               andProjectOrTenant:nil
                                              From:nil To:nil
                                            thenDo:^( NSArray * _Nullable arrTenantResponse ) {
                                                XCTAssertNotNil( arrTenantResponse );
@@ -112,6 +113,7 @@
     [authV2Session listProjectsOrTenantsWithLogin:dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ]
                                       andPassword:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ]
                                         forDomain:nil
+                               andProjectOrTenant:nil
                                              From:nil To:nil
                                            thenDo:^( NSArray * _Nullable arrTenantResponse )
     {

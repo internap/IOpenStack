@@ -8,7 +8,7 @@
 
 #import "IOStackComputeSecurityGroupRuleV2_1.h"
 
-@implementation IOStackServerSecurityGroupRuleV2_1
+@implementation IOStackComputeSecurityGroupRuleV2_1
 
 @synthesize parentGroupID;
 @synthesize ipProtocol;
@@ -29,7 +29,7 @@
         if( [currentSecurityGroupRule valueForKey:@"id"] == nil )
             break;
         
-        IOStackServerSecurityGroupRuleV2_1 * securityGroupRule = [[IOStackComputeSecurityGroupRuleV2_1 alloc] initFromAPIResponse:currentSecurityGroupRule];
+        IOStackComputeSecurityGroupRuleV2_1 * securityGroupRule = [[IOStackComputeSecurityGroupRuleV2_1 alloc] initFromAPIResponse:currentSecurityGroupRule];
         
         [parsedSecurityGroupRules setObject:securityGroupRule
                                      forKey:securityGroupRule.uniqueID];
@@ -46,6 +46,9 @@
 
 - ( instancetype ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
 {
+    if( dicAPIResponse == nil )
+        return nil;
+    
     if( self = [super init] )
     {
         self.objectType     = IOStackObjectTypeSecurityGroupRule;

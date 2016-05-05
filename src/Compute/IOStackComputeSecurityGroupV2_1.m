@@ -8,7 +8,7 @@
 
 #import "IOStackComputeSecurityGroupV2_1.h"
 
-@implementation IOStackServerSecurityGroupV2_1
+@implementation IOStackComputeSecurityGroupV2_1
 
 
 @synthesize groupDescription;
@@ -29,7 +29,7 @@
         if( [currentSecurityGroup valueForKey:@"id"] == nil )
             break;
         
-        IOStackServerSecurityGroupV2_1 * securityGroup = [[IOStackComputeSecurityGroupV2_1 alloc] initFromAPIResponse:currentSecurityGroup];
+        IOStackComputeSecurityGroupV2_1 * securityGroup = [[IOStackComputeSecurityGroupV2_1 alloc] initFromAPIResponse:currentSecurityGroup];
         
         [parsedSecurityGroups setObject:securityGroup
                                  forKey:securityGroup.uniqueID];
@@ -55,6 +55,9 @@
 
 - ( instancetype ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
 {
+    if( dicAPIResponse == nil )
+        return nil;
+    
     if( self = [super init] )
     {
         self.objectType     = IOStackObjectTypeSecurityGroup;

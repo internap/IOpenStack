@@ -9,8 +9,8 @@
 #import <XCTest/XCTest.h>
 
 
-#include "IOStackAuthV3.h"
-#include "IOStackObjectStorageV1.h"
+#import     "IOStackAuthV3.h"
+#import     "IOStackObjectStorageV1.h"
 
 
 @interface IOStackObjectStorageV1Tests : XCTestCase
@@ -39,7 +39,6 @@
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_DOMAIN" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ] );
-    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_IMAGE_ROOT" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_OBJECTSTORAGE_ROOT" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_OBJECTSTORAGE_ACCOUNT" ] );
     
@@ -68,7 +67,7 @@
     [super tearDown];
 }
 
-- ( void ) testNotASingleton
+- ( void ) testOStorageNotASingleton
 {
     XCTAssertNotNil(objectstorageV1Test.currentTokenID);
     
@@ -78,7 +77,7 @@
     XCTAssertNotEqualObjects( objectstorageV1Test, objectstorageV1Test2 );
 }
 
-- ( void ) testCreateListAndDeleteContainer
+- ( void ) testOStorageCreateListAndDeleteContainer
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Image - images exist"];
     NSString * nameContainer            = [NSString stringWithFormat:@"%@-%@", @"testcontainer", [[NSUUID UUID] UUIDString]];
@@ -109,7 +108,7 @@
     }];
 }
 
-- ( void ) testCreateListAndDeleteObjectInContainer
+- ( void ) testOStorageCreateListAndDeleteObjectInContainer
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Object Storage - upload file"];
     NSString * nameContainer            = [NSString stringWithFormat:@"%@-%@", @"testcontainer", [[NSUUID UUID] UUIDString]];
@@ -162,7 +161,7 @@
     }];
 }
 
-- ( void ) testUploadListAndDeleteObjectInContainer
+- ( void ) testOStorageUploadListAndDeleteObjectInContainer
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Object Storage - upload file"];
     NSString * nameContainer            = [NSString stringWithFormat:@"%@-%@", @"testcontainer", [[NSUUID UUID] UUIDString]];

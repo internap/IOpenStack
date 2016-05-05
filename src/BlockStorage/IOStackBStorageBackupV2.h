@@ -19,6 +19,8 @@
 #define IOStackBackupStatusError            @"error"
 #define IOStackBackupStatusErrorRestoring   @"error_restoring"
 
+#define IOStackBackupStatusErrorArray       @[ IOStackBackupStatusError, IOStackBackupStatusErrorRestoring ]
+
 @interface IOStackBStorageBackupV2 : IOStackObject<IOStackObjectParsable>
 
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         uidVolumeFrom;

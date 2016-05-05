@@ -6,7 +6,7 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import <IOpenStack/IOpenStack.h>
+#import "IOStackObject.h"
 
 
 #define IOStackObjectTypeSnapshot         @"snapshot"
@@ -17,6 +17,8 @@
 #define IOStackSnapshotStatusDeleting         @"deleting"
 #define IOStackSnapshotStatusError            @"error"
 #define IOStackSnapshotStatusErrorDeleting    @"error_deleting"
+
+#define IOStackSnapshotStatusErrorArray       @[ IOStackSnapshotStatusError, IOStackSnapshotStatusErrorDeleting ]
 
 
 @interface IOStackBStorageSnapshotV2 : IOStackObject<IOStackObjectParsable>

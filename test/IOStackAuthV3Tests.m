@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 
-#include "IOStackAuthV3.h"
+#import     "IOStackAuthV3.h"
 
 
 @interface IOStackAuthV3Tests : XCTestCase

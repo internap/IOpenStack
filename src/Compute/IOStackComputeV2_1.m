@@ -20,6 +20,8 @@
 #define COMPUTEV2_1_SECURITYGROUP_URN       @"os-security-groups"
 #define COMPUTEV2_1_SECURITYGROUPRULES_URN  @"os-security-group-rules"
 #define COMPUTEV2_1_FLOATINGIP_URN          @"os-floating-ips"
+#define COMPUTEV2_1_NETWORKS_URN            @"os-networks"
+#define COMPUTEV2_1_NETWORKADD_URN          @"add"
 
 
 @implementation IOStackComputeV2_1
@@ -82,31 +84,14 @@
 #pragma mark - Flavor management
 - ( void ) listFlavorsThenDo:( void ( ^ ) ( NSDictionary * dicFlavours ) ) doAfterList
 {
-    [self serviceGET:COMPUTEV2_1_FLAVOR_URN
-          withParams:nil
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-        if( ![responseObject isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_FLAVOR_URN]
-                                    reason:@"response object is not a NSDictionnary"
-                                  userInfo:@{@"tenant_id": currentProjectOrTenantID,
-                                             @"returnedValue": responseObject}];
-        NSDictionary * dicResponse     = responseObject;
-        
-        NSArray * arrFlavorsFound = [dicResponse valueForKey:@"flavors"];
-        if( ![arrFlavorsFound isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_FLAVOR_URN]
-                                    reason:@"flavors object is not a NSArray"
-                                  userInfo:@{@"tenant_id": currentProjectOrTenantID,
-                                             @"returnedValue": responseObject}];
-        
+    [self listResource:COMPUTEV2_1_FLAVOR_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"flavors"
+                thenDo:^(NSArray * _Nullable arrFound, id  _Nullable dataResponse)
+    {
         if( doAfterList != nil )
-            doAfterList( [IOStackServerFlavorsV2_1 parseFromAPIResponse:arrFlavorsFound] );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"call failed : %@ - task %@", error, uidServiceTask );
-        
-        if( doAfterList != nil )
-            doAfterList( nil );
+            doAfterList( [IOStackComputeFlavorV2_1 parseFromAPIResponse:arrFound] );
     }];
 }
 
@@ -114,178 +99,53 @@
 #pragma mark - Server management
 - ( void ) listServersThenDo:( void ( ^ ) ( NSDictionary * dicServers, id idFullResponse ) ) doAfterList
 {
-    [self serviceGET:COMPUTEV2_1_SERVER_URN
-          withParams:nil
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-        if( ![responseObject isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SERVER_URN]
-                                    reason:@"Return value is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        
-        NSDictionary * dicResponse     = responseObject;
-        if( ![[dicResponse objectForKey:@"servers"] isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SERVER_URN]
-                                    reason:@"Access object is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        
+    [self listResource:COMPUTEV2_1_SERVER_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"servers"
+                thenDo:^(NSArray * _Nullable arrFound, id  _Nullable dataResponse)
+    {
         if( doAfterList != nil )
-            doAfterList( [IOStackServerObjectV2_1 parseFromAPIResponse:[dicResponse objectForKey:@"servers"]], dicResponse );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"token not valid : %@", error );
-        
-        if( doAfterList != nil )
-            doAfterList( nil, nil );
+            doAfterList( [IOStackComputeServerV2_1 parseFromAPIResponse:arrFound], dataResponse );
     }];
 }
 
 - ( void ) createServerWithUrlParams:( NSDictionary * ) dicUrlParams
                        andServerName:( NSString * ) strServerName
                    waitUntilIsActive:( BOOL ) bWaitActive
-                              thenDo:( void ( ^ ) ( IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
+                              thenDo:( void ( ^ ) ( IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
 {
-    [self servicePOST:COMPUTEV2_1_SERVER_URN
-           withParams:dicUrlParams
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-                     if( ![responseObject isKindOfClass:[NSDictionary class]] )
-                         [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SERVER_URN]
-                                                 reason:@"Return value is not a NSDictionnary"
-                                               userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-                     
-                     NSDictionary * dicResponse     = responseObject;
-                     if( ![[dicResponse objectForKey:@"server"] isKindOfClass:[NSDictionary class]] )
-                         [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SERVER_URN]
-                                                 reason:@"Access object is not a NSDictionnary"
-                                               userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-                     
-                     NSMutableDictionary * dicServerResultWithName = [NSMutableDictionary dictionaryWithDictionary:[dicResponse objectForKey:@"server"]];
-                     [dicServerResultWithName setObject:strServerName
-                                                 forKey:@"name"];
-                     IOStackServerObjectV2_1 * newServer = [IOStackServerObjectV2_1 initFromAPIResponse:dicServerResultWithName];
-                     
-                     if( bWaitActive )
-                         [self waitServerWithID:newServer.uniqueID
-                                      forStatus:IOStackServerStatusActive
-                                         thenDo:^( bool isWithStatus )
-                          {
-                              if( doAfterCreate != nil )
-                              {
-                                  if( isWithStatus )
-                                      doAfterCreate( newServer, dicResponse );
-                                  
-                                  else
-                                  {
-                                      NSLog( @"Creation failed" );
-                                      doAfterCreate( nil, nil );
-                                  }
-                              }
-                          }];
+    [self createResource:COMPUTEV2_1_SERVER_URN
+              withHeader:nil
+            andUrlParams:dicUrlParams
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+    {
+        NSMutableDictionary * dicServerResultWithName = [NSMutableDictionary dictionaryWithDictionary:[idFullResponse objectForKey:@"server"]];
+        [dicServerResultWithName setObject:strServerName
+                                    forKey:@"name"];
+        IOStackComputeServerV2_1 * newServer = [IOStackComputeServerV2_1 initFromAPIResponse:dicServerResultWithName];
+        
+        if( bWaitActive )
+            [self waitServerWithID:newServer.uniqueID
+                         forStatus:IOStackServerStatusActive
+                            thenDo:^( bool isWithStatus )
+             {
+                 if( doAfterCreate != nil )
+                 {
+                     if( isWithStatus )
+                         doAfterCreate( newServer, idFullResponse );
                      
                      else
-                         doAfterCreate( newServer, dicResponse );
-                 }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-                     NSLog( @"token not valid : %@", error );
-                     
-                     if( doAfterCreate != nil )
+                     {
+                         NSLog( @"Creation failed" );
                          doAfterCreate( nil, nil );
-                 }];
-}
-
-- ( void ) createServerWithName:( NSString * ) strServerName
-                    andFlavorID:( NSString * ) uuidFlavor
-                     andImageID:( NSString * ) uuidImage
-              waitUntilIsActive:( BOOL ) bWaitActive
-                         thenDo:( void ( ^ ) ( IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
-{
-    NSDictionary * dicParams = @{@"server": @{
-                                         @"name": strServerName,
-                                         @"imageRef" : uuidImage,
-                                         @"flavorRef": uuidFlavor
-                                         } };
-    
-    [self createServerWithUrlParams:dicParams
-                      andServerName:strServerName
-                  waitUntilIsActive:bWaitActive
-                             thenDo:doAfterCreate];
-}
-
-- ( void ) createServerWithName:( NSString * ) strServerName
-                    andFlavorID:( NSString * ) uuidFlavor
-                     andImageID:( NSString * ) uuidImage
-                         thenDo:( void ( ^ ) ( IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
-{
-    [self createServerWithName:strServerName
-                   andFlavorID:uuidFlavor
-                    andImageID:uuidImage
-             waitUntilIsActive:NO
-                        thenDo:doAfterCreate];
-}
-
-- ( void ) createServerWithName:( NSString * ) strServerName
-                    andFlavorID:( NSString * ) uuidFlavor
-                     andImageID:( NSString * ) uuidImage
-                 andKeypairName:( NSString * ) strKeypairName
-         andSecurityGroupsNames:( NSArray * ) arrSecurityGroupsNames
-              waitUntilIsActive:( BOOL ) bWaitActive
-                         thenDo:( void ( ^ ) ( IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
-{
-    NSDictionary * dicParams = nil;
-    
-  
-    if( arrSecurityGroupsNames != nil &&
-        [arrSecurityGroupsNames count] > 0 )
-    {
-        NSArray * arrSecurityGroupNamesObjects = [IOStackServerSecurityGroupV2_1 createSecurityGroupNameArrayForAPIFromNameArray:arrSecurityGroupsNames];
-        if( arrSecurityGroupNamesObjects == nil )
-        {
-            if( doAfterCreate != nil )
-                doAfterCreate( nil, nil );
-            
-            return;
-        }
+                     }
+                 }
+             }];
         
-        dicParams = @{@"server":
-                          @{
-                              @"name": strServerName,
-                              @"imageRef" : uuidImage,
-                              @"flavorRef": uuidFlavor,
-                              @"key_name": strKeypairName,
-                              @"security_groups": arrSecurityGroupNamesObjects
-                              }
-                      };
-    }
-    else
-        
-        dicParams = @{@"server":
-                          @{
-                              @"name": strServerName,
-                              @"imageRef" : uuidImage,
-                              @"flavorRef": uuidFlavor,
-                              @"key_name": strKeypairName
-                              }
-                      };
-    
-    [self createServerWithUrlParams:dicParams
-                      andServerName:strServerName
-                  waitUntilIsActive:bWaitActive
-                             thenDo:doAfterCreate];
-}
-
-- ( void ) createServerWithName:( NSString * ) strServerName
-                    andFlavorID:( NSString * ) uuidFlavor
-                     andImageID:( NSString * ) uuidImage
-                 andKeypairName:( NSString * ) strKeypairName
-         andSecurityGroupsNames:( NSArray * ) arrSecurityGroupsNames
-                         thenDo:( void ( ^ ) ( IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
-{
-    [self createServerWithName:strServerName
-                   andFlavorID:uuidFlavor
-                    andImageID:uuidImage
-                andKeypairName:strKeypairName
-        andSecurityGroupsNames:arrSecurityGroupsNames
-             waitUntilIsActive:NO
-                        thenDo:doAfterCreate];
+        else
+            doAfterCreate( newServer, idFullResponse );
+    }];
 }
 
 - ( void ) createServerWithName:( NSString * ) strServerName
@@ -294,18 +154,30 @@
                  andKeypairName:( NSString * ) strKeypairName
                     andUserData:( NSString * ) strUserData
          andSecurityGroupsNames:( NSArray * ) arrSecurityGroupsNames
+              onNetworksWithIDs:( NSArray * ) arrNetworksID
               waitUntilIsActive:( BOOL ) bWaitActive
-                         thenDo:( void ( ^ ) ( IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
+                         thenDo:( void ( ^ ) ( IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
 {
-    NSDictionary * dicParams    = nil;
-    NSData * dataUTF8User       = [strUserData dataUsingEncoding:NSUTF8StringEncoding];
-    NSString * strBase64        = [dataUTF8User base64EncodedStringWithOptions:0];
+    //NSDictionary * dicParams        = nil;
+    NSMutableDictionary * dicParams = [NSMutableDictionary dictionaryWithObject:strServerName forKey:@"name"];
     
+    dicParams[ @"flavorRef" ] = uuidFlavor;
+    dicParams[ @"imageRef" ] = uuidImage;
+    
+    if( strKeypairName != nil )
+        dicParams[ @"key_name" ] = strKeypairName;
+    
+    if( strUserData != nil )
+    {
+        NSData * dataUTF8User           = [strUserData dataUsingEncoding:NSUTF8StringEncoding];
+        NSString * strBase64            = [dataUTF8User base64EncodedStringWithOptions:0];
+        dicParams[ @"user_data" ] = strBase64;
+    }
     
     if( arrSecurityGroupsNames != nil &&
        [arrSecurityGroupsNames count] > 0 )
     {
-        NSArray * arrSecurityGroupNamesObjects = [IOStackServerSecurityGroupV2_1 createSecurityGroupNameArrayForAPIFromNameArray:arrSecurityGroupsNames];
+        NSArray * arrSecurityGroupNamesObjects = [IOStackComputeSecurityGroupV2_1 createSecurityGroupNameArrayForAPIFromNameArray:arrSecurityGroupsNames];
         if( arrSecurityGroupNamesObjects == nil )
         {
             if( doAfterCreate != nil )
@@ -313,50 +185,39 @@
             
             return;
         }
-        
-        dicParams = @{@"server":
-                          @{
-                              @"name": strServerName,
-                              @"imageRef" : uuidImage,
-                              @"flavorRef": uuidFlavor,
-                              @"key_name": strKeypairName,
-                              @"user_data" : strBase64,
-                              @"security_groups": arrSecurityGroupNamesObjects
-                              }
-                      };
+        dicParams[ @"security_groups" ] = arrSecurityGroupNamesObjects;
     }
-    else
-        
-        dicParams = @{@"server":
-                          @{
-                              @"name": strServerName,
-                              @"imageRef" : uuidImage,
-                              @"flavorRef": uuidFlavor,
-                              @"key_name": strKeypairName,
-                              @"user_data" : strBase64
-                              }
-                      };
     
-    [self createServerWithUrlParams:dicParams
+    if( arrNetworksID != nil )
+    {
+        NSMutableArray * arrNetworksIDParams = [NSMutableArray array];
+        for (NSString * currentNetworkID in arrNetworksID)
+            [arrNetworksIDParams addObject:@{@"uuid" : currentNetworkID}];
+        
+        dicParams[ @"networks" ] = arrNetworksIDParams;
+    }
+    
+    [self createServerWithUrlParams:@{@"server": dicParams}
                       andServerName:strServerName
                   waitUntilIsActive:bWaitActive
                              thenDo:doAfterCreate];
 }
 
+
 - ( void ) createServerWithName:( NSString * ) strServerName
-                    andFlavorID:( NSString * ) uuidFlavor
-                     andImageID:( NSString * ) uuidImage
-                 andKeypairName:( NSString * ) strKeypairName
-                    andUserData:( NSString * ) strUserData
-         andSecurityGroupsNames:( NSArray * ) arrSecurityGroupsNames
-                         thenDo:( void ( ^ ) ( IOStackServerObjectV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
+                    andFlavorID:( NSString * ) uidFlavor
+                     andImageID:( NSString * ) uidImage
+              waitUntilIsActive:( BOOL ) bWaitActive
+                         thenDo:( void ( ^ ) ( IOStackComputeServerV2_1 * serverCreated, NSDictionary * dicFullResponse ) ) doAfterCreate
 {
     [self createServerWithName:strServerName
-                   andFlavorID:uuidFlavor
-                    andImageID:uuidImage
-                andKeypairName:strKeypairName
-        andSecurityGroupsNames:arrSecurityGroupsNames
-             waitUntilIsActive:NO
+                   andFlavorID:uidFlavor
+                    andImageID:uidImage
+                andKeypairName:nil
+                   andUserData:nil
+        andSecurityGroupsNames:nil
+             onNetworksWithIDs:nil
+             waitUntilIsActive:bWaitActive
                         thenDo:doAfterCreate];
 }
 
@@ -364,25 +225,25 @@
            waitUntilIsDeleted:( BOOL ) bWaitDeleted
                        thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
 {
-    NSString * strServerURL = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_SERVER_URN, uidServer];
-    [self serviceDELETE:strServerURL
-       onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-           if( bWaitDeleted)
-               [self waitServerWithID:uidServer
-                            forStatus:IOStackServerStatusDeleted
-                               thenDo:^(bool isWithStatus) {
-                                   if( doAfterDelete != nil )
-                                       doAfterDelete( isWithStatus, responseObject );
-                               }];
-           else
-               doAfterDelete( YES, responseObject );
-       }
-       onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-           NSLog( @"token not valid : %@", error );
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( NO, nil );
-       }];
+    NSString * urlServer = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_SERVER_URN, uidServer];
+    [self deleteResource:urlServer
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicResults, id  _Nullable idFullResponse)
+    {
+        if( bWaitDeleted)
+            [self waitServerWithID:uidServer
+                         forStatus:IOStackServerStatusDeleted
+                            thenDo:^(bool isWithStatus)
+        {
+            if( doAfterDelete != nil )
+                doAfterDelete( isWithStatus, idFullResponse );
+        }];
+        else
+            doAfterDelete( ( idFullResponse == nil ) ||
+                                ( idFullResponse[ @"response" ] == nil ) ||
+                                ( [idFullResponse[ @"response" ] isEqualToString:@""] ),
+                          idFullResponse );
+    }];
 }
 
 - ( void ) deleteServerWithID:( NSString * ) uidServer
@@ -406,6 +267,7 @@
                  insideKey:@"server"
                   forField:nil
               toEqualValue:nil
+             orErrorValues:IOStackServerStatusErrorArray
                     thenDo:doAfterWait];
     
     else
@@ -414,6 +276,7 @@
                  insideKey:@"server"
                   forField:@"status"
               toEqualValue:statusServer
+             orErrorValues:IOStackServerStatusErrorArray
                     thenDo:doAfterWait];
 }
 
@@ -422,43 +285,39 @@
 - ( void ) listIPsForServerWithID:( NSString * ) uidServer
                            thenDo:( void ( ^ ) ( NSArray * dicPrivateIPs, NSArray * dicPublicIPs, id idFullResponse ) ) doAfterList
 {
-    NSString * strServerURL = [NSString stringWithFormat:@"%@/%@/%@", COMPUTEV2_1_SERVER_URN, uidServer, COMPUTEV2_1_IP_URN ];
-    [self serviceGET:strServerURL
-          withParams:nil
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-        if( ![responseObject isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_IP_URN]
-                                    reason:@"Return value is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
+    NSString * urlServer = [NSString stringWithFormat:@"%@/%@/%@", COMPUTEV2_1_SERVER_URN, uidServer, COMPUTEV2_1_IP_URN ];
+    [self readResource:urlServer
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"addresses"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+    {
+        NSMutableArray * arrPrivateIPs = [NSMutableArray array];
+        NSMutableArray * arrPublicIPs = [NSMutableArray array];
         
-        NSDictionary * dicResponse     = responseObject;
-        
-        if( ![[dicResponse objectForKey:@"addresses"] isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_IP_URN]
-                                    reason:@"Access object is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        NSDictionary * dicIPType = [dicResponse objectForKey:@"addresses"];
-        
-        if( ![[dicIPType objectForKey:@"private"] isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_IP_URN]
-                                    reason:@"Access object is not a NSArray"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        NSArray * arrPrivateIPs = [dicIPType valueForKey:@"private"];
-        
-        if( ![[dicIPType objectForKey:@"private"] isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_IP_URN]
-                                    reason:@"Access object is not a NSArray"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        NSArray * arrPublicIPs = [dicIPType valueForKey:@"public"];
-        
-        if( doAfterList != nil )
-            doAfterList( arrPrivateIPs, arrPublicIPs, dicResponse );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"token not valid : %@", error );
+        if( [dicObjectFound valueForKey:@"private"] )
+            [arrPrivateIPs addObject:[dicObjectFound valueForKey:@"private"]];
+
+        if( [dicObjectFound valueForKey:@"public"] )
+            [arrPublicIPs addObject:[dicObjectFound valueForKey:@"public"]];
+
+        for( NSString * currentAddressNetworkLabel in dicObjectFound )
+        {
+            if( [currentAddressNetworkLabel isEqualToString:@"private"] ||
+                [currentAddressNetworkLabel isEqualToString:@"public"] )
+                break;
+            
+            NSDictionary * dicAddressDetail = [dicObjectFound valueForKey:currentAddressNetworkLabel];
+            
+            if( [currentAddressNetworkLabel containsString:@"LAN"] && [dicAddressDetail valueForKey:@"addr"])
+                [arrPrivateIPs addObject:[dicAddressDetail valueForKey:@"addr"]];
+
+            if( [currentAddressNetworkLabel containsString:@"WAN"] && [dicAddressDetail valueForKey:@"addr"])
+                [arrPublicIPs addObject:[dicAddressDetail valueForKey:@"addr"]];
+        }
         
         if( doAfterList != nil )
-            doAfterList( nil, nil, nil );
+            doAfterList( arrPrivateIPs, arrPublicIPs, dataResponse );
     }];
 }
 
@@ -466,136 +325,105 @@
                   excludingFixedIPs:( BOOL ) bNoFixedIPs
                              thenDo:( void ( ^ ) ( NSDictionary * dicIPsFromPool, id idFullResponse ) ) doAfterList
 {
-    [self serviceGET:COMPUTEV2_1_FLOATINGIP_URN
-          withParams:nil
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-        if( ![responseObject isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_IP_URN]
-                                    reason:@"Return value is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        
-        NSDictionary * dicResponse     = responseObject;
-        
-        if( ![[dicResponse objectForKey:@"floatingips"] isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_IP_URN]
-                                    reason:@"floatingips object is not a NSArray"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        NSArray * arrIPs = [dicResponse objectForKey:@"floatingips"];
-        
-        NSMutableDictionary * dicIPs = [NSMutableDictionary dictionaryWithCapacity:1];
-        for( NSDictionary * currentIP in arrIPs )
+    [self listResource:COMPUTEV2_1_FLOATINGIP_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"floating_ips"
+                thenDo:^(NSArray * _Nullable arrFound, id  _Nullable dataResponse)
+    {
+        NSMutableDictionary * dicIPs = [NSMutableDictionary dictionary];
+        for( NSDictionary * currentIP in arrFound )
         {
-            if( ( statusIP != nil && [currentIP[ @"status" ] isEqualToString:statusIP] ) &&
-               ( ( currentIP[ @"fixed_ip_address"] == nil ) ||
-                !bNoFixedIPs ) )
-                [dicIPs setValue:@{
-                                   @"uidRouter"         : currentIP[ @"router_id" ],
-                                   @"uidTenant"         : currentIP[ @"tenant_id" ],
-                                   @"uidFloatingNetwork" : currentIP[ @"floating_network_id" ],
-                                   @"uidPort"           : currentIP[ @"port_id" ],
-                                   @"ipAddressFixed"    : currentIP[ @"fixed_ip_address" ],
-                                   @"ipAddressFloating" : currentIP[ @"floating_ip_address" ],
-                                   @"status"            : currentIP[ @"status" ]
-                                   }
+            if( ( !bNoFixedIPs || ( currentIP[ @"fixed_ip"] == nil ) ) &&
+                    ( statusIP == nil || [currentIP[ @"status" ] isEqualToString:statusIP] )  )
+            {
+                NSMutableDictionary * dicCurrentIPValues = [NSMutableDictionary dictionary];
+                
+                if( currentIP[ @"router_id" ] != nil )
+                    dicCurrentIPValues[ @"uidRouter" ]          = currentIP[ @"router_id" ];
+                if( currentIP[ @"tenant_id" ] != nil )
+                    dicCurrentIPValues[ @"uidTenant" ]          = currentIP[ @"tenant_id" ];
+                if( currentIP[ @"floating_network_id" ] != nil )
+                    dicCurrentIPValues[ @"uidFloatingNetwork" ] = currentIP[ @"floating_network_id" ];
+                if( currentIP[ @"port_id" ] != nil )
+                    dicCurrentIPValues[ @"uidPort" ]            = currentIP[ @"port_id" ];
+                if( currentIP[ @"fixed_ip" ] != nil )
+                    dicCurrentIPValues[ @"ipAddressFixed" ]     = currentIP[ @"fixed_ip" ];
+                if( currentIP[ @"ip" ] != nil )
+                    dicCurrentIPValues[ @"ipAddressFloating" ]  = currentIP[ @"ip" ];
+                if( currentIP[ @"status" ] != nil )
+                    dicCurrentIPValues[ @"status" ]             = currentIP[ @"status" ];
+
+                [dicIPs setValue:dicCurrentIPValues
                           forKey:currentIP[ @"id" ]];
+
+            }
         }
         
         if( doAfterList != nil )
-            doAfterList( dicIPs, dicResponse );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"token not valid : %@", error );
-        
-        if( doAfterList != nil )
-            doAfterList( nil, nil );
+            doAfterList( dicIPs, dataResponse );
     }];
 }
 
 - ( void ) createIPAllocationFromPool:( NSString * ) strPoolName
-                               thenDo:( void ( ^ ) ( IOStackServerIPAllocationV2_1 * fipCreated, id idFullResponse ) ) doAfterCreate
+                               thenDo:( void ( ^ ) ( IOStackComputeIPAllocationV2_1 * fipCreated, id idFullResponse ) ) doAfterCreate
 {
     NSDictionary * dicUrlParams = nil;
     
     if( strPoolName != nil )
         dicUrlParams = @{@"pool": strPoolName };
     
-    [self servicePOST:COMPUTEV2_1_FLOATINGIP_URN
-           withParams:dicUrlParams
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-         if( ![responseObject isKindOfClass:[NSDictionary class]] )
-             [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_FLOATINGIP_URN]
-                                     reason:@"Return value is not a NSDictionnary"
-                                   userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-         
-         NSDictionary * dicResponse     = responseObject;
-         if( ![[dicResponse objectForKey:@"floating_ip"] isKindOfClass:[NSDictionary class]] )
-             [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_FLOATINGIP_URN]
-                                     reason:@"floating_ip object is not a NSDictionnary"
-                                   userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-         
-         IOStackServerIPAllocationV2_1 * fipCreated = [IOStackServerIPAllocationV2_1 initFromAPIResponse:[dicResponse objectForKey:@"floating_ip"]];
-         
-         if( doAfterCreate != nil )
-         {
-             if( strPoolName == nil ||
-                [fipCreated.namePool isEqualToString:strPoolName] )
-                 doAfterCreate( fipCreated, dicResponse );
-             
-             else
-                 doAfterCreate( nil, nil );
-         }
-     }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         NSLog( @"token not valid : %@", error );
-         
-         if( doAfterCreate != nil )
-             doAfterCreate( nil, nil );
-     }];
+    [self createResource:COMPUTEV2_1_FLOATINGIP_URN
+              withHeader:nil
+            andUrlParams:dicUrlParams
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+    {
+        IOStackComputeIPAllocationV2_1 * fipCreated = [IOStackComputeIPAllocationV2_1 initFromAPIResponse:[idFullResponse objectForKey:@"floating_ip"]];
+        
+        if( doAfterCreate != nil )
+        {
+            if( strPoolName == nil ||
+               [fipCreated.namePool isEqualToString:strPoolName] )
+                doAfterCreate( fipCreated, idFullResponse );
+            
+            else
+                doAfterCreate( nil, nil );
+        }
+    }];
 }
 
 - ( void ) deleteIPAllocationWithID:( NSString * ) uidFloatingIPAllocationID
                              thenDo:( void ( ^ ) ( bool isDeleted ) ) doAfterDelete
 {
-    NSString * strFloatingIPAllocationURL = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_FLOATINGIP_URN, uidFloatingIPAllocationID];
-    
-    [self serviceDELETE:strFloatingIPAllocationURL
-       onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( YES );
-           
-       }
-       onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-           NSLog( @"token not valid : %@", error );
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( NO );
-       }];
+    NSString * urlFloatingIPAllocation = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_FLOATINGIP_URN, uidFloatingIPAllocationID];
+    [self deleteResource:urlFloatingIPAllocation
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicResults, id  _Nullable idFullResponse)
+    {
+        if( doAfterDelete != nil )
+            doAfterDelete( ( idFullResponse == nil ) ||
+                          ( idFullResponse[ @"response" ] == nil ) ||
+                          ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+    }];
 }
 
 - ( void ) addIPToServerWithID:( NSString * ) uidServer
         usingFloatingIPAddress:( NSString * ) ipAddress
                         thenDo:( void ( ^ ) ( BOOL isAssociated, id idFullResponse ) ) doAfterAdd
 {
-    NSString * strActionServerURL = [NSString stringWithFormat:@"%@/%@/%@", COMPUTEV2_1_SERVER_URN, uidServer, COMPUTEV2_1_ACTION_URN ];
+    NSString * urlActionServer = [NSString stringWithFormat:@"%@/%@/%@", COMPUTEV2_1_SERVER_URN, uidServer, COMPUTEV2_1_ACTION_URN ];
     NSDictionary * dicUrlParams = nil;
     
     if( ipAddress != nil )
         dicUrlParams = @{ @"addFloatingIp": @{ @"address": ipAddress } };
     
-    [self servicePOST:strActionServerURL
-           withParams:dicUrlParams
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-         
+    [self createResource:urlActionServer
+              withHeader:nil
+            andUrlParams:dicUrlParams
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
          if( doAfterAdd != nil )
-             doAfterAdd( YES, responseObject );
-         
-     }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         NSLog( @"token not valid : %@", error );
-         
-         if( doAfterAdd != nil )
-             doAfterAdd( NO, nil );
+             doAfterAdd( YES, idFullResponse );
      }];
 }
 
@@ -603,22 +431,17 @@
         usingFixedIPNetworkUID:( NSString * ) uidNetwork
                         thenDo:( void ( ^ ) ( BOOL isAssociated, id idFullResponse ) ) doAfterAdd
 {
-    NSString * strActionServerURL = [NSString stringWithFormat:@"%@/%@/%@", COMPUTEV2_1_SERVER_URN, uidServer, COMPUTEV2_1_ACTION_URN ];
+    NSString * urlActionServer = [NSString stringWithFormat:@"%@/%@/%@", COMPUTEV2_1_SERVER_URN, uidServer, COMPUTEV2_1_ACTION_URN ];
     NSDictionary * dicUrlParams = @{ @"addFixedIp": @{ @"networkId" : uidNetwork } };
     
-    [self servicePOST:strActionServerURL
-           withParams:dicUrlParams
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
+    [self createResource:urlActionServer
+              withHeader:nil
+            andUrlParams:dicUrlParams
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
          
          if( doAfterAdd != nil )
-             doAfterAdd( YES, responseObject );
-         
-     }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         NSLog( @"token not valid : %@", error );
-         
-         if( doAfterAdd != nil )
-             doAfterAdd( NO, nil );
+             doAfterAdd( YES, idFullResponse );
      }];
 }
 
@@ -626,34 +449,20 @@
 #pragma mark - Keypair management
 - ( void ) listKeypairsThenDo:( void ( ^ ) ( NSDictionary * dicKeypairs, id idFullResponse ) ) doAfterList
 {
-    [self serviceGET:COMPUTEV2_1_KEYPAIR_URN
-          withParams:nil
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-        if( ![responseObject isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_KEYPAIR_URN]
-                                    reason:@"Return value is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        
-        NSDictionary * dicResponse     = responseObject;
-        if( ![[dicResponse objectForKey:@"keypairs"] isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_KEYPAIR_URN]
-                                    reason:@"Access object is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        
+    [self listResource:COMPUTEV2_1_KEYPAIR_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"keypairs"
+                thenDo:^(NSArray * _Nullable arrFound, id  _Nullable dataResponse)
+    {
         if( doAfterList != nil )
-            doAfterList( [IOStackServerKeypairV2_1 parseFromAPIResponse:[dicResponse objectForKey:@"keypairs"]], dicResponse );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"token not valid : %@", error );
-        
-        if( doAfterList != nil )
-            doAfterList( nil, nil );
+            doAfterList( [IOStackComputeKeypairV2_1 parseFromAPIResponse:arrFound], dataResponse );
     }];
 }
 
 - ( void ) createKeypairWithName:( NSString * ) strKeypairName
                     andPublicKey:( NSString * ) strPublicKey
-                          thenDo:( void ( ^ ) ( IOStackServerKeypairV2_1 * keyCreated, id idFullResponse ) ) doAfterCreate
+                          thenDo:( void ( ^ ) ( IOStackComputeKeypairV2_1 * keyCreated, id idFullResponse ) ) doAfterCreate
 {
     NSDictionary * dicUrlParams = nil;
     
@@ -663,39 +472,23 @@
     else
         dicUrlParams = @{@"keypair": @{ @"name": strKeypairName} };
     
-    [self servicePOST:COMPUTEV2_1_KEYPAIR_URN
-           withParams:dicUrlParams
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-         if( ![responseObject isKindOfClass:[NSDictionary class]] )
-             [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_KEYPAIR_URN]
-                                     reason:@"Return value is not a NSDictionnary"
-                                   userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-         
-         NSDictionary * dicResponse     = responseObject;
-         if( ![[dicResponse objectForKey:@"keypair"] isKindOfClass:[NSDictionary class]] )
-             [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_KEYPAIR_URN]
-                                     reason:@"Access object is not a NSDictionnary"
-                                   userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-         
-         IOStackServerKeypairV2_1 * keyCreated = [IOStackServerKeypairV2_1 initFromAPIResponse:[dicResponse objectForKey:@"keypair"]];
-         
-         if( [keyCreated.uniqueID isEqualToString:strKeypairName] &&
-            doAfterCreate != nil )
-             doAfterCreate( keyCreated, dicResponse );
-         
-     }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         NSLog( @"token not valid : %@", error );
-         
-         if( doAfterCreate != nil )
-             doAfterCreate( nil, nil );
-     }];
+    [self createResource:COMPUTEV2_1_KEYPAIR_URN
+              withHeader:nil
+            andUrlParams:dicUrlParams
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+    {
+        IOStackComputeKeypairV2_1 * keyCreated = [IOStackComputeKeypairV2_1 initFromAPIResponse:[idFullResponse objectForKey:@"keypair"]];
+        
+        if( [keyCreated.uniqueID isEqualToString:strKeypairName] &&
+           doAfterCreate != nil )
+            doAfterCreate( keyCreated, idFullResponse );
+    }];
 }
 
 
 - ( void ) createKeypairWithName:( NSString * ) strKeypairName
             andPublicKeyFilePath:( NSString * ) strPublicKeyCompleteFilePath
-                          thenDo:( void ( ^ ) ( IOStackServerKeypairV2_1 * keyCreated, id idFullResponse ) ) doAfterCreate
+                          thenDo:( void ( ^ ) ( IOStackComputeKeypairV2_1 * keyCreated, id idFullResponse ) ) doAfterCreate
 {
     NSError * errRead;
     NSString * strPublicKeyData     = [NSString stringWithContentsOfFile:strPublicKeyCompleteFilePath
@@ -713,21 +506,17 @@
 - ( void ) deleteKeypairWithName:( NSString * ) strKeypairName
                           thenDo:( void ( ^ ) ( bool isDeleted ) ) doAfterDelete
 {
-    NSString * strKeypairURL = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_KEYPAIR_URN, strKeypairName];
+    NSString * urlKeypair = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_KEYPAIR_URN, strKeypairName];
     
-    [self serviceDELETE:strKeypairURL
-       onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( YES );
-           
-       }
-       onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-           NSLog( @"token not valid : %@", error );
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( NO );
-       }];
+    [self deleteResource:urlKeypair
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicResults, id  _Nullable idFullResponse)
+    {
+        if( doAfterDelete != nil )
+            doAfterDelete( ( idFullResponse == nil ) ||
+                          ( idFullResponse[ @"response" ] == nil ) ||
+                          ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+    }];
 }
 
 
@@ -735,33 +524,20 @@
 - ( void ) listActionsForServer:( NSString * ) uidServer
                          thenDo:( void ( ^ ) ( NSArray * arrServerActions, id idFullResponse ) ) doAfterList
 {
-    NSString * strActionServerURL = [NSString stringWithFormat:@"%@/%@/%@", COMPUTEV2_1_SERVER_URN, uidServer, COMPUTEV2_1_INSTANCEACTION_URN ];
-    [self serviceGET:strActionServerURL
-             withParams:nil
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-        if( ![responseObject isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_INSTANCEACTION_URN]
-                                    reason:@"Return value is not a NSDictionnary"
-                                  userInfo:@{@"server_id": uidServer, @"returnedValue": responseObject}];
-        
-        NSDictionary * dicResponse     = responseObject;
-        if( ![[dicResponse objectForKey:@"instanceActions"] isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_INSTANCEACTION_URN]
-                                    reason:@"instanceActions object is not a NSArray"
-                                  userInfo:@{@"server_id": uidServer, @"returnedValue": responseObject}];
-        
-        NSArray * arrActions = [dicResponse objectForKey:@"instanceActions"];
-        
-        if( [arrActions count] > 0 &&
-           doAfterList != nil )
-            doAfterList( arrActions, dicResponse );
-        
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"token not valid : %@", error );
-        
+    NSString * urlServerAction = [NSString stringWithFormat:@"%@/%@/%@", COMPUTEV2_1_SERVER_URN, uidServer, COMPUTEV2_1_INSTANCEACTION_URN ];
+    [self listResource:urlServerAction
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"instanceActions"
+                thenDo:^(NSArray * _Nullable arrFound, id  _Nullable dataResponse)
+    {
         if( doAfterList != nil )
-            doAfterList( nil, nil );
+        {
+            if( [arrFound count] > 0 )
+                doAfterList( arrFound, dataResponse );
+            else
+                doAfterList( nil, dataResponse );
+        }
     }];
 }
 
@@ -769,34 +545,20 @@
 #pragma mark - Security group management
 - ( void ) listSecurityGroupsThenDo:( void ( ^ ) ( NSDictionary * dicSecurityGroups, id idFullResponse ) ) doAfterList
 {
-    [self serviceGET:COMPUTEV2_1_SECURITYGROUP_URN
-          withParams:nil
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-        if( ![responseObject isKindOfClass:[NSDictionary class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SECURITYGROUP_URN]
-                                    reason:@"Return value is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        
-        NSDictionary * dicResponse     = responseObject;
-        if( ![[dicResponse objectForKey:@"security_groups"] isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SECURITYGROUP_URN]
-                                    reason:@"Access object is not a NSDictionnary"
-                                  userInfo:@{@"returnedValue": responseObject}];
-        
+    [self listResource:COMPUTEV2_1_SECURITYGROUP_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"security_groups"
+                thenDo:^(NSArray * _Nullable arrFound, id  _Nullable dataResponse)
+    {
         if( doAfterList != nil )
-            doAfterList( [IOStackServerSecurityGroupV2_1 parseFromAPIResponse:[dicResponse objectForKey:@"security_groups"]], dicResponse );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        NSLog( @"token not valid : %@", error );
-        
-        if( doAfterList != nil )
-            doAfterList( nil, nil );
+            doAfterList( [IOStackComputeSecurityGroupV2_1 parseFromAPIResponse:arrFound], dataResponse );
     }];
 }
 
 - ( void ) createSecurityGroupWithName:( NSString * ) strSecurityGroupName
                         andDescription:( NSString * ) strSecurityGroupDescription
-                                thenDo:( void ( ^ ) ( IOStackServerSecurityGroupV2_1 * secCreated, id idFullResponse ) ) doAfterCreate
+                                thenDo:( void ( ^ ) ( IOStackComputeSecurityGroupV2_1 * secCreated, id idFullResponse ) ) doAfterCreate
 {
     NSDictionary * dicUrlParams = nil;
     
@@ -806,53 +568,33 @@
     else
         dicUrlParams = @{@"security_group": @{ @"name": strSecurityGroupName, @"description" : @"default" } };
     
-    [self servicePOST:COMPUTEV2_1_SECURITYGROUP_URN
-           withParams:dicUrlParams
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-         if( ![responseObject isKindOfClass:[NSDictionary class]] )
-             [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SECURITYGROUP_URN]
-                                     reason:@"Return value is not a NSDictionnary"
-                                   userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-         
-         NSDictionary * dicResponse     = responseObject;
-         if( ![[dicResponse objectForKey:@"keypair"] isKindOfClass:[NSDictionary class]] )
-             [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SECURITYGROUP_URN]
-                                     reason:@"Access object is not a NSDictionnary"
-                                   userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-         
-         IOStackServerSecurityGroupV2_1 * secCreated = [IOStackServerSecurityGroupV2_1 initFromAPIResponse:[dicResponse objectForKey:@"security_group"]];
-         
-         if( secCreated.uniqueID != nil &&
+    [self createResource:COMPUTEV2_1_SECURITYGROUP_URN
+              withHeader:nil
+            andUrlParams:dicUrlParams
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id _Nullable idFullResponse)
+    {
+        IOStackComputeSecurityGroupV2_1 * secCreated = [IOStackComputeSecurityGroupV2_1 initFromAPIResponse:[idFullResponse objectForKey:@"security_group"]];
+        
+        if( secCreated.uniqueID != nil &&
             doAfterCreate != nil )
-             doAfterCreate( secCreated, dicResponse );
-         
-     }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         NSLog( @"token not valid : %@", error );
-         
-         if( doAfterCreate != nil )
-             doAfterCreate( nil, nil );
-     }];
+            doAfterCreate( secCreated, idFullResponse );
+    }];
 }
 
 - ( void ) deleteSecurityGroupWithID:( NSString * ) uidSecurityGroup
                               thenDo:( void ( ^ ) ( bool isDeleted ) ) doAfterDelete
 {
-    NSString * strSecurityGroupURL = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_SECURITYGROUP_URN, uidSecurityGroup];
+    NSString * urlSecurityGroup = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_SECURITYGROUP_URN, uidSecurityGroup];
     
-    [self serviceDELETE:strSecurityGroupURL
-       onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( YES );
-           
-       }
-       onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-           NSLog( @"token not valid : %@", error );
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( NO );
-       }];
+    [self deleteResource:urlSecurityGroup
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicResults, id  _Nullable idFullResponse)
+    {
+        if( doAfterDelete != nil )
+            doAfterDelete( ( idFullResponse == nil ) ||
+                                ( idFullResponse[ @"response" ] == nil ) ||
+                                ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+    }];
 }
 
 - ( void ) addRuleToSecurityGroupWithID:( NSString * ) uidSecurityGroupID
@@ -860,7 +602,7 @@
                                FromPort:( NSNumber * ) nPortFrom
                                  ToPort:( NSNumber * ) nPortTo
                                 AndCIDR:( NSString * ) strCIDR
-                                 thenDo:( void ( ^ ) ( IOStackServerSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse ) ) doAfterCreate
+                                 thenDo:( void ( ^ ) ( IOStackComputeSecurityGroupRuleV2_1 * ruleCreated, id idFullResponse ) ) doAfterCreate
 {
     NSDictionary * dicUrlParams = nil;
     
@@ -893,52 +635,183 @@
                                  @"cidr": strCIDR
                                  } };
         
-    
-    [self servicePOST:COMPUTEV2_1_SECURITYGROUPRULES_URN
-           withParams:dicUrlParams
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-         if( ![responseObject isKindOfClass:[NSDictionary class]] )
-             [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SECURITYGROUPRULES_URN]
-                                     reason:@"Return value is not a NSDictionnary"
-                                   userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-         
-         NSDictionary * dicResponse     = responseObject;
-         if( ![[dicResponse objectForKey:@"keypair"] isKindOfClass:[NSDictionary class]] )
-             [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", COMPUTEV2_1_SECURITYGROUPRULES_URN]
-                                     reason:@"Access object is not a NSDictionnary"
-                                   userInfo:@{@"urlParams": dicUrlParams, @"returnedValue": responseObject}];
-         
-         if( doAfterCreate != nil )
-             doAfterCreate( [IOStackServerSecurityGroupRuleV2_1 initFromAPIResponse:[dicResponse objectForKey:@"security_group_rule"]], dicResponse );
-         
-     }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         NSLog( @"token not valid : %@", error );
-         
-         if( doAfterCreate != nil )
-             doAfterCreate( nil, nil );
-     }];
+    [self createResource:COMPUTEV2_1_SECURITYGROUPRULES_URN
+              withHeader:nil
+            andUrlParams:dicUrlParams
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+    {
+        if( doAfterCreate != nil )
+            doAfterCreate( [IOStackComputeSecurityGroupRuleV2_1 initFromAPIResponse:[idFullResponse objectForKey:@"security_group_rule"]], idFullResponse );
+    }];
 }
 
 - ( void ) deleteSecurityGroupRuleWithID:( NSString * ) uidSecurityGroupRule
                                   thenDo:( void ( ^ ) ( bool isDeleted ) ) doAfterDelete
 {
-    NSString * strSecurityGroupURL = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_SECURITYGROUPRULES_URN, uidSecurityGroupRule];
+    NSString * urlSecurityGroup = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_SECURITYGROUPRULES_URN, uidSecurityGroupRule];
     
-    [self serviceDELETE:strSecurityGroupURL
-       onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( YES );
-           
-       }
-       onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-           NSLog( @"token not valid : %@", error );
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( NO );
-       }];
+    [self deleteResource:urlSecurityGroup
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicResults, id  _Nullable idFullResponse)
+    {
+        if( doAfterDelete != nil )
+            doAfterDelete( ( idFullResponse == nil ) ||
+                          ( idFullResponse[ @"response" ] == nil ) ||
+                          ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+    }];
 }
+
+#pragma mark - Networks management
+- ( void ) listNetworksThenDo:( void ( ^ ) ( NSDictionary * dicNetworks, id idFullResponse ) ) doAfterList
+{
+    [self listResource:COMPUTEV2_1_NETWORKS_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"networks"
+                thenDo:^(NSArray * _Nullable arrFound, id  _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( [IOStackComputeNetworkV2_1 parseFromAPIResponse:arrFound], dataResponse );
+     }];
+}
+
+- ( void ) createNetworkWithLabel:( NSString * ) nameNetwork
+                          andCIDR:( NSString * ) ipCIDR
+                           andMTU:( NSNumber * ) nMTU
+                    andDHCPServer:( NSString * ) ipDHCPServer
+                       startingAt:( NSString * ) ipStartingIP
+                         endingAt:( NSString * ) ipEndingIP
+                 isSharingAddress:( BOOL ) isSharing
+                                thenDo:( void ( ^ ) ( IOStackComputeNetworkV2_1 * networkCreated, id idFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicValues = [NSMutableDictionary dictionaryWithObject:nameNetwork
+                                                                          forKey:@"label"];
+    
+    if( ipCIDR != nil )
+        mdicValues[ @"cidr" ] = ipCIDR;
+    
+    if( nMTU != nil )
+        mdicValues[ @"mtu" ] = nMTU;
+    
+    mdicValues[ @"enable_dhcp" ] = [NSNumber numberWithBool:NO];
+    if( nMTU != nil )
+    {
+        mdicValues[ @"dhcp_server" ] = ipDHCPServer;
+        mdicValues[ @"enable_dhcp" ] = [NSNumber numberWithBool:YES];
+    }
+    
+    mdicValues[ @"share_address" ] = [NSNumber numberWithBool:NO];
+    if( isSharing )
+        mdicValues[ @"share_address" ] = [NSNumber numberWithBool:YES];
+    
+    if( ipStartingIP != nil )
+        mdicValues[ @"allowed_start" ] = ipStartingIP;
+    
+    if( ipEndingIP != nil )
+        mdicValues[ @"allowed_end" ] = ipEndingIP;
+    
+    [self createResource:COMPUTEV2_1_NETWORKS_URN
+              withHeader:nil
+            andUrlParams:@{ @"network" : mdicValues }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id _Nullable idFullResponse)
+     {
+         IOStackComputeNetworkV2_1 * networkCreated = [IOStackComputeNetworkV2_1 initFromAPIResponse:[idFullResponse objectForKey:@"security_group"]];
+         
+         if( networkCreated.uniqueID != nil &&
+            doAfterCreate != nil )
+             doAfterCreate( networkCreated, idFullResponse );
+     }];
+}
+
+- ( void ) getNetworkWithID:( NSString * ) uidNetwork
+                     thenDo:( void ( ^ ) ( IOStackComputeNetworkV2_1 * networkDetails, id idFullResponse ) ) doAfterGet
+{
+    NSString * urlNetwork = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_NETWORKS_URN, uidNetwork];
+    
+    [self readResource:urlNetwork
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"networks"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGet != nil )
+             doAfterGet( [IOStackComputeNetworkV2_1 initFromAPIResponse:dicObjectFound], dataResponse );
+     }];
+}
+
+- ( void ) addNetworkWithID:( NSString * ) uidNetwork
+                     thenDo:( void ( ^ ) ( BOOL isAdded, id idFullResponse ) ) doAfterAdd
+{
+    NSString * urlNetworkAdd = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_NETWORKS_URN, COMPUTEV2_1_NETWORKADD_URN];
+    [self createResource:urlNetworkAdd
+              withHeader:nil
+            andUrlParams:@{ @"id" : uidNetwork }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id _Nullable idFullResponse)
+     {
+         if( doAfterAdd != nil )
+             doAfterAdd( ( idFullResponse == nil ) ||
+                        ( idFullResponse[ @"response" ] == nil ) ||
+                        ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+- ( void ) deleteNetworkWithID:( NSString * ) uidNetwork
+                              thenDo:( void ( ^ ) ( bool isDeleted ) ) doAfterDelete
+{
+    NSString * urlNetwork = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_NETWORKS_URN, uidNetwork];
+    
+    [self deleteResource:urlNetwork
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicResults, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+     }];
+}
+
+- ( void ) findIDForNetworkWithLabelContaining:( NSString * ) strNetworkLabelPart
+                                    thenDo:( void ( ^ ) ( NSArray * arrNetworksWithLabelContaining, id idFullResponse ) ) doAfterFind
+{
+    [self listNetworksThenDo:^(NSDictionary * dicNetworks, id idFullResponse) {
+        NSMutableArray * marrNetworksLabelContaining = [NSMutableArray array];
+        
+        for( IOStackComputeNetworkV2_1 * currentNetwork in dicNetworks )
+        {
+            if( [currentNetwork.labelNetwork containsString:strNetworkLabelPart] )
+                [marrNetworksLabelContaining addObject:currentNetwork];
+        }
+        
+        if( doAfterFind != nil )
+            doAfterFind( marrNetworksLabelContaining, idFullResponse );
+    }];
+}
+
+
+- ( void ) findNetworksWithLabelContaining:( NSString * ) strNetworkLabelPart
+                                    thenDo:( void ( ^ ) ( NSArray * arrNetworksWithLabelContaining, id idFullResponse ) ) doAfterFind
+{
+    [self listNetworksThenDo:^(NSDictionary * dicNetworks, id idFullResponse) {
+        NSArray * arrNetworkWithLabelContaining = [IOStackComputeNetworkV2_1 findIDsForNetworks:dicNetworks
+                                                                            withLabelContaining:strNetworkLabelPart];
+        if( doAfterFind != nil )
+            doAfterFind( arrNetworkWithLabelContaining, idFullResponse );
+    }];
+}
+
+- ( void ) findNetworksWithExactLabel:( NSString * ) strNetworkLabel
+                               thenDo:( void ( ^ ) ( NSArray * arrNetworksWithLabelContaining, id idFullResponse ) ) doAfterFind
+{
+    [self listNetworksThenDo:^(NSDictionary * dicNetworks, id idFullResponse) {
+        NSArray * arrNetworkWithLabelContaining = [IOStackComputeNetworkV2_1 findIDsForNetworks:dicNetworks
+                                                                            withExactLabel:strNetworkLabel];
+        if( doAfterFind != nil )
+            doAfterFind( arrNetworkWithLabelContaining, idFullResponse );
+    }];
+}
+
+
 
 
 @end

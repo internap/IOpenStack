@@ -9,18 +9,18 @@
 #import "IOStackBlockStorageV2.h"
 
 
-#define BLOCKSTORAGEV2_SERVICE_URI          @"v2/"
-#define BLOCKSTORAGEV2_VOLUMES_URN          @"volumes"
-#define BLOCKSTORAGEV2_VOLUMESDETAIL_URN    @"volumes/detail"
-#define BLOCKSTORAGEV2_VOLUMEMETADATA_URN   @"metadata"
-#define BLOCKSTORAGEV2_VOLUMETYPES_URN      @"types"
-#define BLOCKSTORAGEV2_VOLUMEACTION_URN     @"action"
-#define BLOCKSTORAGEV2_BACKUPS_URN          @"backups"
-#define BLOCKSTORAGEV2_BACKUPSDETAIl_URN    @"backups/detail"
-#define BLOCKSTORAGEV2_BACKUPSACTION_URN    @"action"
-#define BLOCKSTORAGEV2_SNAPSHOTS_URN        @"snapshots"
-#define BLOCKSTORAGEV2_SNAPSHOTSDETAIl_URN  @"snapshots/detail"
-#define BLOCKSTORAGEV2_SNAPSHOTSACTION_URN  @"action"
+#define BLOCKSTORAGEV2_SERVICE_URI                  @"v2/"
+#define BLOCKSTORAGEV2_VOLUMES_URN                  @"volumes"
+#define BLOCKSTORAGEV2_VOLUMESDETAIL_URN            @"volumes/detail"
+#define BLOCKSTORAGEV2_VOLUMEMETADATA_URN           @"metadata"
+#define BLOCKSTORAGEV2_VOLUMETYPES_URN              @"types"
+#define BLOCKSTORAGEV2_VOLUMEACTION_URN             @"action"
+#define BLOCKSTORAGEV2_BACKUPS_URN                  @"backups"
+#define BLOCKSTORAGEV2_BACKUPSDETAIl_URN            @"backups/detail"
+#define BLOCKSTORAGEV2_BACKUPSACTION_URN            @"action"
+#define BLOCKSTORAGEV2_SNAPSHOTS_URN                @"snapshots"
+#define BLOCKSTORAGEV2_SNAPSHOTSDETAIl_URN          @"snapshots/detail"
+#define BLOCKSTORAGEV2_SNAPSHOTSACTION_URN          @"action"
 #define BLOCKSTORAGEV2_VOLUMETRANSFERS_URN          @"os-volume-transfer"
 #define BLOCKSTORAGEV2_VOLUMETRANSFERSDETAIl_URN    @"os-volume-transfer/detail"
 #define BLOCKSTORAGEV2_VOLUMETRANSFERSACCEPT_URN    @"accept"
@@ -35,9 +35,11 @@
 
 + ( instancetype ) initWithBlockStorageURL:( NSString * ) strBlockStorageRoot
                                 andTokenID:( NSString * ) strTokenID
+                      forProjectOrTenantID:( NSString * ) strProjectOrTenantID
 {
     return [ [ self alloc ] initWithBlockStorageURL:strBlockStorageRoot
-                                         andTokenID:strTokenID ];
+                                         andTokenID:strTokenID
+                               forProjectOrTenantID:strProjectOrTenantID ];
 }
 
 + ( instancetype ) initWithIdentity:( id<IOStackIdentityInfos> ) idUserIdentity
@@ -250,27 +252,6 @@
         else if( doAfterDelete != nil )
             doAfterDelete( dicResults != nil, idFullResponse );
     }];
-    /*
-    [self serviceDELETE:strServerURL
-       onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-           if( bWaitDeleted )
-               [self waitVolumeWithID:uidVolume
-                            forStatus:IOStackVolumeStatusDeleting
-                               thenDo:^(bool isWithStatus)
-           {
-               if( doAfterDelete != nil )
-                   doAfterDelete( isWithStatus, responseObject );
-           }];
-           else if( doAfterDelete != nil )
-               doAfterDelete( YES, responseObject );
-       }
-       onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-           NSLog( @"token not valid : %@", error );
-           
-           if( doAfterDelete != nil )
-               doAfterDelete( NO, nil );
-       }];
-     */
 }
 
 
@@ -286,6 +267,7 @@
                  insideKey:@"volume"
                   forField:nil
               toEqualValue:nil
+             orErrorValues:IOStackVolumeStatusErrorArray
                     thenDo:doAfterWait];
     
     else
@@ -294,6 +276,7 @@
                  insideKey:@"volume"
                   forField:@"status"
               toEqualValue:statusVolume
+             orErrorValues:IOStackVolumeStatusErrorArray
                     thenDo:doAfterWait];
 }
 
@@ -303,6 +286,18 @@
                                 thenDo:( void ( ^ ) ( NSDictionary * dicMetadata, id idFullResponse ) ) doAfterList
 {
     NSString * strVolumeMetadataURL = [NSString stringWithFormat:@"%@/%@/%@", BLOCKSTORAGEV2_VOLUMES_URN, uidVolume, BLOCKSTORAGEV2_VOLUMEMETADATA_URN ];
+    
+    [self readResource:strVolumeMetadataURL
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"metadata"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( dicObjectFound, dataResponse );
+     }];
+    /*
+     NSString * strVolumeMetadataURL = [NSString stringWithFormat:@"%@/%@/%@", BLOCKSTORAGEV2_VOLUMES_URN, uidVolume, BLOCKSTORAGEV2_VOLUMEMETADATA_URN ];
     
     [self serviceGET:strVolumeMetadataURL
           withParams:nil
@@ -327,6 +322,7 @@
         if( doAfterList != nil )
             doAfterList( nil, nil );
     }];
+     */
 }
 
 - ( void ) createMetadataForVolumeWithID:( NSString * ) uidVolume
@@ -647,6 +643,7 @@
                  insideKey:@"backup"
                   forField:nil
               toEqualValue:nil
+             orErrorValues:IOStackBackupStatusErrorArray
                     thenDo:doAfterWait];
     
     else
@@ -655,6 +652,7 @@
                  insideKey:@"backup"
                   forField:@"status"
               toEqualValue:statusBackup
+             orErrorValues:IOStackBackupStatusErrorArray
                     thenDo:doAfterWait];
 }
 
@@ -776,6 +774,7 @@
                  insideKey:@"snapshot"
                   forField:nil
               toEqualValue:nil
+             orErrorValues:IOStackSnapshotStatusErrorArray
                     thenDo:doAfterWait];
     
     else
@@ -784,6 +783,7 @@
                  insideKey:@"snapshot"
                   forField:@"status"
               toEqualValue:statusSnapshot
+             orErrorValues:IOStackSnapshotStatusErrorArray
                     thenDo:doAfterWait];
 }
 

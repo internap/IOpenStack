@@ -103,23 +103,24 @@
     [self listResource:currentAccountID
             withHeader:nil
           andUrlParams:nil
-                thenDo:^(NSArray * arrFound, id dataResponse) {
-                     if( arrFound == nil )
-                     {
-                         if( doAfterList != nil )
-                             doAfterList( nil );
-                         return;
-                     }
-                     
-                     if( ![arrFound isKindOfClass:[NSArray class]] )
-                         [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", @"/"]
-                                                 reason:@"response object is not a NSArray"
-                                               userInfo:@{@"account_id": currentAccountID,
-                                                          @"returnedValue": dataResponse}];
-                     
-                     if( doAfterList != nil )
-                         doAfterList( [IOStackOStorageContainerV1 parseFromAPIResponse:arrFound] );
-                 }];
+                thenDo:^(NSArray * arrFound, id dataResponse)
+    {
+        if( arrFound == nil )
+        {
+            if( doAfterList != nil )
+                doAfterList( nil );
+            return;
+        }
+        
+        if( ![arrFound isKindOfClass:[NSArray class]] )
+            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", @"/"]
+                                    reason:@"response object is not a NSArray"
+                                  userInfo:@{@"account_id": currentAccountID,
+                                             @"returnedValue": dataResponse}];
+        
+        if( doAfterList != nil )
+            doAfterList( [IOStackOStorageContainerV1 parseFromAPIResponse:arrFound] );
+    }];
 }
 
 - ( void ) createContainerWithName:( NSString * ) strNameContainer

@@ -27,6 +27,9 @@
 @synthesize currentServices;
 
 
+#pragma mark - Property accessor nameProvider readonly
+- ( void ) setNameProvider:( NSString * ) nameProvider { return; }
+
 
 + ( instancetype ) initWithIdentityURL:( NSString * ) strIdentityRoot
 {
@@ -399,7 +402,7 @@
 }
 
 - ( void ) listProjectsOrTenantsWithTokenID:( NSString * ) strTokenID
-                                  forDomain:( NSString * ) strDomain
+                                  forDomain:( NSString * ) strDomainName
                                        From:( NSString * ) strStartingFromID
                                          To:( NSNumber * ) nLimit
                                      thenDo:( void ( ^ ) ( NSArray * arrTenantResponse ) ) doAfterList
@@ -429,6 +432,7 @@
 - ( void ) listProjectsOrTenantsWithLogin:( NSString * ) strLogin
                               andPassword:( NSString * ) strPassword
                                 forDomain:( NSString * ) strDomain
+                       andProjectOrTenant:( NSString * ) strProjectOrTenant
                                      From:( NSString * ) strStartingFromID
                                        To:( NSNumber * ) nLimit
                                    thenDo:( void ( ^ ) ( NSArray * arrTenantResponse ) ) doAfterList
@@ -437,7 +441,7 @@
         [self authenticateWithLogin:strLogin
                         andPassword:strPassword
                           forDomain:strDomain
-                    andProjectOrTenant:nil
+                    andProjectOrTenant:strProjectOrTenant
                                 thenDo:^(NSString * _Nullable strTokenIDResponse, NSDictionary * _Nullable dicFullResponse) {
                                     if( strTokenIDResponse != nil )
                                         [self listProjectsOrTenantsWithTokenID:strTokenIDResponse

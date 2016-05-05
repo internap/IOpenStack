@@ -9,8 +9,8 @@
 #import <XCTest/XCTest.h>
 
 
-#include "IOStackAuthV3.h"
-#import "IOStackBlockStorageV2.h"
+#import     "IOStackAuthV3.h"
+#import     "IOStackBlockStorageV2.h"
 
 
 @interface IOStackBlockStorageV2Tests : XCTestCase
@@ -28,22 +28,6 @@
 }
 
 
-- ( void ) cleanupVolume:( NSDictionary * ) dicUserInfo
-{
-    NSString * uidVolume                            = dicUserInfo[ @"uidVolume" ];
-    void ( ^doAfterCleanup )( bool bSuccess )       = dicUserInfo[ @"blockAfterCleanup" ];
-    
-    [bstorageV2Test deleteVolumeWithID:uidVolume
-                    waitUntilIsDeleted:YES
-                                thenDo:^(bool isDeleted, id  _Nullable idFullResponse)
-    {
-        XCTAssertTrue( isDeleted );
-        if( doAfterCleanup )
-            doAfterCleanup( isDeleted );
-    }];
-}
-
-
 - ( void ) setUp
 {
     [super setUp];
@@ -54,13 +38,13 @@
     
     XCTAssertNotNil( dicSettingsTests );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_IDENTITY_ROOT" ] );
-    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_PROJECTORTENANT" ] );
-    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_DOMAIN" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINDEMO" ] );
     XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDDEMO" ] );
-    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_IMAGE_ROOT" ] );
-    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_OBJECTSTORAGE_ROOT" ] );
-    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_OBJECTSTORAGE_ACCOUNT" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_LOGINADMIN" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_PASSWORDADMIN" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_DOMAIN" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_ACCOUNT_PROJECTORTENANT" ] );
+    XCTAssertNotNil( dicSettingsTests[ @"DEVSTACK_BLOCKSTORAGE_ROOT" ] );
     
     XCTestExpectation *exp = [self expectationWithDescription:@"Setuping Auth"];
     
@@ -103,17 +87,17 @@
 }
 
 
-- ( void ) testNotASingleton
+- ( void ) testBStorageNotASingleton
 {
     XCTAssertNotNil( bstorageV2Test.currentTokenID );
     
-    IOStackObjectStorageV1 *    bstorageV2Test2 = [IOStackObjectStorageV1 initWithObjectStorageURL:dicSettingsTests[ @"DEVSTACK_OBJECTSTORAGE_ROOT" ]
-                                                                                        andTokenID:dicSettingsTests[ @"DEVSTACK_ACCOUNT_PROJECTORTENANT" ]
-                                                                                        forAccount:dicSettingsTests[ @"DEVSTACK_OBJECTSTORAGE_ACCOUNT" ]];
+    IOStackBlockStorageV2 *    bstorageV2Test2 = [IOStackBlockStorageV2 initWithBlockStorageURL:dicSettingsTests[ @"DEVSTACK_BLOCKSTORAGE_ROOT" ]
+                                                                                     andTokenID:bstorageV2Test.currentTokenID
+                                                                           forProjectOrTenantID:bstorageV2Test.currentProjectOrTenantID];
     XCTAssertNotEqualObjects( bstorageV2Test, bstorageV2Test2 );
 }
 
-- ( void ) testCreateListAndDeleteVolume
+- ( void ) testBStorageCreateListAndDeleteVolume
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
     
@@ -146,7 +130,7 @@
     }];
 }
 
-- ( void ) testCreateListAndDeleteVolumeWithDetails
+- ( void ) testBStorageCreateListAndDeleteVolumeWithDetails
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
     NSString * nameVolume       = [NSString stringWithFormat:@"%@-%@", @"testvolume - ", [[NSUUID UUID] UUIDString]];
@@ -210,7 +194,7 @@
     }];
 }
 
-- ( void ) testCreateUpdateMetadataThenDestroyVolume
+- ( void ) testBStorageCreateUpdateMetadataThenDestroyVolume
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume metadata exist"];
     NSDictionary * dicMetadata  = @{ @"metadata1" : @"test metadata value", @"metadata2" : @"another test metadata value"};
@@ -268,7 +252,7 @@
     }];
 }
 
-- ( void ) testCreateExtendThenDestroyVolume
+- ( void ) testBStorageCreateExtendThenDestroyVolume
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
     
@@ -314,7 +298,7 @@
 }
 
 /*
-- ( void ) testCreateResetStatusesThenDestroyVolume
+- ( void ) testBStorageCreateResetStatusesThenDestroyVolume
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - status work"];
     
@@ -360,7 +344,7 @@
     }];
 }
  */
-- ( void ) testCreateSetAndUnsetMetadataThenDestroyVolume
+- ( void ) testBStorageCreateSetAndUnsetMetadataThenDestroyVolume
 {
     __weak IOStackBlockStorageV2 * weakBStorageForTest = bstorageV2Test;
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - metadata set unset"];
@@ -417,7 +401,7 @@
     }];
 }
 
-- ( void ) testAsAdminCreateThenUnmanageVolume
+- ( void ) testBStorageAsAdminCreateThenUnmanageVolume
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - unmanage volume"];
     
@@ -452,7 +436,7 @@
     }];
 }
 
-- ( void ) testCreateListAndDeleteBackup
+- ( void ) testBStorageCreateListAndDeleteBackup
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - backup exist"];
     
@@ -507,7 +491,7 @@
     }];
 }
 
-- ( void ) testCreateListAndDeleteSnapshot
+- ( void ) testBStorageCreateListAndDeleteSnapshot
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - snapshot exist"];
     
@@ -560,7 +544,7 @@
     }];
 }
 
-- ( void ) testCreateAcceptAndDeleteVolumeTransfer
+- ( void ) testBStorageCreateAcceptAndDeleteVolumeTransfer
 {
     XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume transfer exist"];
     

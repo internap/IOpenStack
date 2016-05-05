@@ -8,7 +8,7 @@
 
 #import "IOStackComputeServerV2_1.h"
 
-@implementation IOStackServerObjectV2_1
+@implementation IOStackComputeServerV2_1
 
 @synthesize name;
 @synthesize adminPassword;
@@ -57,7 +57,7 @@
         if( [currentServer valueForKey:@"id"] == nil )
             break;
         
-        IOStackServerObjectV2_1 * server = [[IOStackComputeServerV2_1 alloc] initFromAPIResponse:currentServer];
+        IOStackComputeServerV2_1 * server = [[IOStackComputeServerV2_1 alloc] initFromAPIResponse:currentServer];
         
         [parsedServers setObject:server
                           forKey:server.uniqueID];
@@ -82,6 +82,9 @@
 
 - ( instancetype ) initFromAPIResponse:( NSDictionary * ) dicAPIResponse
 {
+    if( dicAPIResponse == nil )
+        return nil;
+    
     if( self = [super init] )
     {
         self.objectType     = IOStackObjectTypeServer;

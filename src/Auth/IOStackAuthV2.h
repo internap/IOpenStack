@@ -41,6 +41,8 @@
                             andProjectOrTenant:( nullable NSString * ) strProjectOrTenant
                                         thenDo:( nullable void ( ^ ) ( NSString * _Nullable strTokenIDResponse, NSDictionary * _Nullable dicFullResponse ) ) doAfterInit;
 
+
+- ( nonnull instancetype ) initWithIdentityURL:( nonnull NSString * ) strIdentityRoot;
 - ( nonnull instancetype ) initWithIdentityURL:( nonnull NSString * ) strIdentityRoot
                                       andLogin:( nonnull NSString * ) strLogin
                                    andPassword:( nullable NSString * ) strPassword
@@ -75,6 +77,7 @@
 - ( void ) listProjectsOrTenantsWithLogin:( nonnull NSString * ) strLogin
                               andPassword:( nullable NSString * ) strPassword
                                 forDomain:( nullable NSString * ) strDomainName
+                       andProjectOrTenant:( nullable NSString * ) strProjectOrTenant
                                      From:( nullable NSString * ) strStartingFromID
                                        To:( nullable NSNumber * ) nLimit
                                    thenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrProjectResponse ) ) doAfterList;

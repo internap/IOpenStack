@@ -18,6 +18,8 @@
     NSMutableDictionary *   _cacheResponseData;
     NSMutableDictionary *   _dicHeadersValues;
     NSOperationQueue *      serviceQueue;
+
+    BOOL                    debugON;
 }
 
 @synthesize serviceID;
@@ -32,10 +34,12 @@
 
 
 
-- ( instancetype ) init
+- ( instancetype ) initProperties
 {
     if (self = [super init])
     {
+        debugON = NO;
+        
         _dicActiveTasks         = [NSMutableDictionary dictionary];
         _dicActiveSuccessBlocks = [NSMutableDictionary dictionary];
         _dicActiveFailureBlocks = [NSMutableDictionary dictionary];
@@ -55,7 +59,7 @@
                      andMinorVersion:( NSNumber * ) nMinorVersion
                      andProviderName:( NSString * ) strProviderName
 {
-    if( self = [self init] )
+    if( self = [self initProperties] )
     {
         urlPublic           = urlServicePublic;
         serviceType         = strServiceType;
@@ -106,6 +110,11 @@
     }
     
     return self;
+}
+
+- ( void ) activateDebug:( BOOL ) isActivated
+{
+    debugON = isActivated;
 }
 
 - ( NSString * ) taskUUIDForTask:( NSURLSessionTask * ) taskToGetUUID
@@ -185,6 +194,8 @@
     for( NSString * currentHeaderName in _dicHeadersValues )
         [urlreqCurrentRequest addValue:_dicHeadersValues[ currentHeaderName ]
                     forHTTPHeaderField:currentHeaderName];
+    
+    if( debugON ) NSLog( @"-[IOStackFramework DEBUG]- Setting up Headers with values %@", _dicHeadersValues );
 }
 
 
@@ -207,6 +218,9 @@
         
         [compFinalURLQuery setQueryItems:queryItems];
     }
+    
+    if( debugON ) NSLog( @"-[IOStackFramework DEBUG]- HTTP GET - %@", [compFinalURLQuery URL] );
+    
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:[compFinalURLQuery URL]];
     
     [self setURLHeaders:urlRequest];
@@ -263,6 +277,9 @@
         
         [compFinalURLQuery setQueryItems:queryItems];
     }
+    
+    if( debugON ) NSLog( @"-[IOStackFramework DEBUG]- HTTP HEAD - %@", [compFinalURLQuery URL] );
+    
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:[compFinalURLQuery URL]];
     
     [self setURLHeaders:urlRequest];
@@ -317,6 +334,13 @@
     
     if( dataForPOST != nil )
         [urlRequest setHTTPBody:dataForPOST];
+    
+    if( debugON )
+        NSLog( @"-[IOStackFramework DEBUG]- HTTP POST - %@ - with data : %@",
+                        [urlRequest URL],
+                        [NSJSONSerialization JSONObjectWithData:dataForPOST
+                                                        options:0
+                                                          error:nil] );
     
     return [_httpSession dataTaskWithRequest:urlRequest];
 }
@@ -408,6 +432,13 @@
     if( dataForPUT != nil )
         [urlRequest setHTTPBody:dataForPUT];
     
+    if( debugON )
+        NSLog( @"-[IOStackFramework DEBUG]- HTTP PUT - %@ - with data : %@",
+                        [urlRequest URL],
+                        [NSJSONSerialization JSONObjectWithData:dataForPUT
+                                                        options:0
+                                                          error:nil] );
+    
     return [_httpSession dataTaskWithRequest:urlRequest];
 }
 
@@ -494,6 +525,8 @@
     
     [urlRequest setHTTPMethod:@"DELETE"];
     
+    if( debugON ) NSLog( @"-[IOStackFramework DEBUG]- HTTP GET - %@", [urlRequest URL] );
+    
     return [_httpSession dataTaskWithRequest:urlRequest];
 }
 
@@ -562,6 +595,19 @@
         NSLog(@"%@ failed: %@", taskSession.originalRequest.URL, error);
         return;
     }
+    
+    NSMutableData * cachedResponseData = [_cacheResponseData valueForKey:uidTaskSession];
+    if( !cachedResponseData )
+        NSLog(@"No data in response");
+    
+    NSDictionary * dicResponseSerialized = nil;
+    if( cachedResponseData != nil )
+        dicResponseSerialized = [NSJSONSerialization JSONObjectWithData:cachedResponseData
+                                                                options:0
+                                                                  error:nil];
+    
+    if( debugON ) NSLog( @"-[IOStackFramework DEBUG]- HTTP response for %@ - with data : %@", [response URL], dicResponseSerialized );
+    
     if( [response statusCode] < 200 ||
        [response statusCode] >= 300 )
     {
@@ -569,28 +615,12 @@
             [idDelegate onServiceFailure:uidTaskSession
                                withError:error
                        andResponseStatus:[response statusCode]];
-        NSLog(@"%@ failed: %@", taskSession.originalRequest.URL, response);
         return;
     }
     
-    
-    NSMutableData * cachedResponseData = [_cacheResponseData valueForKey:uidTaskSession];
-    if( !cachedResponseData )
-        NSLog(@"No data in response");
-    
-    NSDictionary * dicResponseSerialized = nil;
-    
-    if( cachedResponseData != nil )
-        dicResponseSerialized = [NSJSONSerialization JSONObjectWithData:cachedResponseData
-                                                                options:0
-                                                                  error:nil];
-    
     if( dicResponseSerialized == nil )
         dicResponseSerialized = @{ @"response" : [[NSString alloc] initWithData:cachedResponseData
-                                                                       encoding:NSUTF8StringEncoding]};
-    
-    if( dicResponseSerialized == nil )
-        NSLog( @"Error in converting to UTF8 : %@", dicResponseSerialized );
+                                                    encoding:NSUTF8StringEncoding] };
     
     if( idDelegate != nil )
         [idDelegate onServiceSuccess:uidTaskSession
@@ -615,7 +645,10 @@
     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicHeaderResponse ) {
         if( doWithReadResults != nil )
         {
-            if( nameObjectKey == nil &&
+            if( responseObject == nil )
+                doWithReadResults( nil, nil );
+            
+            else if( nameObjectKey == nil &&
                 [responseObject isKindOfClass:[NSDictionary class]] &&
                 [responseObject count] == 1)
                 doWithReadResults( responseObject, responseObject );
@@ -663,6 +696,7 @@
            responseObject != nil )
         {
             NSArray * arrResponseConverted = nil;
+            
             if( nameObjectKey == nil &&
                 [responseObject isKindOfClass:[NSArray class]] )
                 arrResponseConverted = responseObject;
@@ -673,11 +707,12 @@
                     arrResponseConverted = [responseObject valueForKey:nameObjectKey];
                 
             else
-                arrResponseConverted = [NSJSONSerialization JSONObjectWithData:responseObject
-                                                                       options:0
-                                                                         error:nil];
+                arrResponseConverted = nil;
+            
             doWithListResults( arrResponseConverted, responseObject );
         }
+        else if( doWithListResults != nil )
+            doWithListResults( nil, nil );
     }
     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
         NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
@@ -828,6 +863,7 @@
               insideKey:( NSString * ) nameObjectKey
                forField:( NSString * ) strFieldName
            toEqualValue:( id ) valToEqual
+          orErrorValues:( NSArray * ) arrErrorValues
           withFrequency:( NSTimeInterval ) tiFrequency
              andTimeout:( NSTimeInterval ) tiTimeout
                  thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
@@ -845,6 +881,9 @@
     
     if( valToEqual != nil )
         dicUserInfo[  @"valueToWaitFor" ] = valToEqual;
+    
+    if( arrErrorValues != nil )
+        dicUserInfo[ @"arrErrorValues" ] = arrErrorValues;
     
 
     dicUserInfo[  @"dateStartedLooping" ]   = [NSDate date];
@@ -876,14 +915,16 @@
           withUrlParams:( NSDictionary * ) paramsURL
               insideKey:( NSString * ) nameObjectKey
                forField:( NSString * ) strFieldName
-               toEqualValue:( id ) valToEqual
-                     thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
+           toEqualValue:( id ) valToEqual
+          orErrorValues:( NSArray * ) arrErrorValues
+                 thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
 {
     [self waitResource:urlResource
          withUrlParams:paramsURL
              insideKey:nameObjectKey
               forField:strFieldName
           toEqualValue:valToEqual
+         orErrorValues:arrErrorValues
          withFrequency:DEFAULT_APIREFRESH_FREQUENCY
             andTimeout:DEFAULT_APIREFRESH_TIMEOUT
                 thenDo:doAfterWait];
@@ -905,6 +946,7 @@
     NSString * nameObjectKey                        = dicUserInfo[ @"nameObjectKey" ];
     NSString * strFieldName                         = dicUserInfo[ @"fieldToCheck" ];
     id valueToCheck                                 = dicUserInfo[ @"valueToWaitFor" ];
+    NSArray * arrErrorValues                        = dicUserInfo[ @"arrErrorValues" ];
     NSDate * dateStarted                            = dicUserInfo[ @"dateStartedLooping" ];
     NSTimeInterval tiFrequency                      = [( NSNumber * )dicUserInfo[ @"tiFrequency" ] doubleValue];
     NSTimeInterval tiTimeout                        = [( NSNumber * )dicUserInfo[ @"tiTimeout" ] doubleValue];
@@ -927,9 +969,19 @@
         
         if( objResult == nil ||
             ![objResult isKindOfClass:[NSDictionary class]] )
+        {
             doAfterWaitBlock( NO );
+            return;
+        }
         
         id valRetrieved = [objResult valueForKey:strFieldName];
+        if( arrErrorValues != nil &&
+           [arrErrorValues containsObject:valRetrieved] )
+        {
+            doAfterWaitBlock( NO );
+            return;
+        }
+        
         BOOL bHasReachedEquality = NO;
         
         if( [valRetrieved isKindOfClass:[NSString class]] )

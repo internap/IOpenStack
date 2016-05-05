@@ -6,7 +6,7 @@
 //  Copyright © 2016 Internap Inc. All rights reserved.
 //
 
-#import <IOpenStack/IOpenStack.h>
+#import <Foundation/Foundation.h>
 
 
 #import "IOStackAuth.h"
@@ -25,7 +25,8 @@
 
 
 + ( nonnull instancetype ) initWithBlockStorageURL:( nonnull NSString * ) strBlockStorageRoot
-                                        andTokenID:( nonnull NSString * ) strTokenID;
+                                        andTokenID:( nonnull NSString * ) strTokenID
+                              forProjectOrTenantID:( nonnull NSString * ) strProjectOrTenantID;
 + ( nonnull instancetype ) initWithIdentity:( nonnull id<IOStackIdentityInfos> ) idUserIdentity;
 
 - ( nonnull instancetype ) initWithBlockStorageURL:( nonnull NSString * ) strBlockStorageRoot

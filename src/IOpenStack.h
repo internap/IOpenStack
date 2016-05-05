@@ -29,14 +29,24 @@ FOUNDATION_EXPORT const unsigned char IOpenStackVersionString[];
 #import <IOpenStack/IOStackImageObjectV2.h>
 #import <IOpenStack/IOStackImageV2.h>
 
-#import <IOpenStack/IOStackServerFlavorsV2_1.h>
-#import <IOpenStack/IOStackServerKeypairV2_1.h>
-#import <IOpenStack/IOStackServerSecurityGroupV2_1.h>
-#import <IOpenStack/IOStackServerSecurityGroupRuleV2_1.h>
-#import <IOpenStack/IOStackServerIPAllocationV2_1.h>
-#import <IOpenStack/IOStackServerObjectV2_1.h>
-#import <IOpenStack/IOStackComputeV2_1.h>
+#import <IOpenStack/IOStackBStorageVolumeV2.h>
+#import <IOpenStack/IOStackBStorageBackupV2.h>
+#import <IOpenStack/IOStackBStorageSnapshotV2.h>
+#import <IOpenStack/IOStackBStorageVolumeTransferV2.h>
+#import <IOpenStack/IOStackBlockStorageV2.h>
 
 #import <IOpenStack/IOStackOStorageContainerV1.h>
 #import <IOpenStack/IOStackOStorageObjectV1.h>
 #import <IOpenStack/IOStackObjectStorageV1.h>
+
+#import <IOpenStack/IOStackComputeFlavorV2_1.h>
+#import <IOpenStack/IOStackComputeKeypairV2_1.h>
+#import <IOpenStack/IOStackComputeSecurityGroupV2_1.h>
+#import <IOpenStack/IOStackComputeSecurityGroupRuleV2_1.h>
+#import <IOpenStack/IOStackComputeIPAllocationV2_1.h>
+#import <IOpenStack/IOStackComputeNetworkV2_1.h>
+#import <IOpenStack/IOStackComputeServerV2_1.h>
+#import <IOpenStack/IOStackComputeV2_1.h>
+
+
+#import <IOpenStack/IOStackNetworkV2.h>

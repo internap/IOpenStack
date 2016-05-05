@@ -24,6 +24,7 @@
 #define IOStackVolumeStatusErrorRestoring   @"error_restoring"
 #define IOStackVolumeStatusErrorExtending   @"error_extending"
 
+#define IOStackVolumeStatusErrorArray       @[ IOStackVolumeStatusError, IOStackVolumeStatusErrorDeleting, IOStackVolumeStatusErrorRestoring, IOStackVolumeStatusErrorExtending ]
 
 @interface IOStackBStorageVolumeV2 : IOStackObject<IOStackObjectParsable>
 
