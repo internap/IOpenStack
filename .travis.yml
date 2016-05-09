@@ -1,0 +1,4 @@
+language: objective-c
+xcode_project: IOpenStack.xcodeproj
+xcode_scheme: IOpenStack iOSTests
+

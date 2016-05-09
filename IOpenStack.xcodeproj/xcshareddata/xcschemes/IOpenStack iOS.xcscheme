@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "66B1522F1C0689620069D15D"
-               BuildableName = "IOpenStack iOS.framework"
+               BuildableName = "IOpenStack.framework"
                BlueprintName = "IOpenStack iOS"
                ReferencedContainer = "container:IOpenStack.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66B1522F1C0689620069D15D"
-            BuildableName = "IOpenStack iOS.framework"
+            BuildableName = "IOpenStack.framework"
             BlueprintName = "IOpenStack iOS"
             ReferencedContainer = "container:IOpenStack.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66B1522F1C0689620069D15D"
-            BuildableName = "IOpenStack iOS.framework"
+            BuildableName = "IOpenStack.framework"
             BlueprintName = "IOpenStack iOS"
             ReferencedContainer = "container:IOpenStack.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66B1522F1C0689620069D15D"
-            BuildableName = "IOpenStack iOS.framework"
+            BuildableName = "IOpenStack.framework"
             BlueprintName = "IOpenStack iOS"
             ReferencedContainer = "container:IOpenStack.xcodeproj">
          </BuildableReference>

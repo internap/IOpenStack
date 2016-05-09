@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "66FF1CC21CDBC22300B8E841"
-               BuildableName = "IOpenStack watchOS.framework"
+               BuildableName = "IOpenStack.framework"
                BlueprintName = "IOpenStack watchOS"
                ReferencedContainer = "container:IOpenStack.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66FF1CC21CDBC22300B8E841"
-            BuildableName = "IOpenStack watchOS.framework"
+            BuildableName = "IOpenStack.framework"
             BlueprintName = "IOpenStack watchOS"
             ReferencedContainer = "container:IOpenStack.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "66FF1CC21CDBC22300B8E841"
-            BuildableName = "IOpenStack watchOS.framework"
+            BuildableName = "IOpenStack.framework"
             BlueprintName = "IOpenStack watchOS"
             ReferencedContainer = "container:IOpenStack.xcodeproj">
          </BuildableReference>
