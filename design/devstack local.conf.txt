@@ -13,6 +13,8 @@ FLAT_INTERFACE=eth1
 Q_FLOATING_ALLOCATION_POOL=start=192.168.15.10,end=192.168.15.20
 PUBLIC_NETWORK_GATEWAY=192.168.15.1
 
+IP_VERSION=4+6
+
 disable_service n-net
 enable_service q-svc
 enable_service q-agt
@@ -27,6 +29,12 @@ enable_service s-object
 enable_service s-container 
 enable_service s-account
 enable_service c-bak
+enable_service heat 
+enable_service h-api 
+enable_service h-api-cfn 
+enable_service h-api-cw 
+enable_service h-eng
+
 # fin :)
 # Optional, to enable tempest configuration as part of devstack
 
@@ -35,4 +43,6 @@ VERBOSE=True
 LOG_COLOR=True
 LOGFILE=/opt/stack/logs/stack.sh.log
 SCREEN_LOGDIR=/opt/stack/logs
+PIP_UPGRADE=True
+RECLONE=yes
 
