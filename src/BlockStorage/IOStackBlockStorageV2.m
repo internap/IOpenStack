@@ -346,10 +346,10 @@
 {
     NSString * strVolumeMetadataURL = [NSString stringWithFormat:@"%@/%@/%@", BLOCKSTORAGEV2_VOLUMES_URN, uidVolume, BLOCKSTORAGEV2_VOLUMEMETADATA_URN ];
     
-    [self updateResource:strVolumeMetadataURL
-              withHeader:nil
-              andUrlParams:@{ @"metadata" : dicMetadata }
-                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id _Nullable idFullResponse)
+    [self replaceResource:strVolumeMetadataURL
+               withHeader:nil
+                andUrlParams:@{ @"metadata" : dicMetadata }
+                   thenDo:^(NSDictionary * _Nullable dicResponseHeader, id _Nullable idFullResponse)
     {
         if( doAfterUpdate != nil )
             doAfterUpdate( dicResponseHeader != nil, idFullResponse );

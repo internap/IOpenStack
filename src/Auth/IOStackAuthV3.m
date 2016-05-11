@@ -11,7 +11,18 @@
 
 #define IDENTITYV3_TOKEN_URI            @"v3/auth/tokens"
 #define IDENTITYV3_PROJECT_URN          @"v3/projects"
+#define IDENTITYV3_CREDENTIALS_URN      @"v3/credentials"
 #define IDENTITYV3_DOMAIN_URN           @"v3/domains"
+#define IDENTITYV3_GROUP_URN            @"v3/groups"
+#define IDENTITYV3_POLICIES_URN         @"v3/policies"
+#define IDENTITYV3_REGIONS_URN          @"v3/regions"
+#define IDENTITYV3_USERS_URN            @"v3/users"
+#define IDENTITYV3_SERVICES_URN         @"v3/services"
+#define IDENTITYV3_ENDPOINTS_URN        @"v3/endpoints"
+#define IDENTITYV3_GROUPUSER_URN        @"users"
+#define IDENTITYV3_USERPASSWORD_URN     @"passwords"
+#define IDENTITYV3_USERGROUPS_URN       @"groups"
+#define IDENTITYV3_USERPROJECTS_URN     @"projects"
 #define IDENTITYV3_DEFAULT_DOMAIN       @"Default"
 
 
@@ -478,7 +489,7 @@
 
 
 #pragma mark - Token details
-- ( void ) getDetailsForTokenWithID:( NSString * ) strTokenIDToCheck
+- ( void ) getdetailsForTokenWithID:( NSString * ) strTokenIDToCheck
                              thenDo:( void ( ^ ) ( NSDictionary * strTokenDetails ) ) doAfterGetDetails
 {
     [self readResource:IDENTITYV3_TOKEN_URI
@@ -522,6 +533,120 @@
      }];
 }
 
+
+#pragma mark - Credentials management
+- ( void ) listCredentialsThenDo:( void ( ^ ) ( NSArray * arrCredential, id idFullResponse ) ) doAfterList
+{
+    [self listResource:IDENTITYV3_CREDENTIALS_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"credentials"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+         
+     }];
+}
+
+- ( void ) createCredentialWithBlob:( NSString * ) jsonBlob
+                       andProjectID:( NSString * ) uidProject
+                            andType:( NSString * ) strType
+                          andUserID:( NSString * ) uidUser
+                             thenDo:( void ( ^ ) ( NSDictionary * credentialCreated, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicCredentialParam = [NSMutableDictionary dictionaryWithObject:jsonBlob
+                                                                                   forKey:@"blob"];
+    if( uidProject != nil )
+        mdicCredentialParam[ @"project_id" ] = uidProject;
+
+    if( strType != nil )
+        mdicCredentialParam[ @"type" ] = strType;
+
+    if( uidUser != nil )
+        mdicCredentialParam[ @"user_id" ] = uidUser;
+
+    [self createResource:IDENTITYV3_CREDENTIALS_URN
+              withHeader:nil
+            andUrlParams:@{ @"credential" : mdicCredentialParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalCredential = idFullResponse;
+         if( idFullResponse != nil )
+             finalCredential = idFullResponse[ @"credential" ];
+         
+         if( doAfterCreate != nil )
+             doAfterCreate( finalCredential, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForCredentialWithID:( NSString * ) uidCredential
+                                 thenDo:( void ( ^ ) ( NSDictionary * dicDomain ) ) doAfterGetDetail
+{
+    NSString * urlCredential =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_CREDENTIALS_URN, uidCredential];
+    [self readResource:urlCredential
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"credential"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updateCredentialWithID:( NSString * ) uidCredential
+                          newBlob:( NSString * ) jsonBlob
+                     newProjectID:( NSString * ) uidProject
+                          newType:( NSString * ) strType
+                        newUserID:( NSString * ) uidUser
+                       thenDo:( void ( ^ ) ( NSDictionary * credentialUpdated, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlCredential =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_CREDENTIALS_URN, uidCredential];
+    NSMutableDictionary * mdicCredentialParam = [NSMutableDictionary dictionary];
+    
+    if( jsonBlob != nil )
+        mdicCredentialParam[ @"blob" ] = jsonBlob;
+    
+    if( uidProject != nil )
+        mdicCredentialParam[ @"project_id" ] = uidProject;
+    
+    if( strType != nil )
+        mdicCredentialParam[ @"type" ] = strType;
+    
+    if( uidUser != nil )
+        mdicCredentialParam[ @"user_id" ] = uidUser;
+    
+    [self updateResource:urlCredential
+              withHeader:nil
+            andUrlParams:@{ @"credential" : mdicCredentialParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalCredential = idFullResponse;
+         if( idFullResponse != nil )
+             finalCredential = idFullResponse[ @"credential" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalCredential, idFullResponse );
+     }];
+}
+
+- ( void ) deleteCredentialWithID:( NSString * ) uidCredential
+                           thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlCredential =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_CREDENTIALS_URN, uidCredential];
+    [self deleteResource:urlCredential
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+
 #pragma mark - Domain management
 - ( void ) listDomainsThenDo:( void ( ^ ) ( NSArray * arrDomains, id idFullResponse ) ) doAfterList
 {
@@ -539,7 +664,7 @@
 
 - ( void ) createDomainWithName:( NSString * ) nameDomain
                  andDescription:( NSString * ) strDescription
-                      enabled:( BOOL ) isEnabled
+                      isEnabled:( BOOL ) isEnabled
                          thenDo:( void ( ^ ) ( NSDictionary * domainCreated, id dicFullResponse ) ) doAfterCreate
 {
     NSMutableDictionary * mdicDomainParam = [NSMutableDictionary dictionaryWithObject:nameDomain
@@ -550,11 +675,11 @@
     mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
     
     if( !isEnabled )
-        mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+        mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
     
     [self createResource:IDENTITYV3_DOMAIN_URN
               withHeader:nil
-            andUrlParams:mdicDomainParam
+            andUrlParams:@{ @"domain" : mdicDomainParam }
                   thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
      {
          NSDictionary * finalDomain = idFullResponse;
@@ -566,7 +691,7 @@
      }];
 }
 
-- ( void ) getDetailForDomainWithID:( NSString * ) uidDomain
+- ( void ) getdetailForDomainWithID:( NSString * ) uidDomain
                              thenDo:( void ( ^ ) ( NSDictionary * dicDomain ) ) doAfterGetDetail
 {
     NSString * urlDomain =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_DOMAIN_URN, uidDomain];
@@ -581,6 +706,40 @@
      }];
 }
 
+- ( void ) updateDomainWithID:( NSString * ) uidDomain
+                      newName:( NSString * ) nameDomain
+               newDescription:( NSString * ) strDescription
+                    isEnabled:( BOOL ) isEnabled
+                       thenDo:( void ( ^ ) ( NSDictionary * domainUpdated, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlDomain =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_DOMAIN_URN, uidDomain];
+    NSMutableDictionary * mdicDomainParam = [NSMutableDictionary dictionary];
+    
+    if( nameDomain != nil )
+        mdicDomainParam[ @"name" ] = nameDomain;
+
+    if( strDescription != nil )
+        mdicDomainParam[ @"description" ] = strDescription;
+    
+    mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    if( !isEnabled )
+        mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    
+    [self updateResource:urlDomain
+              withHeader:nil
+            andUrlParams:@{ @"domain" : mdicDomainParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalDomain = idFullResponse;
+         if( idFullResponse != nil )
+             finalDomain = idFullResponse[ @"domain" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalDomain, idFullResponse );
+     }];
+}
+
 - ( void ) deleteDomainWithID:( NSString * ) uidDomain
                        thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
 {
@@ -590,7 +749,295 @@
                   thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
      {
          if( doAfterDelete != nil )
-             doAfterDelete( dicObjectFound == nil, idFullResponse );
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+
+#pragma mark - Groups management
+- ( void ) listGroupsThenDo:( void ( ^ ) ( NSArray * arrGroups, id idFullResponse ) ) doAfterList
+{
+    [self listResource:IDENTITYV3_GROUP_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"groups"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+         
+     }];
+}
+
+- ( void ) createGroupWithName:( NSString * ) nameGroup
+                andDescription:( NSString * ) strDescription
+              andOwnerDomainID:( NSString * ) uidOwnerDomain
+                         thenDo:( void ( ^ ) ( NSDictionary * groupCreated, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicGroupParam = [NSMutableDictionary dictionaryWithObject:nameGroup
+                                                                               forKey:@"name"];
+    if( strDescription != nil )
+        mdicGroupParam[ @"description" ] = strDescription;
+    
+    if( uidOwnerDomain != nil )
+        mdicGroupParam[ @"domain_id" ] = uidOwnerDomain;
+    
+    [self createResource:IDENTITYV3_GROUP_URN
+              withHeader:nil
+            andUrlParams:@{ @"group" : mdicGroupParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalGroup = idFullResponse;
+         if( idFullResponse != nil )
+             finalGroup = idFullResponse[ @"group" ];
+         
+         if( doAfterCreate != nil )
+             doAfterCreate( finalGroup, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForGroupWithID:( NSString * ) uidGroup
+                             thenDo:( void ( ^ ) ( NSDictionary * dicGroup ) ) doAfterGetDetail
+{
+    NSString * urlGroup =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_GROUP_URN, uidGroup];
+    [self readResource:urlGroup
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"group"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updateGroupWithID:( NSString * ) uidGroup
+                     newName:( NSString * ) nameGroup
+              newDescription:( NSString * ) strDescription
+            newOwnerDomainID:( NSString * ) uidOwnerDomain
+                       thenDo:( void ( ^ ) ( NSDictionary * groupUpdated, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlGroup =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_GROUP_URN, uidGroup];
+    NSMutableDictionary * mdicGroupParam = [NSMutableDictionary dictionary];
+    
+    if( nameGroup != nil )
+        mdicGroupParam[ @"name" ] = nameGroup;
+    
+    if( strDescription != nil )
+        mdicGroupParam[ @"description" ] = strDescription;
+    
+    if( uidOwnerDomain != nil )
+        mdicGroupParam[ @"domain_id" ] = uidOwnerDomain;
+    
+    [self updateResource:urlGroup
+              withHeader:nil
+            andUrlParams:@{ @"group" : mdicGroupParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalGroup = idFullResponse;
+         if( idFullResponse != nil )
+             finalGroup = idFullResponse[ @"group" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalGroup, idFullResponse );
+     }];
+}
+
+- ( void ) deleteGroupWithID:( NSString * ) uidGroup
+                       thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlGroup =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_GROUP_URN, uidGroup];
+    [self deleteResource:urlGroup
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+- ( void ) listUsersInGroupWithID:( NSString * ) uidGroup
+                           thenDo:( void ( ^ ) ( NSArray * arrUsers, id idFullResponse ) ) doAfterList
+{
+    NSString * urlGroupUsers =[NSString stringWithFormat:@"%@/%@/%@", IDENTITYV3_GROUP_URN, uidGroup, IDENTITYV3_GROUPUSER_URN];
+    [self listResource:urlGroupUsers
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"users"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+     }];
+}
+
+- ( void ) addUserWithID:( NSString * ) uidUser
+           toGroupWithID:( NSString * ) uidGroup
+                  thenDo:( void ( ^ ) ( BOOL isAdded, id dicFullResponse ) ) doAfterAdd
+{
+    NSString * urlUserInGroup =[NSString stringWithFormat:@"%@/%@/%@/%@", IDENTITYV3_GROUP_URN, uidGroup, IDENTITYV3_GROUPUSER_URN, uidUser];
+    
+    [self replaceResource:urlUserInGroup
+               withHeader:nil
+             andUrlParams:nil
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         if( doAfterAdd != nil )
+             doAfterAdd( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+- ( void ) checkUserWithID:( NSString * ) uidUser
+      belongsToGroupWithID:( NSString * ) uidGroup
+                    thenDo:( void ( ^ ) ( BOOL isInGroup ) ) doAfterCheck
+{
+    NSString * urlUserInGroup =[NSString stringWithFormat:@"%@/%@/%@/%@", IDENTITYV3_GROUP_URN, uidGroup, IDENTITYV3_GROUPUSER_URN, uidUser];
+    [self metadataResource:urlUserInGroup
+                withHeader:nil
+              andUrlParams:nil
+                    thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterCheck != nil )
+             doAfterCheck( ( ( dataResponse == nil ) ||
+                            ( dataResponse[ @"response" ] == nil ) ||
+                            ( [dataResponse[ @"response" ] isEqualToString:@""] ) ) );
+     }];
+}
+
+- ( void ) deleteUserWithID:( NSString * ) uidUser
+            fromGroupWithID:( NSString * ) uidGroup
+                     thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlUserInGroup =[NSString stringWithFormat:@"%@/%@/%@/%@", IDENTITYV3_GROUP_URN, uidGroup, IDENTITYV3_GROUPUSER_URN, uidUser];
+    [self deleteResource:urlUserInGroup
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+
+#pragma mark - Policies management
+- ( void ) listPoliciesThenDo:( void ( ^ ) ( NSArray * arrPolicies, id idFullResponse ) ) doAfterList
+{
+    [self listResource:IDENTITYV3_POLICIES_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"policies"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+         
+     }];
+}
+
+- ( void ) createPolicyWithBlob:( NSString * ) strBlob
+                        andType:( NSString * ) mimeType
+                   andProjectID:( NSString * ) uidProject
+                 andOwnerUserID:( NSString * ) uidOwner
+                         thenDo:( void ( ^ ) ( NSDictionary * policyCreated, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicPolicyParam = [NSMutableDictionary dictionaryWithObject:strBlob
+                                                                               forKey:@"blob"];
+    if( mimeType != nil )
+        mdicPolicyParam[ @"type" ] = mimeType;
+
+    if( uidProject != nil )
+        mdicPolicyParam[ @"project_id" ] = uidProject;
+    
+    if( uidOwner != nil )
+        mdicPolicyParam[ @"user_id" ] = uidOwner;
+    
+    
+    [self createResource:IDENTITYV3_POLICIES_URN
+              withHeader:nil
+            andUrlParams:@{ @"policy" : mdicPolicyParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalPolicy = idFullResponse;
+         if( idFullResponse != nil )
+             finalPolicy = idFullResponse[ @"policy" ];
+         
+         if( doAfterCreate != nil )
+             doAfterCreate( finalPolicy, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForPolicyWithID:( NSString * ) uidPolicy
+                             thenDo:( void ( ^ ) ( NSDictionary * dicPolicy ) ) doAfterGetDetail
+{
+    NSString * urlPolicy =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_POLICIES_URN, uidPolicy];
+    [self readResource:urlPolicy
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"policy"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updatePolicyWithID:( NSString * ) uidPolicy
+                      newBlob:( NSString * ) strBlob
+                      newType:( NSString * ) mimeType
+                 newProjectID:( NSString * ) uidProject
+               newOwnerUserID:( NSString * ) uidOwner
+                       thenDo:( void ( ^ ) ( NSDictionary * policyUpdated, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlPolicy =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_POLICIES_URN, uidPolicy];
+    NSMutableDictionary * mdicPolicyParam = [NSMutableDictionary dictionary];
+
+    if( strBlob != nil )
+        mdicPolicyParam[ @"blob" ] = strBlob;
+    
+    if( mimeType != nil )
+        mdicPolicyParam[ @"type" ] = mimeType;
+    
+    if( uidProject != nil )
+        mdicPolicyParam[ @"project_id" ] = uidProject;
+    
+    if( uidOwner != nil )
+        mdicPolicyParam[ @"user_id" ] = uidOwner;
+    
+    
+    [self updateResource:urlPolicy
+              withHeader:nil
+            andUrlParams:@{ @"policy" : mdicPolicyParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalPolicy = idFullResponse;
+         if( idFullResponse != nil )
+             finalPolicy = idFullResponse[ @"policy" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalPolicy, idFullResponse );
+     }];
+}
+
+- ( void ) deletePolicyWithID:( NSString * ) uidPolicy
+                       thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlPolicy =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_POLICIES_URN, uidPolicy];
+    [self deleteResource:urlPolicy
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
      }];
 }
 
@@ -711,6 +1158,684 @@
                              thenDo:doAfterList];
 }
 
+- ( void ) createProjectOrTenantWithName:( NSString * ) nameProjectOrTenant
+                          andDescription:( NSString * ) strDescription
+                             andDomainID:( NSString * ) uidDomain
+              andParentProjectOrTenantID:( NSString * ) uidParentProjectOrTenant
+                                isDomain:( BOOL ) isAlsoDomain
+                               isEnabled:( BOOL ) isEnabled
+                                  thenDo:( void ( ^ ) ( NSDictionary * createdProjectOrTenant, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicProjectOrTenantParam = [NSMutableDictionary dictionaryWithObject:nameProjectOrTenant
+                                                                               forKey:@"name"];
+    if( strDescription != nil )
+        mdicProjectOrTenantParam[ @"description" ] = strDescription;
+    
+    if( uidDomain != nil )
+        mdicProjectOrTenantParam[ @"domain_id" ] = uidDomain;
+    
+    if( uidParentProjectOrTenant != nil )
+        mdicProjectOrTenantParam[ @"parent_id" ] = uidParentProjectOrTenant;
+    
+    mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    if( isEnabled )
+        mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    
+    mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:NO];
+    if( isAlsoDomain )
+        mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:YES];
+    
+    [self createResource:IDENTITYV3_PROJECT_URN
+              withHeader:nil
+            andUrlParams:@{ @"project" : mdicProjectOrTenantParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalProjectOrTenant = idFullResponse;
+         if( idFullResponse != nil )
+             finalProjectOrTenant = idFullResponse[ @"project" ];
+         
+         if( doAfterCreate != nil )
+             doAfterCreate( finalProjectOrTenant, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForProjectOrTenantWithID:( NSString * ) uidProjectOrTenant
+                                      thenDo:( void ( ^ ) ( NSDictionary * dicProjectOrTenant ) ) doAfterGetDetail
+{
+    NSString * urlProjectOrTenant =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_PROJECT_URN, uidProjectOrTenant];
+    [self readResource:urlProjectOrTenant
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"project"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updateProjectOrTenantWithID:( NSString * ) uidProjectOrTenant
+                               newName:( NSString * ) nameProjectOrTenant
+                        newDescription:( NSString * ) strDescription
+                           newDomainID:( NSString * ) uidDomain
+                              isDomain:( BOOL ) isAlsoDomain
+                             isEnabled:( BOOL ) isEnabled
+                       thenDo:( void ( ^ ) ( NSDictionary * updatedProjectOrTenant, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlProjectOrTenant =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_PROJECT_URN, uidProjectOrTenant];
+    NSMutableDictionary * mdicProjectOrTenantParam = [NSMutableDictionary dictionary];
+    
+    if( nameProjectOrTenant != nil )
+        mdicProjectOrTenantParam[ @"name" ] = nameProjectOrTenant;
+    
+    if( strDescription != nil )
+        mdicProjectOrTenantParam[ @"description" ] = strDescription;
+    
+    if( uidDomain != nil )
+        mdicProjectOrTenantParam[ @"domain_id" ] = uidDomain;
+        
+    mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    if( isEnabled )
+        mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    
+    mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:NO];
+    if( isAlsoDomain )
+        mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:YES];
+    
+    [self updateResource:urlProjectOrTenant
+              withHeader:nil
+            andUrlParams:@{ @"project" : mdicProjectOrTenantParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalProjectOrTenant = idFullResponse;
+         if( idFullResponse != nil )
+             finalProjectOrTenant = idFullResponse[ @"project" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalProjectOrTenant, idFullResponse );
+     }];
+}
+
+- ( void ) deleteProjectOrTenantWithID:( NSString * ) uidProjectOrTenant
+                       thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlProjectOrTenant =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_PROJECT_URN, uidProjectOrTenant];
+    [self deleteResource:urlProjectOrTenant
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+
+#pragma mark - Regions management
+- ( void ) listRegionsThenDo:( void ( ^ ) ( NSArray * arrRegions, id idFullResponse ) ) doAfterList
+{
+    [self listResource:IDENTITYV3_REGIONS_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"regions"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+         
+     }];
+}
+
+- ( void ) createRegionWithDescription:( NSString * ) strDescription
+                           andForcedID:( NSString * ) strRegionForcedID
+                     andParentRegionID:( NSString * ) uidParentRegion
+                         thenDo:( void ( ^ ) ( NSDictionary * createdRegion, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicRegionParam = [NSMutableDictionary dictionary];
+    
+    if( strDescription != nil )
+        mdicRegionParam[ @"description" ] = strDescription;
+    
+    if( strRegionForcedID != nil )
+        mdicRegionParam[ @"id" ] = strRegionForcedID;
+    
+    if( uidParentRegion != nil )
+        mdicRegionParam[ @"parent_region_id" ] = uidParentRegion;
+    
+    if( [mdicRegionParam count] > 0)
+        [self createResource:IDENTITYV3_REGIONS_URN
+                  withHeader:nil
+                andUrlParams:@{ @"region" : mdicRegionParam }
+                      thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+         {
+             NSDictionary * finalRegion = idFullResponse;
+             if( idFullResponse != nil )
+                 finalRegion = idFullResponse[ @"region" ];
+             
+             if( doAfterCreate != nil )
+                 doAfterCreate( finalRegion, idFullResponse );
+         }];
+}
+
+- ( void ) getdetailForRegionWithID:( NSString * ) uidRegion
+                             thenDo:( void ( ^ ) ( NSDictionary * dicRegion ) ) doAfterGetDetail
+{
+    NSString * urlRegion =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_REGIONS_URN, uidRegion];
+    [self readResource:urlRegion
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"region"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updateRegionWithID:( NSString * ) uidRegion
+               newDescription:( NSString * ) strDescription
+            newParentRegionID:( NSString * ) uidParentRegion
+                       thenDo:( void ( ^ ) ( NSDictionary * updatedRegion, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlRegion =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_REGIONS_URN, uidRegion];
+    NSMutableDictionary * mdicRegionParam = [NSMutableDictionary dictionary];
+    
+    if( strDescription != nil )
+        mdicRegionParam[ @"description" ] = strDescription;
+    
+    if( uidParentRegion != nil )
+        mdicRegionParam[ @"parent_region_id" ] = uidParentRegion;
+    
+    [self updateResource:urlRegion
+              withHeader:nil
+            andUrlParams:@{ @"region" : mdicRegionParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalRegion = idFullResponse;
+         if( idFullResponse != nil )
+             finalRegion = idFullResponse[ @"region" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalRegion, idFullResponse );
+     }];
+}
+
+- ( void ) deleteRegionWithID:( NSString * ) uidRegion
+                       thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlRegion =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_REGIONS_URN, uidRegion];
+    [self deleteResource:urlRegion
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+#pragma mark - Services and endpoints management
+- ( void ) listServicesThenDo:( void ( ^ ) ( NSArray * arrServices, id idFullResponse ) ) doAfterList
+{
+    [self listResource:IDENTITYV3_SERVICES_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"services"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+         
+     }];
+}
+
+- ( void ) createServiceWithType:( NSString * ) strServiceType
+                         andName:( NSString * ) nameService
+                  andDescription:( NSString * ) strDescription
+              andForcedServiceID:( NSString * ) uidForced
+                       isEnabled:( BOOL ) isEnabled
+                          thenDo:( void ( ^ ) ( NSDictionary * createdService, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicServiceParam = [NSMutableDictionary dictionaryWithObject:strServiceType
+                                                                                forKey:@"type"];
+    
+    if( nameService != nil )
+        mdicServiceParam[ @"name" ] = nameService;
+
+    if( strDescription != nil )
+        mdicServiceParam[ @"description" ] = strDescription;
+    
+    if( uidForced != nil )
+        mdicServiceParam[ @"service_id" ] = uidForced;
+    
+    mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    if( isEnabled )
+        mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    
+    [self createResource:IDENTITYV3_SERVICES_URN
+              withHeader:nil
+            andUrlParams:@{ @"service" : mdicServiceParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalService = idFullResponse;
+         if( idFullResponse != nil )
+             finalService = idFullResponse[ @"service" ];
+         
+         if( doAfterCreate != nil )
+             doAfterCreate( finalService, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForServiceWithID:( NSString * ) uidService
+                             thenDo:( void ( ^ ) ( NSDictionary * dicService ) ) doAfterGetDetail
+{
+    NSString * urlService =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_SERVICES_URN, uidService];
+    [self readResource:urlService
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"service"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updateServiceWithID:( NSString * ) uidService
+                       newType:( NSString * ) strServiceType
+                       newName:( NSString * ) nameService
+                newDescription:( NSString * ) strDescription
+                     isEnabled:( BOOL ) isEnabled
+                       thenDo:( void ( ^ ) ( NSDictionary * updatedService, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlService =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_SERVICES_URN, uidService];
+    NSMutableDictionary * mdicServiceParam = [NSMutableDictionary dictionary];
+    
+    if( strServiceType != nil )
+        mdicServiceParam[ @"type" ] = strServiceType;
+    
+    if( nameService != nil )
+        mdicServiceParam[ @"name" ] = nameService;
+    
+    if( strDescription != nil )
+        mdicServiceParam[ @"description" ] = strDescription;
+    
+    mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    if( isEnabled )
+        mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    [self updateResource:urlService
+              withHeader:nil
+            andUrlParams:@{ @"service" : mdicServiceParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalService = idFullResponse;
+         if( idFullResponse != nil )
+             finalService = idFullResponse[ @"service" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalService, idFullResponse );
+     }];
+}
+
+- ( void ) deleteServiceWithID:( NSString * ) uidService
+                       thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlService =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_SERVICES_URN, uidService];
+    [self deleteResource:urlService
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+- ( void ) listEndpointsWithInterface:( NSString * ) strInterfaceToFilterBy
+                         andServiceID:( NSString * ) uidServiceToFilterBy
+                               thenDo:( void ( ^ ) ( NSArray * arrEndpoints, id idFullResponse ) ) doAfterList
+{
+    NSString * urlEndpoints =[NSString stringWithFormat:@"%@", IDENTITYV3_ENDPOINTS_URN];
+    NSURLComponents * queryString = [NSURLComponents componentsWithString:IDENTITYV3_ENDPOINTS_URN];
+    NSMutableArray * arrQueryItems = [NSMutableArray array];
+    
+    if( strInterfaceToFilterBy != nil )
+        [arrQueryItems addObject:[NSURLQueryItem queryItemWithName:@"interface"
+                                                             value:strInterfaceToFilterBy]];
+    
+    if( uidServiceToFilterBy != nil )
+        [arrQueryItems addObject:[NSURLQueryItem queryItemWithName:@"service_id"
+                                                             value:uidServiceToFilterBy]];
+    
+    if( [arrQueryItems count ] > 0)
+    {
+        [queryString setQueryItems:arrQueryItems];
+        urlEndpoints = [[queryString URL] absoluteString];
+    }
+    
+    [self listResource:urlEndpoints
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"endpoints"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+     }];
+}
+
+- ( void ) createEndpointWithName:( NSString * ) nameEndpoint
+                     andInterface:( NSString * ) strInterface
+                           andURL:( NSString * ) urlEndpoint
+                     andServiceID:( NSString * ) uidService
+                      andRegionID:( NSString * ) uidRegion
+                        isEnabled:( BOOL ) isEnabled
+                           thenDo:( void ( ^ ) ( NSDictionary * createdEndpoint, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicEndpointParam = [NSMutableDictionary dictionaryWithObject:nameEndpoint
+                                                                                 forKey:@"name"];
+    
+    if( strInterface != nil )
+        mdicEndpointParam[ @"interface" ] = strInterface;
+    
+    if( urlEndpoint != nil )
+        mdicEndpointParam[ @"url" ] = urlEndpoint;
+    
+    if( uidService != nil )
+        mdicEndpointParam[ @"service_id" ] = uidService;
+    
+    if( uidRegion != nil )
+        mdicEndpointParam[ @"region_id" ] = uidRegion;
+    
+    mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    if( isEnabled )
+        mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    
+    [self createResource:IDENTITYV3_ENDPOINTS_URN
+              withHeader:nil
+            andUrlParams:@{ @"endpoint" : mdicEndpointParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalService = idFullResponse;
+         if( idFullResponse != nil )
+             finalService = idFullResponse[ @"endpoint" ];
+         
+         if( doAfterCreate != nil )
+             doAfterCreate( finalService, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForEndpointWithID:( NSString * ) uidEndpoint
+                               thenDo:( void ( ^ ) ( NSDictionary * dicService ) ) doAfterGetDetail
+{
+    NSString * urlEndpoint = [NSString stringWithFormat:@"%@/%@", IDENTITYV3_ENDPOINTS_URN, uidEndpoint];
+    [self readResource:urlEndpoint
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"endpoint"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updateEndpointWithID:( NSString * ) uidEndpoint
+                        newName:( NSString * ) nameEndpoint
+                   newInterface:( NSString * ) strInterface
+                         newURL:( NSString * ) urlEndpoint
+                   newServiceID:( NSString * ) uidService
+                    newRegionID:( NSString * ) uidRegion
+                      isEnabled:( BOOL ) isEnabled
+                        thenDo:( void ( ^ ) ( NSDictionary * updatedEndpoint, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlEndpointResource =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_ENDPOINTS_URN, uidEndpoint];
+    NSMutableDictionary * mdicEndpointParam = [NSMutableDictionary dictionary];
+    
+    if( nameEndpoint != nil )
+        mdicEndpointParam[ @"name" ] = nameEndpoint;
+
+    if( strInterface != nil )
+        mdicEndpointParam[ @"interface" ] = strInterface;
+    
+    if( urlEndpoint != nil )
+        mdicEndpointParam[ @"url" ] = urlEndpoint;
+    
+    if( uidService != nil )
+        mdicEndpointParam[ @"service_id" ] = uidService;
+    
+    if( uidRegion != nil )
+        mdicEndpointParam[ @"region_id" ] = uidRegion;
+    
+    mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    if( isEnabled )
+        mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    [self updateResource:urlEndpointResource
+              withHeader:nil
+            andUrlParams:@{ @"endpoint" : mdicEndpointParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalService = idFullResponse;
+         if( idFullResponse != nil )
+             finalService = idFullResponse[ @"endpoint" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalService, idFullResponse );
+     }];
+}
+
+- ( void ) deleteEndpointWithID:( NSString * ) uidEndpoint
+                         thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlEndpoint =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_ENDPOINTS_URN, uidEndpoint];
+    [self deleteResource:urlEndpoint
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+
+#pragma mark - Users management
+- ( void ) listUsersThenDo:( void ( ^ ) ( NSArray * arrUsers, id idFullResponse ) ) doAfterList
+{
+    [self listResource:IDENTITYV3_USERS_URN
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"users"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+         
+     }];
+}
+
+- ( void ) createUserWithName:( NSString * ) nameUser
+                  andPassword:( NSString * ) strPassword
+               andDescription:( NSString * ) strDescription
+                     andEmail:( NSString * ) strEmail
+          andDefaultProjectID:( NSString * ) uidDefaultProjectOrTenant
+                  andDomainID:( NSString * ) uidDomain
+                    isEnabled:( BOOL ) isEnabled
+                        thenDo:( void ( ^ ) ( NSDictionary * createdUser, id dicFullResponse ) ) doAfterCreate
+{
+    NSMutableDictionary * mdicUserParam = [NSMutableDictionary dictionaryWithObject:nameUser
+                                                                              forKey:@"name"];
+    if( strPassword != nil )
+        mdicUserParam[ @"password" ] = strPassword;
+    
+    if( strDescription != nil )
+        mdicUserParam[ @"description" ] = strDescription;
+
+    if( strEmail != nil )
+        mdicUserParam[ @"email" ] = strEmail;
+
+    if( uidDefaultProjectOrTenant != nil )
+        mdicUserParam[ @"default_project_id" ] = uidDefaultProjectOrTenant;
+
+    if( uidDomain != nil )
+        mdicUserParam[ @"domain_id" ] = uidDomain;
+    
+    mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    if( isEnabled )
+        mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    [self createResource:IDENTITYV3_USERS_URN
+              withHeader:nil
+            andUrlParams:@{ @"user" : mdicUserParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalUser = idFullResponse;
+         if( idFullResponse != nil )
+             finalUser = idFullResponse[ @"user" ];
+         
+         if( doAfterCreate != nil )
+             doAfterCreate( finalUser, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForUserWithID:( NSString * ) uidUser
+                            thenDo:( void ( ^ ) ( NSDictionary * dicUser ) ) doAfterGetDetail
+{
+    NSString * urlUser =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_USERS_URN, uidUser];
+    [self readResource:urlUser
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"user"
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updateUserWithID:( NSString * ) uidUser
+                    newName:( NSString * ) nameUser
+                newPassword:( NSString * ) strPassword
+             newDescription:( NSString * ) strDescription
+                   newEmail:( NSString * ) strEmail
+        newDefaultProjectID:( NSString * ) uidDefaultProjectOrTenant
+                newDomainID:( NSString * ) uidDomain
+                  isEnabled:( BOOL ) isEnabled
+                      thenDo:( void ( ^ ) ( NSDictionary * updatedUser, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlUser =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_USERS_URN, uidUser];
+    NSMutableDictionary * mdicUserParam = [NSMutableDictionary dictionary];
+    
+    if( nameUser != nil )
+        mdicUserParam[ @"name" ] = nameUser;
+    
+    if( strPassword != nil )
+        mdicUserParam[ @"password" ] = strPassword;
+    
+    if( strDescription != nil )
+        mdicUserParam[ @"description" ] = strDescription;
+    
+    if( strEmail != nil )
+        mdicUserParam[ @"email" ] = strEmail;
+    
+    if( uidDefaultProjectOrTenant != nil )
+        mdicUserParam[ @"default_project_id" ] = uidDefaultProjectOrTenant;
+    
+    if( uidDomain != nil )
+        mdicUserParam[ @"domain_id" ] = uidDomain;
+    
+    mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    if( isEnabled )
+        mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    
+    [self updateResource:urlUser
+              withHeader:nil
+            andUrlParams:@{ @"user" : mdicUserParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalUser = idFullResponse;
+         if( idFullResponse != nil )
+             finalUser = idFullResponse[ @"user" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalUser, idFullResponse );
+     }];
+}
+
+- ( void ) deleteUserWithID:( NSString * ) uidUser
+                      thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlUser =[NSString stringWithFormat:@"%@/%@", IDENTITYV3_USERS_URN, uidUser];
+    [self deleteResource:urlUser
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+
+- ( void ) changeUserWithID:( NSString * ) uidUser
+             andOldPassword:( NSString * ) strOldPassword
+            withNewPassword:( NSString * ) strNewPassword
+                     thenDo:( void ( ^ ) ( BOOL isAdded, id dicFullResponse ) ) doAfterChange
+{
+    NSString * urlPasswordForUser =[NSString stringWithFormat:@"%@/%@/%@", IDENTITYV3_USERS_URN, uidUser, IDENTITYV3_USERPASSWORD_URN];
+    
+    [self replaceResource:urlPasswordForUser
+               withHeader:nil
+             andUrlParams:nil
+                   thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         if( doAfterChange != nil )
+             doAfterChange( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+- ( void ) listGroupsForUserWithID:( NSString * ) uidUser
+                            thenDo:( void ( ^ ) ( NSArray * arrGroups, id idFullResponse ) ) doAfterList
+{
+    NSString * urlGroupForUser =[NSString stringWithFormat:@"%@/%@/%@", IDENTITYV3_USERS_URN, uidUser, IDENTITYV3_USERGROUPS_URN];
+    [self listResource:urlGroupForUser
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"groups"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+     }];
+}
+
+- ( void ) listProjectsForUserWithID:( NSString * ) uidUser
+                              thenDo:( void ( ^ ) ( NSArray * arrProjects, id idFullResponse ) ) doAfterList
+{
+    NSString * urlGroupForUser =[NSString stringWithFormat:@"%@/%@/%@", IDENTITYV3_USERS_URN, uidUser, IDENTITYV3_USERPROJECTS_URN];
+    [self listResource:urlGroupForUser
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"projects"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+     }];
+}
 
 
 @end

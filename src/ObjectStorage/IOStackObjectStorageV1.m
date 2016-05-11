@@ -139,13 +139,14 @@
     
     NSString * urlContainer = [NSString stringWithFormat:@"%@/%@", currentAccountID, strNameContainer];
     
-    [self updateResource:urlContainer
-              withHeader:dicHeader
-            andUrlParams:nil
-                  thenDo:^(NSDictionary * dicResults, id idFullResponse) {
-                       if( doAfterCreate )
-                           doAfterCreate( ( dicResults != nil ), idFullResponse );
-                   }];
+    [self replaceResource:urlContainer
+               withHeader:dicHeader
+             andUrlParams:nil
+                   thenDo:^(NSDictionary * dicResults, id idFullResponse)
+    {
+        if( doAfterCreate )
+            doAfterCreate( ( dicResults != nil ), idFullResponse );
+    }];
 }
 
 - ( void ) deleteContainerWithName:( NSString * ) strNameContainer
@@ -217,10 +218,10 @@
     
     NSString * urlObject = [NSString stringWithFormat:@"%@/%@/%@", currentAccountID, strNameContainer, strNameObject];
     
-    [self updateResource:urlObject
-              withHeader:dicHeader
-            andUrlParams:nil
-                  thenDo:^(NSDictionary * dicResults, id idFullResponse)
+    [self replaceResource:urlObject
+               withHeader:dicHeader
+             andUrlParams:nil
+                   thenDo:^(NSDictionary * dicResults, id idFullResponse)
     {
         if( doAfterCreate )
             doAfterCreate( ( dicResults != nil ), idFullResponse );
@@ -255,10 +256,10 @@
     
     NSString * urlObject = [NSString stringWithFormat:@"%@/%@/%@", currentAccountID, strNameContainer, strNameObject];
     
-    [self updateResource:urlObject
-              withHeader:dicHeader
-              andRawData:dataRaw//[dataRaw base64EncodedStringWithOptions:0
-                  thenDo:^(NSDictionary * dicResults, id idFullResponse)
+    [self replaceResource:urlObject
+               withHeader:dicHeader
+               andRawData:dataRaw//[dataRaw base64EncodedStringWithOptions:0
+                   thenDo:^(NSDictionary * dicResults, id idFullResponse)
     {
         if( doAfterCreate )
             doAfterCreate( ( dicResults != nil ), idFullResponse );

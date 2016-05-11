@@ -86,7 +86,7 @@
                               thenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrProjectResponse ) ) doAfterList;
 - ( void ) listProjectsOrTenantsThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrProjectResponse ) ) doAfterList;
 - ( void ) listExtensionsThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrExtensions ) ) doAfterList;
-- ( void ) getDetailForExtensionWithAlias:( nonnull NSString * ) nameAlias
+- ( void ) getdetailForExtensionWithAlias:( nonnull NSString * ) nameAlias
                                    thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicExtension ) ) doAfterGetDetail;
 
 

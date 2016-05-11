@@ -113,7 +113,7 @@
                          endingAt:( nullable NSString * ) ipEndingIP
                  isSharingAddress:( BOOL ) isSharing
                            thenDo:( nullable void ( ^ ) ( IOStackComputeNetworkV2_1 * _Nullable networkCreated, id _Nullable idFullResponse ) ) doAfterCreate;
-- ( void ) getDetailsForNetworkWithID:( nonnull NSString * ) uidNetwork
+- ( void ) getdetailsForNetworkWithID:( nonnull NSString * ) uidNetwork
                                thenDo:( nullable void ( ^ ) ( IOStackComputeNetworkV2_1 * _Nullable networkDetails, id _Nullable idFullResponse ) ) doAfterGet;
 - ( void ) addNetworkWithID:( nonnull NSString * ) uidNetwork
                      thenDo:( nullable void ( ^ ) ( BOOL isAdded, id _Nullable idFullResponse ) ) doAfterAdd;

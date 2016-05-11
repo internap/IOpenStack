@@ -502,7 +502,7 @@
     }];
 }
 
-- ( void ) getDetailForExtensionWithAlias:( NSString * ) nameAlias
+- ( void ) getdetailForExtensionWithAlias:( NSString * ) nameAlias
                                    thenDo:( void ( ^ ) ( NSDictionary * dicExtension ) ) doAfterGetDetail
 {
     NSString * urlExtensionAlias =[NSString stringWithFormat:@"%@/%@", IDENTITYV2_EXTENSION_URN, nameAlias];

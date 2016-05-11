@@ -19,6 +19,11 @@ curl -i http://10.211.55.6:5000/v3/auth/tokens -X POST -H "Content-Type: applica
 curl -i http://10.211.55.6:5000/v3/auth/tokens -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d '{"auth" : {"identity" : {"methods" : ["token"], "token" : { "id" : "62737999ed144a7aaf99c0bacefe9bfb" } }, "scope": "unscoped"  } }'
 
 
+
+curl -i http://10.211.55.10:5000/v3/auth/tokens -X POST -H "Content-Type: application/json" -H "Accept: application/json" -d '{"auth" : {"identity" : {"methods" : ["password"], "password" : { "user" : { "name" : "admin","domain": {"name": "Default"},"password" : "password" } } }, "scope": "unscoped" } }'
+
+
+
 curl -i http://10.211.55.6:5000/v3/auth/tokens -X GET -H "X-Auth-Token: 6b815d79945c4aecba6200e5c90be301" -H "X-Subject-Token: 6b815d79945c4aecba6200e5c90be301" -H "Accept: application/json"
 
 
@@ -27,7 +32,9 @@ curl -i http://10.211.55.6:5000/v3/services/7c4fb417fe89428fb6dbd932ebbaf2d5 -X 
 curl -i "http://10.211.55.6:5000/v3/endpoints?service_id=7c4fb417fe89428fb6dbd932ebbaf2d5&interface=public" -X GET -H "X-Auth-Token: 5316f1c4366847c8a40f22109b6622fb" -H "Accept: application/json"
 
 
-curl -i http://10.211.55.6:5000/v3/domains -X GET -H "X-Auth-Token: 12896251e0514a928a603e0f8659c5ea" -H "Accept: application/json"
+curl -i http://10.211.55.10:5000/v3/domains -X GET -H "X-Auth-Token: e67b76cc08f447f2b9ae52984e81e6b6" -H "Accept: application/json"
+curl -i http://10.211.55.10:5000/v3/domains/d604f28490c842ac841fa615a47d4009 -X PATCH -H "X-Auth-Token: e67b76cc08f447f2b9ae52984e81e6b6" -H "Accept: application/json" -H "Content-Type: application/json" -d '{ "domain" : { "enabled" : false } }'
+curl -i http://10.211.55.10:5000/v3/domains/d604f28490c842ac841fa615a47d4009 -X DELETE -H "X-Auth-Token: e67b76cc08f447f2b9ae52984e81e6b6" -H "Accept: application/json"
 
 curl -i http://10.211.55.6:5000/v3/projects/default -X GET -H "X-Auth-Token: 12896251e0514a928a603e0f8659c5ea" -H "Accept: application/json"
 

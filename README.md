@@ -4,7 +4,7 @@ IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenS
 
 It currently support most of the Core Services (Keystone, Glance, Nova, Swift, Cinder). Neutron to come.
 
-+ Identity / Authentication - [Keystone](/src/Auth/README.md) ![Progress](http://progressed.io/bar/70)  
++ Identity / Authentication - [Keystone](/src/Auth/README.md) ![Progress](http://progressed.io/bar/90)  
 + Images - [Glance](/src/Image/README.md) ![Progress](http://progressed.io/bar/100)  
 + Compute - [Nova](/src/Compute/README.md) ![Progress](http://progressed.io/bar/40)  
 + Object Storage - [Swift](/src/ObjectStorage/README.md) ![Progress](http://progressed.io/bar/80)  

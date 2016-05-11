@@ -18,6 +18,7 @@
 #define BLOCKSTORAGEV2_SERVICE  @"volumev2"
 #define NETWORK_SERVICE         @"network"
 #define ORCHESTRATION_SERVICE   @"orchestration"
+#define EC2_SERVICE             @"ec2"
 
 #define GENERIC_SERVICENAME     @"generic"
 
@@ -136,6 +137,20 @@
                 withParams:( nullable NSDictionary * ) dicParams
           onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
           onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+-( NSUInteger ) servicePATCH:( nonnull NSString * ) urnResource
+                 withRawData:( nonnull NSData * ) datRaw
+                 andDelegate:( nullable id<IOStackServiceDelegate> ) idDelegate;
+-( NSUInteger ) servicePATCH:( nonnull NSString * ) urnResource
+                 withRawData:( nonnull NSData * ) datRaw
+            onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
+            onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+-( NSUInteger ) servicePATCH:( nonnull NSString * ) urnResource
+                  withParams:( nullable NSDictionary * ) dicParams
+                 andDelegate:( nonnull id<IOStackServiceDelegate> ) idDelegate;
+-( NSUInteger ) servicePATCH:( nonnull NSString * ) urnResource
+                  withParams:( nullable NSDictionary * ) dicParams
+            onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
+            onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
 -( NSUInteger ) serviceDELETE:( nonnull NSString * ) urnResource
                   andDelegate:( nonnull id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) serviceDELETE:( nonnull NSString * ) urnResource
@@ -172,6 +187,14 @@
                withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
              andUrlParams:( nullable NSDictionary * ) paramsURL
                    thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicResponseHeaders, id _Nullable idFullResponse ) ) doWithCreateResults;
+- ( void ) replaceResource:( nonnull NSString * ) urlResource
+                withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
+                andRawData:( nullable NSData * ) datRaw
+                    thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicResponseHeader, id _Nullable idFullResponse ) ) doWithCreateResults;
+- ( void ) replaceResource:( nonnull NSString * ) urlResource
+                withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
+              andUrlParams:( nullable NSDictionary * ) paramsURL
+                    thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicResponseHeader, id _Nullable idFullResponse ) ) doWithCreateResults;
 - ( void ) updateResource:( nonnull NSString * ) urlResource
                withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
                andRawData:( nullable NSData * ) datRaw
