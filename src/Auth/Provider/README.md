@@ -26,29 +26,24 @@ Make sure to have sufficient credit or active payment options before trying this
 
 1. Log in your [Internap account](http://login.internap.com)
 2. In the header menu, select 'Cloud Management' 
-
-        ![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement1.png)
+![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement1.png)
     
 3. In the Cloud Management page, click the 'Get New API User' button 
-    
-        ![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement3.png)
+![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement3.png)
     
 4. Read and accept the disclaimers, and note down / save the API credentials displayed 
-
-        ![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
-        * red box 1 : will be your INAP_ACCOUNT_LOGIN
-        * red box 2 : will be your INAP_ACCOUNT_PASSWORD
-            >**INFO** : if you loose those credentials, you can re-generate new ones by using this same button
+![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
+    * red box 1 : will be your INAP_ACCOUNT_LOGIN
+    * red box 2 : will be your INAP_ACCOUNT_PASSWORD
+    >**INFO** : if you loose those credentials, you can re-generate new ones by using this same button
 
 5. Back in the Cloud Management page, note down / save your Tenant ID
-    
-        ![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
-        * red box 3 : will be your INAP_ACCOUNT_PROJECTORTENANT
+![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
+    * red box 3 : will be your INAP_ACCOUNT_PROJECTORTENANT
     
 6. Finally, still in the same Cloud Management page, scroll down to the list of region to activate the one your want to spin instances/resource in, wait until the activation is finished, and make sure that it is displayed as 'ACTIVE'
-
-        ![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
-        * In this example, we have the New Jersey region (*nyj01*) activated 
+![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
+    * In this example, we have the New Jersey region (*nyj01*) activated 
     
 7. Now, launch XCode, open the IOpenStack.xcodeproj project and insert those values directly inside the DefaultSettings.plist file in the /test directory
 
