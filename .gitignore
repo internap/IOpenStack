@@ -6,6 +6,8 @@
 build/
 DerivedData
 .DS_Store
+design/.DS_Store
+**/.DS_Store
 **/SettingsTests.plist
 Carthage/
 

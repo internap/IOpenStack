@@ -38,7 +38,7 @@ Make sure to have sufficient credit or active payment options before trying this
 >**INFO** : if you loose those credentials, you can re-generate new ones by using this same button
 
 5. Back in the Cloud Management page, note down / save your Tenant ID
-![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
+![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement1.png)
     * red box 3 : will be your INAP_ACCOUNT_PROJECTORTENANT
     
 6. Finally, still in the same Cloud Management page, scroll down to the list of region to activate the one your want to spin instances/resource in, wait until the activation is finished, and make sure that it is displayed as 'ACTIVE'
@@ -46,6 +46,7 @@ Make sure to have sufficient credit or active payment options before trying this
     * red box 4 : in this example, we have the New Jersey region (*nyj01*) activated
     
 7. Now, launch XCode, open the IOpenStack.xcodeproj project and insert those values directly inside the DefaultSettings.plist file in the /test directory
+![INTERNAP - CloudManagement Menu](/design/step-by-step/XCode-pList.png)
 
 8. Finally, still in XCode, in the test folder, enable the following file for the IOpenStacl iOSTests Target Membership :
     * IOStackAuth_INAPTests.m
@@ -53,6 +54,7 @@ Make sure to have sufficient credit or active payment options before trying this
     * IOStackBStorage_INAPTests.m
     * IOStackOStorage_INAPTests.m
     * IOStackCompute_INAPTests.m
+![INTERNAP - CloudManagement Menu](/design/step-by-step/XCode-TargetMembership.png)
  
 
 
