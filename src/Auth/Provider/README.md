@@ -35,14 +35,14 @@ Make sure to have sufficient credit or active payment options before trying this
 ![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
     * red box 1 : will be your INAP_ACCOUNT_LOGIN
     * red box 2 : will be your INAP_ACCOUNT_PASSWORD
-    >**INFO** : if you loose those credentials, you can re-generate new ones by using this same button
+>**INFO** : if you loose those credentials, you can re-generate new ones by using this same button
 
 5. Back in the Cloud Management page, note down / save your Tenant ID
 ![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
     * red box 3 : will be your INAP_ACCOUNT_PROJECTORTENANT
     
 6. Finally, still in the same Cloud Management page, scroll down to the list of region to activate the one your want to spin instances/resource in, wait until the activation is finished, and make sure that it is displayed as 'ACTIVE'
-![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement2.png)
+![INTERNAP - CloudManagement Menu](/design/step-by-step/INTERNAP-CloudManagement4.png)
     * In this example, we have the New Jersey region (*nyj01*) activated 
     
 7. Now, launch XCode, open the IOpenStack.xcodeproj project and insert those values directly inside the DefaultSettings.plist file in the /test directory
