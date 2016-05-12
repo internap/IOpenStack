@@ -24,5 +24,39 @@
 	<string>http://10.211.55.8:8080</string>
 	<key>DEVSTACK_OBJECTSTORAGE_ACCOUNT</key>
 	<string>AUTH_</string>
+	<key>DREAM_IDENTITY_ROOT</key>
+	<string>https://iad2.dream.io:5000</string>
+	<key>DREAM_IMAGE_ROOT</key>
+	<string>https://iad2.dream.io:9292</string>
+	<key>DREAM_BLOCKSTORAGE_ROOT</key>
+	<string>https://iad2.dream.io:8776</string>
+	<key>DREAM_COMPUTE_ROOT</key>
+	<string>https://iad2.dream.io:8774</string>
+	<key>DREAM_ACCOUNT_DOMAIN</key>
+	<string>Default</string>
+	<key>DREAM_ACCOUNT_LOGIN</key>
+	<string></string>
+	<key>DREAM_ACCOUNT_PASSWORD</key>
+	<string></string>
+	<key>DREAM_ACCOUNT_PROJECTORTENANT</key>
+	<string></string>
+	<key>INAP_ACCOUNT_DOMAIN</key>
+	<string>Default</string>
+	<key>INAP_IDENTITY_ROOT</key>
+	<string>https://identity.api.cloud.iweb.com</string>
+	<key>INAP_IMAGE_ROOT</key>
+	<string>https://image.api.nyj01.cloud.iweb.com</string>
+	<key>INAP_BLOCKSTORAGE_ROOT</key>
+	<string>https://volume.api.nyj01.cloud.iweb.com</string>
+	<key>INAP_OBJECTSTORAGE_ROOT</key>
+	<string>https://object-store.api.nyj01.cloud.iweb.com</string>
+	<key>INAP_ACCOUNT_LOGIN</key>
+	<string></string>
+	<key>INAP_ACCOUNT_PASSWORD</key>
+	<string></string>
+	<key>INAP_ACCOUNT_PROJECTORTENANT</key>
+	<string></string>
+	<key>INAP_OBJECTSTORAGE_ACCOUNT</key>
+	<string></string>
 </dict>
 </plist>

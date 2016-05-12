@@ -332,6 +332,7 @@
 		66CE45F31CAB04BC00BAF0DC /* IOStackBlockStorageV2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IOStackBlockStorageV2.m; path = src/BlockStorage/IOStackBlockStorageV2.m; sourceTree = SOURCE_ROOT; };
 		66CE45F61CAB166500BAF0DC /* IOStackBlockStorageV2Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IOStackBlockStorageV2Tests.m; path = test/IOStackBlockStorageV2Tests.m; sourceTree = SOURCE_ROOT; };
 		66CE45F81CAB2C1200BAF0DC /* IOStackBStorageVolumeV2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOStackBStorageVolumeV2.h; path = src/BlockStorage/IOStackBStorageVolumeV2.h; sourceTree = SOURCE_ROOT; };
+		66D702411CE524D800F53005 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = src/Auth/Provider/README.md; sourceTree = SOURCE_ROOT; };
 		66E6F0E91CD92CA2003A04D5 /* IOStackComputeSecurityGroupV2_1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IOStackComputeSecurityGroupV2_1.m; path = src/Compute/IOStackComputeSecurityGroupV2_1.m; sourceTree = SOURCE_ROOT; };
 		66EDB1B01C80E23B00B24E24 /* IOStackComputeIPAllocationV2_1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IOStackComputeIPAllocationV2_1.m; path = src/Compute/IOStackComputeIPAllocationV2_1.m; sourceTree = SOURCE_ROOT; };
 		66EDB1B41C80FFA400B24E24 /* IOStackObjectStorageV1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOStackObjectStorageV1.h; path = src/ObjectStorage/IOStackObjectStorageV1.h; sourceTree = SOURCE_ROOT; };
@@ -545,6 +546,7 @@
 		66EFEC091C55E50B00D1E909 /* Provider */ = {
 			isa = PBXGroup;
 			children = (
+				66D702411CE524D800F53005 /* README.md */,
 				6678FA071C6401E000E47F91 /* IOStackAuth_INAP.h */,
 				6678FA051C6401E000E47F91 /* IOStackAuth_INAP.m */,
 				6678FA081C6401E000E47F91 /* IOStackAuth_Dream.h */,
@@ -1331,6 +1333,7 @@
 				66FF1CCA1CDBC22300B8E841 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		66FF1CE11CDBC24600B8E841 /* Build configuration list for PBXNativeTarget "IOpenStack tvOS" */ = {
 			isa = XCConfigurationList;
@@ -1339,6 +1342,7 @@
 				66FF1CE31CDBC24600B8E841 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		66FF1CE41CDBC24600B8E841 /* Build configuration list for PBXNativeTarget "IOpenStack tvOSTests" */ = {
 			isa = XCConfigurationList;
@@ -1347,6 +1351,7 @@
 				66FF1CE61CDBC24600B8E841 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

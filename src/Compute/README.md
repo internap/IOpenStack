@@ -1,9 +1,8 @@
-IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenStack.
-
-Progress : ![Progress](http://progressed.io/bar/30)
-
+### IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenStack
 
 This part describe the Compute service support of the library :
+
+Progress : ![Progress](http://progressed.io/bar/30)
 
 + Nova V2.1
 + + Service versions ![Current Progress](http://progressed.io/bar/0)

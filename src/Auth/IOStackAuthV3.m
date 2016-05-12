@@ -1502,27 +1502,17 @@
                          andServiceID:( NSString * ) uidServiceToFilterBy
                                thenDo:( void ( ^ ) ( NSArray * arrEndpoints, id idFullResponse ) ) doAfterList
 {
-    NSString * urlEndpoints =[NSString stringWithFormat:@"%@", IDENTITYV3_ENDPOINTS_URN];
-    NSURLComponents * queryString = [NSURLComponents componentsWithString:IDENTITYV3_ENDPOINTS_URN];
-    NSMutableArray * arrQueryItems = [NSMutableArray array];
+    NSMutableDictionary * dicQueryParams = [NSMutableDictionary dictionary];
     
     if( strInterfaceToFilterBy != nil )
-        [arrQueryItems addObject:[NSURLQueryItem queryItemWithName:@"interface"
-                                                             value:strInterfaceToFilterBy]];
+        dicQueryParams[@"interface" ] = strInterfaceToFilterBy;
     
     if( uidServiceToFilterBy != nil )
-        [arrQueryItems addObject:[NSURLQueryItem queryItemWithName:@"service_id"
-                                                             value:uidServiceToFilterBy]];
+        dicQueryParams[@"service_id" ] = uidServiceToFilterBy;
     
-    if( [arrQueryItems count ] > 0)
-    {
-        [queryString setQueryItems:arrQueryItems];
-        urlEndpoints = [[queryString URL] absoluteString];
-    }
-    
-    [self listResource:urlEndpoints
+    [self listResource:IDENTITYV3_ENDPOINTS_URN
             withHeader:nil
-          andUrlParams:nil
+          andUrlParams:dicQueryParams
              insideKey:@"endpoints"
                 thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
      {

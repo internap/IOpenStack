@@ -1,9 +1,8 @@
-IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenStack.
-
-Progress : ![Progress](http://progressed.io/bar/30)
-
+### IOpenStack is a Objective-C iOS framework (including watchOS and tvOS) for OpenStack
 
 This part describe the BlockStorage/Volume service support of the library :
+
+Progress : ![Progress](http://progressed.io/bar/30)
 
 + Cinder V2.1
 + + Service versions ![Current Progress](http://progressed.io/bar/0)
