@@ -4,9 +4,9 @@ This part describe the Object Storage service support of the library :
 
 Progress : ![Progress](http://progressed.io/bar/20)
 
-+ Glance V2
-+ + Service versions ![Current Progress](http://progressed.io/bar/0)
-+ + Endpoints ![Current Progress](http://progressed.io/bar/0)
-+ + Accounts ![Current Progress](http://progressed.io/bar/0)
-+ + Containers ![Current Progress](http://progressed.io/bar/75)
-+ + Objects ![Current Progress](http://progressed.io/bar/70)
++ Swift V2
+    + ![Current Progress](http://progressed.io/bar/0)   Service versions
+    + ![Current Progress](http://progressed.io/bar/0)   Endpoints
+    + ![Current Progress](http://progressed.io/bar/0)   Accounts
+    + ![Current Progress](http://progressed.io/bar/75)   Containers
+    + ![Current Progress](http://progressed.io/bar/70)   Objects
