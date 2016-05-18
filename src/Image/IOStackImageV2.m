@@ -13,6 +13,10 @@
 #define IMAGEV2_IMAGE_URN               @"images"
 #define IMAGEV2_IMAGEREACTIVATE_URN     @"reactivate"
 #define IMAGEV2_IMAGEDEACTIVATE_URN     @"deactivate"
+#define IMAGEV2_IMAGEFILE_URN           @"file"
+#define IMAGEV2_IMAGETAGS_URN           @"tags"
+#define IMAGEV2_IMAGEMEMBERS_URN        @"members"
+#define IMAGEV2_TASKS_URN               @"tasks"
 
 
 @implementation IOStackImageV2
@@ -28,9 +32,9 @@
                                   andTokenID:strTokenID ];
 }
 
-+ ( instancetype ) initWithIdentity:( id<IOStackIdentityInfos> ) idUserIdentity
++ ( instancetype ) initWithIdentity:( id<IOStackIdentityInfos> ) idMemberIdentity
 {
-    return [ [ self alloc ] initWithIdentity:idUserIdentity ];
+    return [ [ self alloc ] initWithIdentity:idMemberIdentity ];
 }
 
 
@@ -52,12 +56,12 @@
     return self;
 }
 
-- ( instancetype ) initWithIdentity:( id<IOStackIdentityInfos> ) idUserIdentity
+- ( instancetype ) initWithIdentity:( id<IOStackIdentityInfos> ) idMemberIdentity
 {
-    IOStackService * currentService = [idUserIdentity.currentServices valueForKey:IMAGESTORAGE_SERVICE];
+    IOStackService * currentService = [idMemberIdentity.currentServices valueForKey:IMAGESTORAGE_SERVICE];
     
     return [self initWithImageURL:[[currentService urlPublic] absoluteString]
-                       andTokenID:idUserIdentity.currentTokenID];
+                       andTokenID:idMemberIdentity.currentTokenID];
 }
 
 
@@ -186,7 +190,7 @@
     [self listResource:urlImage
             withHeader:nil
           andUrlParams:dicQueryParams
-             insideKey:@"endpoints"
+             insideKey:@"images"
                 thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
      {
          if( doAfterList != nil )
@@ -195,15 +199,15 @@
 }
 
 - ( void ) createImageWithName:( NSString * ) nameImage
-                   andForcedID:( NSString * ) uidForced
-                 andVisibility:( NSString * ) strVisibility
-                        andTag:( NSArray * ) arrTags
             andContainerFormat:( NSString * ) strContainerFormat
                  andDiskFormat:( NSString * ) strDiskFormat
+                 andVisibility:( NSString * ) strVisibility
+                        andTag:( NSArray * ) arrTags
                     andDiskMin:( NSNumber * ) numDiskMin
                      andRAMMin:( NSNumber * ) numRAMMin
                  andProperties:( NSDictionary * ) dicProperties
                    isProtected:( BOOL ) isProtected
+                   andForcedID:( NSString * ) uidForced
                        thenDo:( void ( ^ ) ( IOStackImageObjectV2 * createdImage ) ) doAfterCreate
 {
     NSString * urlImage = [NSString stringWithFormat:@"%@%@",
@@ -235,9 +239,7 @@
     if( dicProperties != nil )
         mdicImageParam[ @"properties" ] = dicProperties;
     
-    mdicImageParam[ @"protected" ] = [NSNumber numberWithBool:NO];
-    if( isProtected )
-        mdicImageParam[ @"protected" ] = [NSNumber numberWithBool:YES];
+    mdicImageParam[ @"protected" ] = [NSNumber numberWithBool:isProtected];
     
     [self createResource:urlImage
               withHeader:nil
@@ -353,7 +355,7 @@
 
 
 - ( void ) reactivateImageWithID:( NSString * ) uidImage
-                          thenDo:( void ( ^ ) ( BOOL isAdded, id dicFullResponse ) ) doAfterChange
+                          thenDo:( void ( ^ ) ( BOOL isReactivated, id dicFullResponse ) ) doAfterChange
 {
     NSString * urlReactivateImage = [NSString stringWithFormat:@"%@%@/%@/%@",
                                      IMAGEV2_SERVICE_URI,
@@ -374,7 +376,7 @@
 }
 
 - ( void ) deactivateImageWithID:( NSString * ) uidImage
-                          thenDo:( void ( ^ ) ( BOOL isAdded, id dicFullResponse ) ) doAfterChange
+                          thenDo:( void ( ^ ) ( BOOL isDeactivated, id dicFullResponse ) ) doAfterChange
 {
     NSString * urlReactivateImage = [NSString stringWithFormat:@"%@%@/%@/%@",
                                      IMAGEV2_SERVICE_URI,
@@ -393,6 +395,297 @@
                            ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
      }];
 }
+
+- ( void ) uploadImageWithID:( NSString * ) uidImage
+                    fromData:( NSData * ) datRaw
+                      thenDo:( void ( ^ ) ( BOOL isUploaded ) ) doAfterUpload
+{
+    NSString * urlImageFile = [NSString stringWithFormat:@"%@%@/%@/%@",
+                                     IMAGEV2_SERVICE_URI,
+                                     IMAGEV2_IMAGE_URN,
+                                     uidImage,
+                                     IMAGEV2_IMAGEFILE_URN];
+    
+    [self replaceResource:urlImageFile
+               withHeader:@{ @"Content-Type" : @"application/octet-stream" }
+               andRawData:datRaw
+                   thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         if( doAfterUpload != nil )
+             doAfterUpload( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+     }];
+}
+
+- ( void ) uploadImageWithID:( NSString * ) uidImage
+            fromFileWithPath:( NSString * ) pathFileToUpload
+                      thenDo:( void ( ^ ) ( BOOL isUploaded ) ) doAfterUpload
+{
+    NSError * errRead;
+    NSData * datRawFile                 = [NSData dataWithContentsOfFile:pathFileToUpload
+                                                                 options:NSUTF8StringEncoding
+                                                                   error:&errRead];
+    
+    [self uploadImageWithID:uidImage
+                   fromData:datRawFile
+                     thenDo:doAfterUpload];
+}
+
+- ( void ) getrawdataForImageWithID:( NSString * ) uidImage
+                             thenDo:( void ( ^ ) ( NSData * datRaw ) ) doAfterGetRawData
+{
+    NSString * urlImageFile = [NSString stringWithFormat:@"%@%@/%@/%@",
+                               IMAGEV2_SERVICE_URI,
+                               IMAGEV2_IMAGE_URN,
+                               uidImage,
+                               IMAGEV2_IMAGEFILE_URN];
+    
+    [self readResource:urlImageFile
+            withHeader:nil
+          andUrlParams:nil
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetRawData != nil )
+             doAfterGetRawData( dataResponse );
+     }];
+}
+
+- ( void ) addTag:( NSString * ) strTag
+    toImageWithID:( NSString * ) uidImage
+           thenDo:( void ( ^ ) ( BOOL isAdded ) ) doAfterAdd
+{
+    NSString * urlImageFile = [NSString stringWithFormat:@"%@%@/%@/%@/%@",
+                               IMAGEV2_SERVICE_URI,
+                               IMAGEV2_IMAGE_URN,
+                               uidImage,
+                               IMAGEV2_IMAGETAGS_URN,
+                               strTag];
+    
+    [self replaceResource:urlImageFile
+               withHeader:nil
+               andRawData:nil
+                   thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         if( doAfterAdd != nil )
+             doAfterAdd( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+     }];
+}
+
+- ( void ) deleteTag:( NSString * ) strTag
+       toImageWithID:( NSString * ) uidImage
+              thenDo:( void ( ^ ) ( BOOL isDeleted ) ) doAfterDelete
+{
+    NSString * urlImageFile = [NSString stringWithFormat:@"%@%@/%@/%@/%@",
+                               IMAGEV2_SERVICE_URI,
+                               IMAGEV2_IMAGE_URN,
+                               uidImage,
+                               IMAGEV2_IMAGETAGS_URN,
+                               strTag];
+    
+    [self deleteResource:urlImageFile
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicResults, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ) );
+    }];
+}
+
+
+#pragma mark - Members management
+- ( void ) listMembersForImageWithID:( NSString * ) uidImage
+                              thenDo:( void ( ^ ) ( NSArray * arrMembers, id idFullResponse ) ) doAfterList
+{
+    NSString * urlImageMembers = [NSString stringWithFormat:@"%@%@/%@/%@",
+                                  IMAGEV2_SERVICE_URI,
+                                  IMAGEV2_IMAGE_URN,
+                                  uidImage,
+                                  IMAGEV2_IMAGEMEMBERS_URN];
+    
+    [self listResource:urlImageMembers
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"members"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+     }];
+}
+
+- ( void ) createMemberWithID:( NSString * ) uidMember
+               forImageWithID:( NSString * ) uidImage
+                       thenDo:( void ( ^ ) ( NSDictionary * createdMember, id dicFullResponse ) ) doAfterCreate
+{
+    NSString * urlImageMembers = [NSString stringWithFormat:@"%@%@/%@/%@",
+                                  IMAGEV2_SERVICE_URI,
+                                  IMAGEV2_IMAGE_URN,
+                                  uidImage,
+                                  IMAGEV2_IMAGEMEMBERS_URN];
+
+    [self createResource:urlImageMembers
+              withHeader:nil
+            andUrlParams:@{ @"member_id" : uidMember }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         if( doAfterCreate != nil )
+             doAfterCreate( idFullResponse, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForMemberWithID:( NSString * ) uidMember
+                     forImageWithID:( NSString * ) uidImage
+                           thenDo:( void ( ^ ) ( NSDictionary * dicMember ) ) doAfterGetDetail
+{
+    NSString * urlImageMember = [NSString stringWithFormat:@"%@%@/%@/%@/%@",
+                                  IMAGEV2_SERVICE_URI,
+                                  IMAGEV2_IMAGE_URN,
+                                  uidImage,
+                                  IMAGEV2_IMAGEMEMBERS_URN,
+                                  uidMember];
+    
+    [self readResource:urlImageMember
+            withHeader:nil
+          andUrlParams:nil
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
+- ( void ) updateMemberWithID:( NSString * ) uidMember
+               forImageWithID:( NSString * ) uidImage
+                   withStatus:( NSString * ) strNewStatus
+                     thenDo:( void ( ^ ) ( NSDictionary * updatedMember, id dicFullResponse ) ) doAfterUpdate
+{
+    NSString * urlImageMember = [NSString stringWithFormat:@"%@%@/%@/%@/%@",
+                                  IMAGEV2_SERVICE_URI,
+                                  IMAGEV2_IMAGE_URN,
+                                  uidImage,
+                                  IMAGEV2_IMAGEMEMBERS_URN,
+                                  uidMember];
+    
+    [self updateResource:urlImageMember
+              withHeader:nil
+            andUrlParams:@{ @"status" : strNewStatus }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         if( doAfterUpdate != nil )
+             doAfterUpdate( idFullResponse, idFullResponse );
+     }];
+}
+
+- ( void ) acceptMemberWithID:( NSString * ) uidMember
+               forImageWithID:( NSString * ) uidImage
+                       thenDo:( void ( ^ ) ( NSDictionary * updatedMember, id dicFullResponse ) ) doAfterUpdate
+{
+    [self updateMemberWithID:uidMember
+              forImageWithID:uidImage
+                  withStatus:@"accepted"
+                      thenDo:doAfterUpdate];
+}
+
+- ( void ) deleteMemberWithID:( NSString * ) uidMember
+                 forImageWith:( NSString * ) uidImage
+                     thenDo:( void ( ^ ) ( bool isDeleted, id idFullResponse ) ) doAfterDelete
+{
+    NSString * urlImageMember = [NSString stringWithFormat:@"%@%@/%@/%@/%@",
+                                 IMAGEV2_SERVICE_URI,
+                                 IMAGEV2_IMAGE_URN,
+                                 uidImage,
+                                 IMAGEV2_IMAGEMEMBERS_URN,
+                                 uidMember];
+    [self deleteResource:urlImageMember
+              withHeader:nil
+                  thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable idFullResponse)
+     {
+         if( doAfterDelete != nil )
+             doAfterDelete( ( idFullResponse == nil ) ||
+                           ( idFullResponse[ @"response" ] == nil ) ||
+                           ( [idFullResponse[ @"response" ] isEqualToString:@""] ), idFullResponse );
+     }];
+}
+
+
+#pragma mark - Tasks management
+- ( void ) listTasksthenDo:( void ( ^ ) ( NSArray * arrTasks, id idFullResponse ) ) doAfterList
+{
+    NSString * urlTasks = [NSString stringWithFormat:@"%@%@",
+                                  IMAGEV2_SERVICE_URI,
+                                  IMAGEV2_TASKS_URN];
+    
+    [self listResource:urlTasks
+            withHeader:nil
+          andUrlParams:nil
+             insideKey:@"tasks"
+                thenDo:^(NSArray * _Nullable arrFound, id _Nullable dataResponse)
+     {
+         if( doAfterList != nil )
+             doAfterList( arrFound, dataResponse );
+     }];
+}
+
+- ( void ) createTaskWithType:( NSString * ) strType
+                 fromLocation:( NSString * ) urlLocation
+                andDiskFormat:( NSString * ) strFromDiskFormat
+                 toDiskFormat:( NSString * ) strToDiskFormat
+           andContainerFormat:( NSString * ) strContainerFormat
+                       thenDo:( void ( ^ ) ( NSDictionary * createdTask, id dicFullResponse ) ) doAfterCreate
+{
+    NSString * urlTasks = [NSString stringWithFormat:@"%@%@",
+                           IMAGEV2_SERVICE_URI,
+                           IMAGEV2_TASKS_URN];
+    
+    NSMutableDictionary * mdicTaskInputParams = [NSMutableDictionary dictionary];
+    if( urlLocation != nil )
+        mdicTaskInputParams[ @"import_from" ] = urlLocation;
+    
+    if( strFromDiskFormat != nil )
+        mdicTaskInputParams[ @"import_from_format" ] = strFromDiskFormat;
+    
+    NSMutableDictionary * mdicTaskInputImagesParams = [NSMutableDictionary dictionary];
+    if( strToDiskFormat != nil )
+        mdicTaskInputParams[ @"disk_format" ] = strToDiskFormat;
+    if( strContainerFormat != nil )
+        mdicTaskInputParams[ @"container_format" ] = strContainerFormat;
+    
+    if( mdicTaskInputImagesParams != nil )
+        mdicTaskInputParams[ @"image_properties" ] = mdicTaskInputImagesParams;
+    
+    [self createResource:urlTasks
+              withHeader:nil
+            andUrlParams:@{ @"type" : strType, @"input" : mdicTaskInputParams }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeaders, id  _Nullable idFullResponse)
+     {
+         if( doAfterCreate != nil )
+             doAfterCreate( idFullResponse, idFullResponse );
+     }];
+}
+
+- ( void ) getdetailForTaskWithID:( NSString * ) uidTask
+                           thenDo:( void ( ^ ) ( NSDictionary * dicMember ) ) doAfterGetDetail
+{
+    NSString * urlTask = [NSString stringWithFormat:@"%@%@/%@",
+                           IMAGEV2_SERVICE_URI,
+                           IMAGEV2_TASKS_URN,
+                          uidTask];
+
+    [self readResource:urlTask
+            withHeader:nil
+          andUrlParams:nil
+                thenDo:^(NSDictionary * _Nullable dicObjectFound, id  _Nullable dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dicObjectFound );
+     }];
+}
+
 
 
 @end

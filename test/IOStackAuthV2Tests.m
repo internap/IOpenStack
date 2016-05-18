@@ -29,6 +29,8 @@
 - ( void ) setUp
 {
     [super setUp];
+    [self setContinueAfterFailure:NO];
+    
     NSString * currentTestFilePath  = @__FILE__;
     NSString * currentSettingTests  = [NSString stringWithFormat:@"%@/SettingsTests.plist", [currentTestFilePath stringByDeletingLastPathComponent]];
     
@@ -78,6 +80,7 @@
         XCTAssertNotNil( strTokenIDResponse );
         XCTAssertNotNil( dicFullResponse );
         XCTAssertNotNil( authV2Session.currentTokenID );
+        XCTAssertNotNil( authV2Session.currentUserID );
         
         [expectation fulfill];
     }];

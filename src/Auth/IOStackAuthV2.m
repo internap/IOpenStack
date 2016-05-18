@@ -21,6 +21,7 @@
 @synthesize currentDomain;
 @synthesize currentProjectOrTenant;
 @synthesize currentProjectOrTenantID;
+@synthesize currentUserID;
 
 //local properties accessors
 @synthesize currentTokenObject;
@@ -82,6 +83,7 @@
     {
         currentDomain = @"Default";
         currentTokenID = nil;
+        currentUserID = nil;
 
         currentTokenObject = nil;
         currentTenantsList = nil;
@@ -314,6 +316,10 @@
         
         else
             currentServices = [self parseServices:arrServiceCatalog];
+        
+        if( dicAccess[ @"user" ] != nil &&
+            dicAccess[ @"user" ][ @"id"] != nil )
+            currentUserID = dicAccess[ @"user" ][ @"id"];
         
         if( doAfterAuth != nil )
             doAfterAuth( currentTokenID, dicResponse );

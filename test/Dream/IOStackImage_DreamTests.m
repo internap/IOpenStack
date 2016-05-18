@@ -29,6 +29,8 @@
 - ( void )setUp
 {
     [super setUp];
+    [self setContinueAfterFailure:NO];
+    
     NSString * currentTestFilePath  = @__FILE__;
     NSString * currentSettingTests  = [NSString stringWithFormat:@"%@/../SettingsTests.plist", [currentTestFilePath stringByDeletingLastPathComponent]];
     

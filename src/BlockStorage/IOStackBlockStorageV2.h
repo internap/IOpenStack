@@ -33,6 +33,7 @@
                                         andTokenID:( nonnull NSString * ) strTokenID
                               forProjectOrTenantID:( nonnull NSString * ) strProjectOrTenantID;
 - ( nonnull instancetype ) initWithIdentity:( nonnull id<IOStackIdentityInfos> ) idUserIdentity;
+- ( void ) listLimitsThenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicLimits ) ) doAfterList;
 - ( void ) listVolumesThenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicVolumes, id _Nullable idFullResponse ) ) doAfterList;
 - ( void ) createVolumeWithSize:( nonnull NSNumber * ) nSizeInGiB
                         andName:( nullable NSString * ) strVolumeName
@@ -52,9 +53,40 @@
 - ( void ) createVolumeWithSize:( nonnull NSNumber * ) nSizeInGiB
            waitUntilIsAvailable:( BOOL ) bWaitAvailable
                          thenDo:( nullable void ( ^ ) ( IOStackBStorageVolumeV2 * _Nullable volumeCreated, id _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) getdetailForVolumeWithID:( nonnull NSString * ) uidVolume
+                             thenDo:( nullable void ( ^ ) ( IOStackBStorageVolumeV2 * _Nullable volDetails ) ) doAfterGetDetail;
+- ( void ) updateVolumeWithID:( nonnull NSString * ) uidVolume
+                      newName:( nullable NSString * ) nameUser
+               newDescription:( nullable NSString * ) strDescription
+                  newMetadata:( nullable NSDictionary * ) dicMetadata
+                       thenDo:( nullable void ( ^ ) ( IOStackBStorageVolumeV2 * _Nullable updatedUser, id _Nullable dicFullResponse ) ) doAfterUpdate;
 - ( void ) deleteVolumeWithID:( nonnull NSString * ) uidVolume
            waitUntilIsDeleted:( BOOL ) bWaitDeleted
                        thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
+- ( void ) listVolumeTypesThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrVolumeTypes, id _Nullable idFullResponse ) ) doAfterList;
+- ( void ) createVolumeTypeWithName:( nonnull NSString * ) nameVolumeType
+                     andDescription:( nullable NSString * ) strDescription
+                      andExtraSpecs:( nullable NSDictionary * ) dicExtraSpecs
+                           isPublic:( BOOL ) isPublic
+                             thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable createdVolumeType, id _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) getdetailForVolumeTypeWithID:( nonnull NSString * ) uidVolumeType
+                                 thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicVolumeType ) ) doAfterGetDetail;
+- ( void ) updateVolumeTypeWithID:( nonnull NSString * ) uidVolumeType
+                          newName:( nullable NSString * ) nameVolumeType
+                   newDescription:( nullable NSString * ) strDescription
+                    newExtraSpecs:( nullable NSDictionary * ) dicExtraSpecs
+                         isPublic:( BOOL ) isPublic
+                           thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable updatedVolumeType, id _Nullable dicFullResponse ) ) doAfterUpdate;
+- ( void ) deleteVolumeTypeWithID:( nonnull NSString * ) uidVolumeType
+                           thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
+- ( void ) listProjectWithAccessToVolumeTypeWithID:( nonnull NSString * ) uidVolumeType
+                                            thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicMetadata, id _Nullable idFullResponse ) ) doAfterList;
+- ( void ) createAccessToVolumeTypeWithID:( nonnull NSString * ) uidVolumeType
+                             forProjectID:( nonnull NSString * ) uidProjectOrTenant
+                                   thenDo:( nullable void ( ^ ) ( BOOL isCreated, id _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) deleteAccessToVolumeTypeWithID:( nonnull NSString * ) uidVolumeType
+                             forProjectID:( nonnull NSString * ) uidProjectOrTenant
+                                   thenDo:( nullable void ( ^ ) ( BOOL isCreated, id _Nullable dicFullResponse ) ) doAfterCreate;
 - ( void ) listMetadataForVolumeWithID:( nonnull NSString * ) uidVolume
                                 thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicMetadata, id _Nullable idFullResponse ) ) doAfterList;
 - ( void ) createMetadataForVolumeWithID:( nonnull NSString * ) uidVolume
@@ -111,6 +143,44 @@
 - ( void ) deleteBackupWithID:( nonnull NSString * ) uidBackup
            waitUntilIsDeleted:( BOOL ) bWaitDeleted
                        thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
+- ( void ) restoreBackupWithID:( nonnull NSString * ) uidBackup
+                ofVolumeWithID:( nullable NSString * ) uidVolume
+                        orName:( nullable NSString * ) nameVolume
+          waitUntilIsAvailable:( BOOL ) bWaitAvailable
+                        thenDo:( nullable void ( ^ ) ( IOStackBStorageVolumeV2 * _Nullable volumeRestored ) ) doAfterCreate;
+- ( void ) forcedeleteBackupWithID:( nonnull NSString * ) uidBackup
+                            thenDo:( nullable void ( ^ ) ( BOOL isForceDeleted ) ) doAfterForceDelete;
+- ( void ) listQuotasForProjectOrTenantWithID:( nonnull NSString * ) uidProjectOrTenant
+                                       thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicQuotas ) ) doAfterList;
+- ( void ) updateQuotaForProjectOrTenantWithID:( nonnull NSString * ) uidProjectOrTenant
+                             newTotalSizeQuota:( nullable NSNumber * ) numMaxTotalGBytes
+                               newVolumesQuota:( nullable NSNumber * ) numMaxVolumes
+                             newPerVolumeQuota:( nullable NSNumber * ) numMaxPerVolumeGBytes
+                                newBackupQuota:( nullable NSNumber * ) numMaxBackups
+                       newBackupTotalSizeQuota:( nullable NSNumber * ) numMaxBackupTotalSizeGBytes
+                              newSnapshotQuota:( nullable NSNumber * ) numMaxSnapshots
+                                        thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable updatedQuota ) ) doAfterUpdate;
+- ( void ) deleteQuotaForProjectOrTenantWithID:( nonnull NSString * ) uidProjectOrTenant
+                                        thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
+- ( void ) getdetailDefaultQuotasThenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicQuota ) ) doAfterGetDetail;
+- ( void ) listQuotasForUserWithID:( nonnull NSString * ) uidUser
+          andProjectOrTenantWithID:( nonnull NSString * ) uidProjectOrTenant
+                            thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicQuotas ) ) doAfterList;
+- ( void ) updateQuotaForUserWithID:( nonnull NSString * ) uidUser
+           andProjectOrTenantWithID:( nonnull NSString * ) uidProjectOrTenant
+                  newTotalSizeQuota:( nullable NSNumber * ) numMaxTotalGBytes
+                    newVolumesQuota:( nullable NSNumber * ) numMaxVolumes
+                  newPerVolumeQuota:( nullable NSNumber * ) numMaxPerVolumeGBytes
+                     newBackupQuota:( nullable NSNumber * ) numMaxBackups
+            newBackupTotalSizeQuota:( nullable NSNumber * ) numMaxBackupTotalSizeGBytes
+                   newSnapshotQuota:( nullable NSNumber * ) numMaxSnapshots
+                             thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable updatedQuota ) ) doAfterUpdate;
+- ( void ) deleteQuotaForUserWithID:( nonnull NSString * ) uidUser
+           andProjectOrTenantWithID:( nonnull NSString * ) uidProjectOrTenant
+                             thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
+- ( void ) getdetailQuotasForUserWithID:( nonnull NSString * ) uidUser
+               andProjectOrTenantWithID:( nonnull NSString * ) uidProjectOrTenant
+                                 thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicQuota ) ) doAfterGetDetail;
 - ( void ) listSnapshotsThenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicSnapshots, id _Nullable idFullResponse ) ) doAfterList;
 - ( void ) createSnapshotFromVolumeWithID:( nonnull NSString * ) uidVolumeToSnapshotFrom
                                  withName:( nullable NSString * ) nameSnapshot
@@ -118,9 +188,21 @@
                                   force:( BOOL ) bForceSnapshot
                    waitUntilIsAvailable:( BOOL ) bWaitAvailable
                                  thenDo:( nullable void ( ^ ) ( IOStackBStorageSnapshotV2 * _Nullable snapshotCreated, id _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) getdetailForSnapshotWithID:( nonnull NSString * ) uidSnapshot
+                               thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicSnapshot ) ) doAfterGetDetail;
+- ( void ) updateQuotaForSnapshotWithID:( nonnull NSString * ) uidSnapshot
+                                newName:( nullable NSString * ) nameSnapshot
+                         newDescription:( nullable NSString * ) strDescription
+                                 thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable updatedSnapshot ) ) doAfterUpdate;
 - ( void ) deleteSnapshotWithID:( nonnull NSString * ) uidSnapshot
              waitUntilIsDeleted:( BOOL ) bWaitDeleted
                          thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
+- ( void ) listMetadataForSnapshotWithID:( nonnull NSString * ) uidSnapshot
+                                  thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicSnapshot ) ) doAfterGetDetail;
+- ( void ) updateMetadataForSnapshotWithID:( nonnull NSString * ) uidSnapshot
+                               andMetadata:( nonnull NSDictionary * ) dicMetadata
+                                    thenDo:( nullable void ( ^ ) ( BOOL isUpdated ) ) doAfterUpdate;
+- ( void ) listStoragePoolsThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrStoragePools ) ) doAfterList;
 - ( void ) listVolumeTransfersThenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicVolumeTransfers, id _Nullable idFullResponse ) ) doAfterList;
 - ( void ) createVolumeTransferForVolumeWithID:( nonnull NSString * ) uidVolumeToTransfer
                               withTransferName:( nullable NSString * ) nameVolumeTransfer
@@ -130,6 +212,45 @@
 - ( void ) acceptVolumeTransferForVolumeWithID:( nonnull NSString * ) uidVolumeTransfer
                                    withAuthKey:( nonnull NSString * ) keyAuthentication
                                         thenDo:( nullable void ( ^ ) ( BOOL isTransferAccepted, id _Nullable dicFullResponse ) ) doAfterAccept;
+- ( void ) listConsistencyGroupsThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrConsistencyGroups, id _Nullable idFullResponse ) ) doAfterList;
+- ( void ) createConsistencyGroupWithName:( nullable NSString * ) nameConsistencyGroup
+                           andDescription:( nullable NSString * ) strDescription
+                           andVolumeTypes:( nullable NSArray<NSString *> * ) arrVolumeTypes
+                                forUserID:( nullable NSString * ) uidUser
+                             andProjectID:( nullable NSString * ) uidProject
+                                andStatus:( nullable NSString * ) statusConsistencyGroup
+                       inAvailabilityZone:( nullable NSString * ) strAvailabilityZone
+                                   thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable createdConsistencyGroup, id _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) createConsistencyGroupWithName:( nullable NSString * ) nameConsistencyGroup
+                           andDescription:( nullable NSString * ) strDescription
+                     fromConsistencyGroup:( nullable NSString * ) uidConsistencyGroupFrom
+                            andCGSnapshot:( nullable NSString * ) uidConsistencyGroupSnapFrom
+                                forUserID:( nullable NSString * ) uidUser
+                             andProjectID:( nullable NSString * ) uidProject
+                                andStatus:( nullable NSString * ) statusConsistencyGroup
+                                   thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable createdConsistencyGroup, id _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) getdetailForConsistencyGroupWithID:( nullable NSString * ) uidConsistencyGroup
+                                       thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicConsistencyGroup ) ) doAfterGetDetail;
+- ( void ) updateConsistencyGroupWithID:( nonnull NSString * ) uidConsistencyGroup
+                                newName:( nullable NSString * ) nameConsistencyGroup
+                         newDescription:( nullable NSString * ) strDescription
+                             addVolumes:( nullable NSArray<NSString *> * ) arrVolumeIDsToAdd
+                          removeVolumes:( nullable NSArray<NSString *> * ) arrVolumeIDsToRemove
+                                 thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable updatedConsistencyGroup, id _Nullable dicFullResponse ) ) doAfterUpdate;
+- ( void ) deleteConsistencyGroupWithID:( nonnull NSString * ) uidConsistencyGroup
+                                 thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
+- ( void ) listConsistencyGroupsSnapshotsThenDo:( nullable void ( ^ ) ( NSArray * _Nullable arrConsistencyGroups, id _Nullable idFullResponse ) ) doAfterList;
+- ( void ) createConsistencyGroupSnapshotWithCGroupID:( nonnull NSString * ) uidConsistencyGroup
+                                              andName:( nullable NSString * ) nameConsistencyGroup
+                                       andDescription:( nullable NSString * ) strDescription
+                                            forUserID:( nullable NSString * ) uidUser
+                                         andProjectID:( nullable NSString * ) uidProject
+                                            andStatus:( nullable NSString * ) statusConsistencyGroupSnapshot
+                                               thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable createdConsistencyGroupSnapshot, id _Nullable dicFullResponse ) ) doAfterCreate;
+- ( void ) getdetailForConsistencyGroupSnapshotWithID:( nonnull NSString * ) uidConsistencyGroupSnapshot
+                                               thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicConsistencyGroup ) ) doAfterGetDetail;
+- ( void ) deleteConsistencyGroupSnapshotWithID:( nonnull NSString * ) uidConsistencyGroupSnapshot
+                                         thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
 
 
 @end

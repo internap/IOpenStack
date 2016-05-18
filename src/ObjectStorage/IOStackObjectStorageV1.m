@@ -229,10 +229,10 @@
 }
 
 - ( void ) uploadObjectWithName:( NSString * ) strNameObject
-                    andMetaData:( NSDictionary * ) dicMetadata
+                       fromData:( NSData * ) dataRaw
+                    addMetaData:( NSDictionary * ) dicMetadata
                     inContainer:( NSString * ) strNameContainer
                       keepItFor:( NSTimeInterval ) tiForDelete
-                       withData:( NSData * ) dataRaw
                          thenDo:( void ( ^ ) ( BOOL isCreated, id idFullResponse ) ) doAfterCreate
 {
     if( [strNameObject length] > 256 )
@@ -264,6 +264,26 @@
         if( doAfterCreate )
             doAfterCreate( ( dicResults != nil ), idFullResponse );
     }];
+}
+
+- ( void ) uploadObjectWithName:( NSString * ) strNameObject
+               fromFileWithPath:( NSString * ) pathFileToUpload
+                    addMetaData:( NSDictionary * ) dicMetadata
+                    inContainer:( NSString * ) strNameContainer
+                      keepItFor:( NSTimeInterval ) tiForDelete
+                         thenDo:( void ( ^ ) ( BOOL isCreated, id idFullResponse ) ) doAfterCreate
+{
+    NSError * errRead;
+    NSData * datRawFile                 = [NSData dataWithContentsOfFile:pathFileToUpload
+                                                                 options:NSUTF8StringEncoding
+                                                                   error:&errRead];
+    
+    [self uploadObjectWithName:strNameObject
+                      fromData:datRawFile
+                   addMetaData:dicMetadata
+                   inContainer:strNameContainer
+                     keepItFor:tiForDelete
+                        thenDo:doAfterCreate];
 }
 
 - ( void ) deleteObjectWithName:( NSString * ) strNameObject

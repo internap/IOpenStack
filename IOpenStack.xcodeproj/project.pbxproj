@@ -65,6 +65,7 @@
 		669A11A91CA34B5D00E4F3CF /* IOStackNetworkV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 669A11A71CA34B5D00E4F3CF /* IOStackNetworkV2.m */; };
 		66A8DFA41C8789420076C9B2 /* IOStackObjectStorageV1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A8DFA31C8789420076C9B2 /* IOStackObjectStorageV1Tests.m */; };
 		66B1523B1C0689620069D15D /* IOpenStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66B152301C0689620069D15D /* IOpenStack.framework */; };
+		66BE5A451CEA30610092302F /* SettingsTests.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66CE45E91CAAD95A00BAF0DC /* SettingsTests.plist */; };
 		66C7306C1CD92D3100EBC950 /* IOStackComputeIPAllocationV2_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 66C7306B1CD92D3100EBC950 /* IOStackComputeIPAllocationV2_1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		66CE45EA1CAAD95A00BAF0DC /* SettingsTests.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66CE45E91CAAD95A00BAF0DC /* SettingsTests.plist */; };
 		66CE45EC1CAAFF7500BAF0DC /* DefaultSettingsTests.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66CE45EB1CAAFF7500BAF0DC /* DefaultSettingsTests.plist */; };
@@ -874,6 +875,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66BE5A451CEA30610092302F /* SettingsTests.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

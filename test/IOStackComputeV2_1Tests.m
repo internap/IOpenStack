@@ -31,7 +31,6 @@
 - ( void )setUp
 {
     [super setUp];
-    
     [self setContinueAfterFailure:NO];
     
     NSString * currentTestFilePath  = @__FILE__;

@@ -28,6 +28,7 @@
 @synthesize isProtected;
 @synthesize ramdisk_id;
 @synthesize kernel_id;
+@synthesize tags;
 
 
 + ( NSDictionary * ) parseFromAPIResponse:( NSArray * ) arrAPIResponseData
@@ -85,6 +86,8 @@
         
         ramdisk_id          = dicAPIResponse[ @"ramdisk_id" ];
         kernel_id           = dicAPIResponse[ @"kernel_id" ];
+        
+        tags                = dicAPIResponse[ @"tags" ];
 
     }
     return self;

@@ -34,6 +34,7 @@
 @synthesize currentDomain;
 @synthesize currentProjectOrTenant;
 @synthesize currentProjectOrTenantID;
+@synthesize currentUserID;
 
 //local properties accessors
 @synthesize currentTokenObject;
@@ -92,6 +93,7 @@
         currentDomain = IDENTITYV3_DEFAULT_DOMAIN;
         currentTokenID = nil;
         currentProjectOrTenant = nil;
+        currentUserID = nil;
         
         
         currentTokenObject  = nil;
@@ -313,11 +315,14 @@
             NSDictionary * dicUserDomainDatas = [dicUserDatas objectForKey:@"domain"];
             if( dicUserDomainDatas != nil )
                 currentDomainID = [dicUserDomainDatas objectForKey:@"id"];
+            
+            currentUserID = [dicUserDatas objectForKey:@"id"];
         }
         
         if( currentServices == nil ||
            [currentServices count] == 0 )
             currentServices = nil;
+        
         
         if( doAfterAuth != nil )
             doAfterAuth( currentTokenID, dicResponse );
@@ -672,11 +677,8 @@
     if( strDescription != nil )
         mdicDomainParam[ @"description" ] = strDescription;
     
-    mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
-    
-    if( !isEnabled )
-        mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    
+    mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
+   
     [self createResource:IDENTITYV3_DOMAIN_URN
               withHeader:nil
             andUrlParams:@{ @"domain" : mdicDomainParam }
@@ -721,10 +723,7 @@
     if( strDescription != nil )
         mdicDomainParam[ @"description" ] = strDescription;
     
-    mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
-    
-    if( !isEnabled )
-        mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
+    mdicDomainParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
     [self updateResource:urlDomain
               withHeader:nil
@@ -1177,14 +1176,9 @@
     if( uidParentProjectOrTenant != nil )
         mdicProjectOrTenantParam[ @"parent_id" ] = uidParentProjectOrTenant;
     
-    mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    if( isEnabled )
-        mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
-    
-    mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:NO];
-    if( isAlsoDomain )
-        mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:YES];
+    mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:isAlsoDomain];
     
     [self createResource:IDENTITYV3_PROJECT_URN
               withHeader:nil
@@ -1235,14 +1229,9 @@
     if( uidDomain != nil )
         mdicProjectOrTenantParam[ @"domain_id" ] = uidDomain;
         
-    mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    if( isEnabled )
-        mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    mdicProjectOrTenantParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
-    
-    mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:NO];
-    if( isAlsoDomain )
-        mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:YES];
+    mdicProjectOrTenantParam[ @"is_domain" ] = [NSNumber numberWithBool:isAlsoDomain];
     
     [self updateResource:urlProjectOrTenant
               withHeader:nil
@@ -1412,10 +1401,7 @@
     if( uidForced != nil )
         mdicServiceParam[ @"service_id" ] = uidForced;
     
-    mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    if( isEnabled )
-        mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
-    
+    mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
     [self createResource:IDENTITYV3_SERVICES_URN
               withHeader:nil
@@ -1465,9 +1451,7 @@
     if( strDescription != nil )
         mdicServiceParam[ @"description" ] = strDescription;
     
-    mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    if( isEnabled )
-        mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    mdicServiceParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
     [self updateResource:urlService
               withHeader:nil
@@ -1544,10 +1528,7 @@
     if( uidRegion != nil )
         mdicEndpointParam[ @"region_id" ] = uidRegion;
     
-    mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    if( isEnabled )
-        mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
-    
+    mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
     [self createResource:IDENTITYV3_ENDPOINTS_URN
               withHeader:nil
@@ -1605,9 +1586,7 @@
     if( uidRegion != nil )
         mdicEndpointParam[ @"region_id" ] = uidRegion;
     
-    mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    if( isEnabled )
-        mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    mdicEndpointParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
     [self updateResource:urlEndpointResource
               withHeader:nil
@@ -1680,9 +1659,7 @@
     if( uidDomain != nil )
         mdicUserParam[ @"domain_id" ] = uidDomain;
     
-    mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    if( isEnabled )
-        mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
     [self createResource:IDENTITYV3_USERS_URN
               withHeader:nil
@@ -1744,9 +1721,7 @@
     if( uidDomain != nil )
         mdicUserParam[ @"domain_id" ] = uidDomain;
     
-    mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:NO];
-    if( isEnabled )
-        mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:YES];
+    mdicUserParam[ @"enabled" ] = [NSNumber numberWithBool:isEnabled];
     
     [self updateResource:urlUser
               withHeader:nil

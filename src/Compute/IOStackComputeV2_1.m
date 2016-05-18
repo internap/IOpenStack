@@ -694,15 +694,13 @@
         mdicValues[ @"mtu" ] = nMTU;
     
     mdicValues[ @"enable_dhcp" ] = [NSNumber numberWithBool:NO];
-    if( nMTU != nil )
+    if( ipDHCPServer != nil )
     {
         mdicValues[ @"dhcp_server" ] = ipDHCPServer;
         mdicValues[ @"enable_dhcp" ] = [NSNumber numberWithBool:YES];
     }
     
-    mdicValues[ @"share_address" ] = [NSNumber numberWithBool:NO];
-    if( isSharing )
-        mdicValues[ @"share_address" ] = [NSNumber numberWithBool:YES];
+    mdicValues[ @"share_address" ] = [NSNumber numberWithBool:isSharing];
     
     if( ipStartingIP != nil )
         mdicValues[ @"allowed_start" ] = ipStartingIP;
@@ -811,7 +809,51 @@
     }];
 }
 
-
+/*
+- ( void ) updateQuotaForProjectOrTenantWithID:( NSString * ) uidProjectOrTenant
+                                 newCoresQuota:( NSNumber * ) numMaxCores
+                              newFixedIPsQuota:( NSNumber * ) numMaxFixedIPs
+                           newFloatingIPsQuota:( NSNumber * ) numMaxFloatingIPs
+               newInjectedFileContentSizeQuota:( NSNumber * ) numMaxFileContentBytes
+                  newInjectedFilepathSizeQuota:( NSNumber * ) numMaxFilepathBytes
+                         newInjectedFilesQuota:( NSNumber * ) numMaxInjectedFiles
+                              newInstanceQuota:( NSNumber * ) numMaxInstances
+                              newKeypairsQuota:( NSNumber * ) numMaxKeypairs
+                              newMetadataQuota:( NSNumber * ) numMaxMetadata
+                                   newRAMQuota:( NSNumber * ) numMaxRAM
+                         newSecurityGroupQuota:( NSNumber * ) numMaxSecurityGroup
+                    newSecurityGroupRulesQuota:( NSNumber * ) numMaxSecurityGroupRules
+                                        thenDo:( void ( ^ ) ( NSDictionary * updatedQuota ) ) doAfterUpdate
+{
+    NSString * urlProjectOrTenant =[NSString stringWithFormat:@"%@/%@", BLOCKSTORAGEV2_QUOTAS_URN, uidProjectOrTenant];
+    NSMutableDictionary * mdicQuotaParam = [NSMutableDictionary dictionary];
+    
+    if( numMaxCores != nil )
+        mdicQuotaParam[ @"name" ] = numMaxCores;
+    
+    if( numMaxFixedIPs != nil )
+        mdicQuotaParam[ @"description" ] = numMaxFixedIPs;
+    
+    if( numMaxFloatingIPs != nil )
+        mdicQuotaParam[ @"domain_id" ] = numMaxFloatingIPs;
+    
+    if( numMaxFloatingIPs != nil )
+        mdicQuotaParam[ @"domain_id" ] = numMaxFloatingIPs;
+    
+    [self updateResource:urlProjectOrTenant
+              withHeader:nil
+            andUrlParams:@{ @"quota_set" : mdicQuotaParam }
+                  thenDo:^(NSDictionary * _Nullable dicResponseHeader, id  _Nullable idFullResponse)
+     {
+         NSDictionary * finalQuota = idFullResponse;
+         if( idFullResponse != nil )
+             finalQuota = idFullResponse[ @"quota_set" ];
+         
+         if( doAfterUpdate != nil )
+             doAfterUpdate( finalQuota );
+     }];
+}
+ */
 
 
 @end

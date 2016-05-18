@@ -12,6 +12,26 @@
 #define IOStackObjectTypeImage         @"image"
 
 
+#define IOStackImageContainerFormatAMI      @"ami"
+#define IOStackImageContainerFormatARI      @"ari"
+#define IOStackImageContainerFormatAKI      @"aki"
+#define IOStackImageContainerFormatBARE     @"bare"
+#define IOStackImageContainerFormatOVF      @"ovf"
+#define IOStackImageContainerFormatOVA      @"ova"
+#define IOStackImageContainerFormatDOCKER   @"docker"
+
+
+#define IOStackImageDiskFormatAMI           @"ami"
+#define IOStackImageDiskFormatARI           @"ari"
+#define IOStackImageDiskFormatAKI           @"aki"
+#define IOStackImageDiskFormatVHD           @"vhd"
+#define IOStackImageDiskFormatVMDK          @"vmdk"
+#define IOStackImageDiskFormatRAW           @"raw"
+#define IOStackImageDiskFormatQCOW2         @"qcow2"
+#define IOStackImageDiskFormatVDI           @"vdi"
+#define IOStackImageDiskFormatISO           @"iso"
+
+
 @interface IOStackImageObjectV2 : IOStackObject<IOStackObjectParsable>
 
 
@@ -35,6 +55,8 @@
 
 @property (readonly, strong, nonatomic) NSString * _Nullable                        ramdisk_id;
 @property (readonly, strong, nonatomic) NSString * _Nullable                        kernel_id;
+
+@property (readonly, strong, nonatomic) NSArray * _Nullable                        tags;
 
 
 + ( nonnull NSDictionary * ) parseFromAPIResponse:( nonnull NSArray * ) arrAPIResponseData;

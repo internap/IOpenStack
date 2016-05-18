@@ -2,7 +2,7 @@
 
 This part describe the Object Storage service support of the library :
 
-Progress : ![Progress](http://progressed.io/bar/20)
+Progress : ![Progress](http://progressed.io/bar/60)
 
 + Swift V2
     + ![Current Progress](http://progressed.io/bar/0)   Service versions

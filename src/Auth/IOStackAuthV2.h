@@ -21,6 +21,7 @@
 @property (readonly, strong, nonatomic) NSString * _Nullable                currentDomain;
 @property (readonly, strong, nonatomic) NSString * _Nullable                currentProjectOrTenant;
 @property (readonly, strong, nonatomic) NSString * _Nullable                currentProjectOrTenantID;
+@property (readonly, strong, nonatomic) NSString * _Nullable                currentUserID;
 
 // local property accessors
 @property (readonly, strong, nonatomic) NSDictionary * _Nullable            currentTokenObject;

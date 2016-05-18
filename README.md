@@ -5,12 +5,12 @@
 
 It currently support most of the Core Services (Keystone, Glance, Nova, Swift, Cinder). Neutron to come.
 
-+ Identity / Authentication - [Keystone](/src/Auth) ![Progress](http://progressed.io/bar/90)  
-+ Images - [Glance](/src/Image) ![Progress](http://progressed.io/bar/100)  
-+ Compute - [Nova](/src/Compute) ![Progress](http://progressed.io/bar/40)  
-+ Object Storage - [Swift](/src/ObjectStorage) ![Progress](http://progressed.io/bar/80)  
-+ Block Storage - [Cinder](/src/BlockStorage) ![Progress](http://progressed.io/bar/90)  
-+ Network - [Neutron](/src/Network) ![Progress](http://progressed.io/bar/0)
++ ![Progress](http://progressed.io/bar/90)   Identity / Authentication - [Keystone](/src/Auth)   
++ ![Progress](http://progressed.io/bar/60)   Images - [Glance](/src/Image)   
++ ![Progress](http://progressed.io/bar/90)   Block Storage - [Cinder](/src/BlockStorage)  
++ ![Progress](http://progressed.io/bar/60)   Object Storage - [Swift](/src/ObjectStorage) 
++ ![Progress](http://progressed.io/bar/30)   Compute - [Nova](/src/Compute)  
++ ![Progress](http://progressed.io/bar/0)   Network - [Neutron](/src/Network) 
 
 You can see the support details by clicking the service name.
 

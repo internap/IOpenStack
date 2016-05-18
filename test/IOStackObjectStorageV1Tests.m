@@ -28,6 +28,8 @@
 - ( void )setUp
 {
     [super setUp];
+    [self setContinueAfterFailure:NO];
+    
     NSString * currentTestFilePath  = @__FILE__;
     NSString * currentSettingTests  = [NSString stringWithFormat:@"%@/SettingsTests.plist", [currentTestFilePath stringByDeletingLastPathComponent]];
     
@@ -169,11 +171,6 @@
     NSString * currentTestFilePath      = @__FILE__;
     NSString * currentKeyDataFilePath   = [NSString stringWithFormat:@"%@/testkey-id_rsa.pub", [currentTestFilePath stringByDeletingLastPathComponent]];
     NSDictionary * dicContainerMetadata = @{ @"testmeta" : @"testvalue" };
-    NSError * errRead;
-    NSData * datRawFile                 = [NSData dataWithContentsOfFile:currentKeyDataFilePath
-                                                                 options:NSUTF8StringEncoding
-                                                                   error:&errRead];
-    XCTAssertNotNil( datRawFile );
     
     
     [objectstorageV1Test createContainerWithName:nameContainer
@@ -186,10 +183,10 @@
              XCTAssertTrue( [dicContainers count] > 0 );
              XCTAssertNotNil( [dicContainers valueForKey:nameContainer] );
              [objectstorageV1Test uploadObjectWithName:nameObject
-                                           andMetaData:nil
+                                      fromFileWithPath:currentKeyDataFilePath
+                                           addMetaData:nil
                                            inContainer:nameContainer
                                              keepItFor:0
-                                              withData:datRawFile
                                                 thenDo:^(BOOL isCreated, id  _Nullable idFullResponse)
               {
                   XCTAssertTrue( isCreated );

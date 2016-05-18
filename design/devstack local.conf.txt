@@ -22,7 +22,6 @@ enable_service q-dhcp
 enable_service q-l3
 enable_service q-meta
 enable_service neutron
-# a voir, peut etre ca marche pas
 enable_service n-novnc
 enable_service s-proxy 
 enable_service s-object 

@@ -45,11 +45,17 @@
                            keepItFor:( NSTimeInterval ) tiForDelete
                               thenDo:( nullable void ( ^ ) ( BOOL isCreated, id _Nullable idFullResponse ) ) doAfterCreate;
 - ( void ) uploadObjectWithName:( nonnull NSString * ) strNameObject
-                    andMetaData:( nullable NSDictionary * ) dicMetadata
+                       fromData:( nonnull NSData * ) dataRaw
+                    addMetaData:( nullable NSDictionary * ) dicMetadata
                     inContainer:( nonnull NSString * ) strNameContainer
                       keepItFor:( NSTimeInterval ) tiForDelete
-                       withData:( nonnull NSData * ) dataRaw
                          thenDo:( nullable void ( ^ ) ( BOOL isCreated, id _Nullable idFullResponse ) ) doAfterUpload;
+- ( void )  uploadObjectWithName:( nonnull NSString * ) strNameObject
+                fromFileWithPath:( nonnull NSString * ) pathFileToUpload
+                     addMetaData:( nullable NSDictionary * ) dicMetadata
+                     inContainer:( nonnull NSString * ) strNameContainer
+                       keepItFor:( NSTimeInterval ) tiForDelete
+                          thenDo:( nullable void ( ^ ) ( BOOL isCreated, id _Nullable idFullResponse ) ) doAfterUpload;
 - ( void ) deleteObjectWithName:( nonnull NSString * ) strNameObject
                     inContainer:( nonnull NSString * ) strNameContainer
                          thenDo:( nullable void ( ^ ) ( BOOL isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;
