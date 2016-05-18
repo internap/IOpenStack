@@ -6,7 +6,7 @@ This is the provider drivers directory where you can find instruction on how to 
 + DreamHost - [DreamCompute](https://www.dreamhost.com/cloud/computing/) and [DreamObjects](https://www.dreamhost.com/cloud/storage/), currently supported : ![Progress](http://progressed.io/bar/100)  
 + OVH - [OVH Public cloud](https://www.ovh.com/us/cloud/instances/) and [OVH Public cloud storage](https://www.ovh.com/us/cloud/storage/), currently supported : ![Progress](http://progressed.io/bar/0)  
 
-> **NOTE:** Those instruction are for framework developer. If you want to know how to *use* the framework inside your application, please refer to the [main README](/README.md)
+> **NOTE:** Those instruction are for framework developer. If you want to know how to *use* the framework inside your application, please refer to the [main README](/)
 
 Setup for launching the tests
 -------------------
