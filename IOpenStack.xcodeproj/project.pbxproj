@@ -8,14 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		660F31361CD556D2005AF357 /* IOStackAuth_Dream.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA061C6401E000E47F91 /* IOStackAuth_Dream.m */; };
-		660F31381CD59646005AF357 /* IOStackImage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31371CD59646005AF357 /* IOStackImage_INAPTests.m */; };
-		660F313F1CD597B4005AF357 /* IOStackAuth_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F313D1CD596A2005AF357 /* IOStackAuth_INAPTests.m */; };
-		660F31401CD597BA005AF357 /* IOStackAuth_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F313B1CD59693005AF357 /* IOStackAuth_DreamTests.m */; };
-		660F31421CD59957005AF357 /* IOStackImage_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31411CD59957005AF357 /* IOStackImage_DreamTests.m */; };
-		660F31441CD7C29F005AF357 /* IOStackBStorage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31431CD7C29F005AF357 /* IOStackBStorage_INAPTests.m */; };
-		660F31461CD7EA73005AF357 /* IOStackBStorage_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31451CD7EA73005AF357 /* IOStackBStorage_DreamTests.m */; };
-		660F31481CD7EE1D005AF357 /* IOStackOStorage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31471CD7EE1D005AF357 /* IOStackOStorage_INAPTests.m */; };
-		660F314A1CD7F0AE005AF357 /* IOStackCompute_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31491CD7F0AE005AF357 /* IOStackCompute_INAPTests.m */; };
 		660F314D1CD92178005AF357 /* IOStackComputeNetworkV2_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 660F314B1CD92178005AF357 /* IOStackComputeNetworkV2_1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		660F314E1CD92178005AF357 /* IOStackComputeNetworkV2_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F314C1CD92178005AF357 /* IOStackComputeNetworkV2_1.m */; };
 		66217DFA1CB5B46100D3AB15 /* IOStackBStorageBackupV2.h in Headers */ = {isa = PBXBuildFile; fileRef = 66217DF81CB5B46100D3AB15 /* IOStackBStorageBackupV2.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -51,27 +43,59 @@
 		6678FA1F1C64022B00E47F91 /* IOStackComputeV2_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA1B1C64022B00E47F91 /* IOStackComputeV2_1.m */; };
 		6678FA201C64022B00E47F91 /* IOStackComputeV2_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678FA1C1C64022B00E47F91 /* IOStackComputeV2_1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6678FA351C6409CD00E47F91 /* IOpenStackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA281C64025E00E47F91 /* IOpenStackTests.m */; };
-		6678FA361C6409CD00E47F91 /* IOStackAuthV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA241C64025E00E47F91 /* IOStackAuthV2Tests.m */; };
-		6678FA371C6409CD00E47F91 /* IOStackAuthV3Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA231C64025E00E47F91 /* IOStackAuthV3Tests.m */; };
-		6678FA3B1C6409CD00E47F91 /* IOStackImageV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA211C64025E00E47F91 /* IOStackImageV2Tests.m */; };
-		6678FA3C1C6409CD00E47F91 /* IOStackComputeV2_1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA221C64025E00E47F91 /* IOStackComputeV2_1Tests.m */; };
 		6678FA3E1C640B4C00E47F91 /* IOStackAuth_INAP.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA051C6401E000E47F91 /* IOStackAuth_INAP.m */; };
 		6678FA4B1C650FEA00E47F91 /* IOStackComputeSecurityGroupV2_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678FA491C650FEA00E47F91 /* IOStackComputeSecurityGroupV2_1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6678FA4F1C654CB400E47F91 /* IOStackComputeSecurityGroupRuleV2_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678FA4D1C654CB400E47F91 /* IOStackComputeSecurityGroupRuleV2_1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		66790AE01CB5B4B700A5FF86 /* IOStackBStorageVolumeV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 66790ADF1CB5B4B700A5FF86 /* IOStackBStorageVolumeV2.m */; };
 		667958A51C694FD00036BE83 /* IOStackComputeFlavorV2_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 667958A31C694FD00036BE83 /* IOStackComputeFlavorV2_1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		66861FB61CD959C000BD70AB /* IOStackNetworkV2.h in Headers */ = {isa = PBXBuildFile; fileRef = 66861FB51CD959C000BD70AB /* IOStackNetworkV2.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		66861FB81CDBA0B900BD70AB /* IOStackCompute_Dream.m in Sources */ = {isa = PBXBuildFile; fileRef = 66861FB71CDBA0B900BD70AB /* IOStackCompute_Dream.m */; };
 		669A11A91CA34B5D00E4F3CF /* IOStackNetworkV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 669A11A71CA34B5D00E4F3CF /* IOStackNetworkV2.m */; };
-		66A8DFA41C8789420076C9B2 /* IOStackObjectStorageV1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A8DFA31C8789420076C9B2 /* IOStackObjectStorageV1Tests.m */; };
 		66B1523B1C0689620069D15D /* IOpenStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66B152301C0689620069D15D /* IOpenStack.framework */; };
 		66BE5A451CEA30610092302F /* SettingsTests.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66CE45E91CAAD95A00BAF0DC /* SettingsTests.plist */; };
+		66C5BD821CEE3A0F003D5CFF /* IOStackImage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31371CD59646005AF357 /* IOStackImage_INAPTests.m */; };
+		66C5BD831CEE3A0F003D5CFF /* IOStackAuthV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA241C64025E00E47F91 /* IOStackAuthV2Tests.m */; };
+		66C5BD841CEE3A0F003D5CFF /* IOStackOStorage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31471CD7EE1D005AF357 /* IOStackOStorage_INAPTests.m */; };
+		66C5BD851CEE3A0F003D5CFF /* IOStackBStorage_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31451CD7EA73005AF357 /* IOStackBStorage_DreamTests.m */; };
+		66C5BD861CEE3A0F003D5CFF /* IOpenStackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA281C64025E00E47F91 /* IOpenStackTests.m */; };
+		66C5BD871CEE3A0F003D5CFF /* IOStackComputeV2_1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA221C64025E00E47F91 /* IOStackComputeV2_1Tests.m */; };
+		66C5BD881CEE3A0F003D5CFF /* IOStackBlockStorageV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CE45F61CAB166500BAF0DC /* IOStackBlockStorageV2Tests.m */; };
+		66C5BD891CEE3A0F003D5CFF /* IOStackCompute_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31491CD7F0AE005AF357 /* IOStackCompute_INAPTests.m */; };
+		66C5BD8A1CEE3A0F003D5CFF /* IOStackAuth_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F313B1CD59693005AF357 /* IOStackAuth_DreamTests.m */; };
+		66C5BD8B1CEE3A0F003D5CFF /* IOStackAuth_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F313D1CD596A2005AF357 /* IOStackAuth_INAPTests.m */; };
+		66C5BD8C1CEE3A0F003D5CFF /* IOStackBStorage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31431CD7C29F005AF357 /* IOStackBStorage_INAPTests.m */; };
+		66C5BD8D1CEE3A0F003D5CFF /* IOStackAuthV3Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA231C64025E00E47F91 /* IOStackAuthV3Tests.m */; };
+		66C5BD8E1CEE3A0F003D5CFF /* IOStackCompute_Dream.m in Sources */ = {isa = PBXBuildFile; fileRef = 66861FB71CDBA0B900BD70AB /* IOStackCompute_Dream.m */; };
+		66C5BD8F1CEE3A0F003D5CFF /* IOStackImageV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA211C64025E00E47F91 /* IOStackImageV2Tests.m */; };
+		66C5BD901CEE3A0F003D5CFF /* IOStackImage_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31411CD59957005AF357 /* IOStackImage_DreamTests.m */; };
+		66C5BD911CEE3A0F003D5CFF /* IOStackObjectStorageV1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A8DFA31C8789420076C9B2 /* IOStackObjectStorageV1Tests.m */; };
+		66C5BD931CEE3A0F003D5CFF /* IOpenStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FF1CD01CDBC24600B8E841 /* IOpenStack.framework */; };
+		66C5BD9F1CEE3A24003D5CFF /* IOStackBStorage_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31451CD7EA73005AF357 /* IOStackBStorage_DreamTests.m */; };
+		66C5BDA01CEE3A24003D5CFF /* IOStackAuthV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA241C64025E00E47F91 /* IOStackAuthV2Tests.m */; };
+		66C5BDA11CEE3A24003D5CFF /* IOStackOStorage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31471CD7EE1D005AF357 /* IOStackOStorage_INAPTests.m */; };
+		66C5BDA21CEE3A24003D5CFF /* IOStackComputeV2_1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA221C64025E00E47F91 /* IOStackComputeV2_1Tests.m */; };
+		66C5BDA31CEE3A24003D5CFF /* IOStackCompute_Dream.m in Sources */ = {isa = PBXBuildFile; fileRef = 66861FB71CDBA0B900BD70AB /* IOStackCompute_Dream.m */; };
+		66C5BDA41CEE3A24003D5CFF /* IOStackAuthV3Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA231C64025E00E47F91 /* IOStackAuthV3Tests.m */; };
+		66C5BDA51CEE3A24003D5CFF /* IOpenStackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA281C64025E00E47F91 /* IOpenStackTests.m */; };
+		66C5BDA61CEE3A24003D5CFF /* IOStackAuth_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F313B1CD59693005AF357 /* IOStackAuth_DreamTests.m */; };
+		66C5BDA71CEE3A24003D5CFF /* IOStackImage_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31411CD59957005AF357 /* IOStackImage_DreamTests.m */; };
+		66C5BDA81CEE3A24003D5CFF /* IOStackObjectStorageV1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A8DFA31C8789420076C9B2 /* IOStackObjectStorageV1Tests.m */; };
+		66C5BDA91CEE3A24003D5CFF /* IOStackBlockStorageV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CE45F61CAB166500BAF0DC /* IOStackBlockStorageV2Tests.m */; };
+		66C5BDAA1CEE3A24003D5CFF /* IOStackImageV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA211C64025E00E47F91 /* IOStackImageV2Tests.m */; };
+		66C5BDAB1CEE3A24003D5CFF /* IOStackCompute_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31491CD7F0AE005AF357 /* IOStackCompute_INAPTests.m */; };
+		66C5BDAC1CEE3A24003D5CFF /* IOStackBStorage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31431CD7C29F005AF357 /* IOStackBStorage_INAPTests.m */; };
+		66C5BDAD1CEE3A24003D5CFF /* IOStackAuth_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F313D1CD596A2005AF357 /* IOStackAuth_INAPTests.m */; };
+		66C5BDAE1CEE3A24003D5CFF /* IOStackImage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31371CD59646005AF357 /* IOStackImage_INAPTests.m */; };
+		66C5BDB01CEE3A24003D5CFF /* IOpenStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66B152301C0689620069D15D /* IOpenStack.framework */; };
+		66C5BDC21CEE3CE3003D5CFF /* getting_started.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C5BDC11CEE3CE3003D5CFF /* getting_started.m */; };
+		66C5BDC31CEE3CE3003D5CFF /* getting_started.m in Sources */ = {isa = PBXBuildFile; fileRef = 66C5BDC11CEE3CE3003D5CFF /* getting_started.m */; };
+		66C5BDC81CEE3E16003D5CFF /* DefaultSettingsTests.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66C5BDC41CEE3E16003D5CFF /* DefaultSettingsTests.plist */; };
+		66C5BDC91CEE3E16003D5CFF /* SettingsTests.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66C5BDC51CEE3E16003D5CFF /* SettingsTests.plist */; };
+		66C5BDCA1CEE3E16003D5CFF /* testkey-id_rsa in Resources */ = {isa = PBXBuildFile; fileRef = 66C5BDC61CEE3E16003D5CFF /* testkey-id_rsa */; };
+		66C5BDCB1CEE3E16003D5CFF /* testkey-id_rsa.pub in Resources */ = {isa = PBXBuildFile; fileRef = 66C5BDC71CEE3E16003D5CFF /* testkey-id_rsa.pub */; };
 		66C7306C1CD92D3100EBC950 /* IOStackComputeIPAllocationV2_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 66C7306B1CD92D3100EBC950 /* IOStackComputeIPAllocationV2_1.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		66CE45EA1CAAD95A00BAF0DC /* SettingsTests.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66CE45E91CAAD95A00BAF0DC /* SettingsTests.plist */; };
-		66CE45EC1CAAFF7500BAF0DC /* DefaultSettingsTests.plist in Resources */ = {isa = PBXBuildFile; fileRef = 66CE45EB1CAAFF7500BAF0DC /* DefaultSettingsTests.plist */; };
 		66CE45F41CAB04BC00BAF0DC /* IOStackBlockStorageV2.h in Headers */ = {isa = PBXBuildFile; fileRef = 66CE45F21CAB04BC00BAF0DC /* IOStackBlockStorageV2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		66CE45F51CAB04BC00BAF0DC /* IOStackBlockStorageV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CE45F31CAB04BC00BAF0DC /* IOStackBlockStorageV2.m */; };
-		66CE45F71CAB166500BAF0DC /* IOStackBlockStorageV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CE45F61CAB166500BAF0DC /* IOStackBlockStorageV2Tests.m */; };
 		66CE45FA1CAB2C1200BAF0DC /* IOStackBStorageVolumeV2.h in Headers */ = {isa = PBXBuildFile; fileRef = 66CE45F81CAB2C1200BAF0DC /* IOStackBStorageVolumeV2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		66E6F0EA1CD92CA2003A04D5 /* IOStackComputeSecurityGroupV2_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E6F0E91CD92CA2003A04D5 /* IOStackComputeSecurityGroupV2_1.m */; };
 		66EDB1B21C80E23B00B24E24 /* IOStackComputeIPAllocationV2_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 66EDB1B01C80E23B00B24E24 /* IOStackComputeIPAllocationV2_1.m */; };
@@ -189,26 +213,25 @@
 		66FF1D531CDBC38E00B8E841 /* IOStackComputeV2_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA1B1C64022B00E47F91 /* IOStackComputeV2_1.m */; };
 		66FF1D541CDBC38E00B8E841 /* IOStackNetworkV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 669A11A71CA34B5D00E4F3CF /* IOStackNetworkV2.m */; };
 		66FF1D561CDBC3AA00B8E841 /* IOpenStackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA281C64025E00E47F91 /* IOpenStackTests.m */; };
-		66FF1D571CDBC3AA00B8E841 /* IOStackAuthV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA241C64025E00E47F91 /* IOStackAuthV2Tests.m */; };
-		66FF1D581CDBC3AA00B8E841 /* IOStackAuthV3Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA231C64025E00E47F91 /* IOStackAuthV3Tests.m */; };
-		66FF1D591CDBC3AA00B8E841 /* IOStackImageV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA211C64025E00E47F91 /* IOStackImageV2Tests.m */; };
-		66FF1D5A1CDBC3AA00B8E841 /* IOStackBlockStorageV2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CE45F61CAB166500BAF0DC /* IOStackBlockStorageV2Tests.m */; };
-		66FF1D5B1CDBC3AA00B8E841 /* IOStackObjectStorageV1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66A8DFA31C8789420076C9B2 /* IOStackObjectStorageV1Tests.m */; };
-		66FF1D5C1CDBC3AA00B8E841 /* IOStackComputeV2_1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6678FA221C64025E00E47F91 /* IOStackComputeV2_1Tests.m */; };
-		66FF1D5D1CDBC3AA00B8E841 /* IOStackAuth_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F313B1CD59693005AF357 /* IOStackAuth_DreamTests.m */; };
-		66FF1D5E1CDBC3AA00B8E841 /* IOStackImage_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31411CD59957005AF357 /* IOStackImage_DreamTests.m */; };
-		66FF1D5F1CDBC3AA00B8E841 /* IOStackBStorage_DreamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31451CD7EA73005AF357 /* IOStackBStorage_DreamTests.m */; };
-		66FF1D601CDBC3AA00B8E841 /* IOStackCompute_Dream.m in Sources */ = {isa = PBXBuildFile; fileRef = 66861FB71CDBA0B900BD70AB /* IOStackCompute_Dream.m */; };
-		66FF1D611CDBC3AA00B8E841 /* IOStackAuth_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F313D1CD596A2005AF357 /* IOStackAuth_INAPTests.m */; };
-		66FF1D621CDBC3AA00B8E841 /* IOStackImage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31371CD59646005AF357 /* IOStackImage_INAPTests.m */; };
-		66FF1D631CDBC3AA00B8E841 /* IOStackBStorage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31431CD7C29F005AF357 /* IOStackBStorage_INAPTests.m */; };
-		66FF1D641CDBC3AA00B8E841 /* IOStackOStorage_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31471CD7EE1D005AF357 /* IOStackOStorage_INAPTests.m */; };
-		66FF1D651CDBC3AA00B8E841 /* IOStackCompute_INAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 660F31491CD7F0AE005AF357 /* IOStackCompute_INAPTests.m */; };
 		66FF1D671CDBC3E200B8E841 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66FF1D661CDBC3E200B8E841 /* CFNetwork.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		66B1523C1C0689620069D15D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 66B152271C0689610069D15D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 66B1522F1C0689620069D15D;
+			remoteInfo = IOpenStack;
+		};
+		66C5BD801CEE3A0F003D5CFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 66B152271C0689610069D15D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 66FF1CCF1CDBC24600B8E841;
+			remoteInfo = "IOpenStack tvOS";
+		};
+		66C5BD9D1CEE3A24003D5CFF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 66B152271C0689610069D15D /* Project object */;
 			proxyType = 1;
@@ -252,6 +275,16 @@
 			dstSubfolderSpec = 16;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66C5BDB41CEE3A24003D5CFF /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -325,6 +358,13 @@
 		66A8DFA31C8789420076C9B2 /* IOStackObjectStorageV1Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IOStackObjectStorageV1Tests.m; path = test/IOStackObjectStorageV1Tests.m; sourceTree = SOURCE_ROOT; };
 		66B152301C0689620069D15D /* IOpenStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IOpenStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		66B1523A1C0689620069D15D /* IOpenStack iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "IOpenStack iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66C5BD991CEE3A0F003D5CFF /* FirstApp Guide tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FirstApp Guide tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66C5BDB81CEE3A24003D5CFF /* FirstApp Guide iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FirstApp Guide iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66C5BDC11CEE3CE3003D5CFF /* getting_started.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = getting_started.m; path = firstapp/getting_started.m; sourceTree = SOURCE_ROOT; };
+		66C5BDC41CEE3E16003D5CFF /* DefaultSettingsTests.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DefaultSettingsTests.plist; path = firstapp/DefaultSettingsTests.plist; sourceTree = SOURCE_ROOT; };
+		66C5BDC51CEE3E16003D5CFF /* SettingsTests.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = SettingsTests.plist; path = firstapp/SettingsTests.plist; sourceTree = SOURCE_ROOT; };
+		66C5BDC61CEE3E16003D5CFF /* testkey-id_rsa */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "testkey-id_rsa"; path = "firstapp/testkey-id_rsa"; sourceTree = SOURCE_ROOT; };
+		66C5BDC71CEE3E16003D5CFF /* testkey-id_rsa.pub */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "testkey-id_rsa.pub"; path = "firstapp/testkey-id_rsa.pub"; sourceTree = SOURCE_ROOT; };
 		66C7306B1CD92D3100EBC950 /* IOStackComputeIPAllocationV2_1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOStackComputeIPAllocationV2_1.h; path = src/Compute/IOStackComputeIPAllocationV2_1.h; sourceTree = SOURCE_ROOT; };
 		66CE45E91CAAD95A00BAF0DC /* SettingsTests.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = SettingsTests.plist; path = test/SettingsTests.plist; sourceTree = SOURCE_ROOT; };
 		66CE45EB1CAAFF7500BAF0DC /* DefaultSettingsTests.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = DefaultSettingsTests.plist; path = test/DefaultSettingsTests.plist; sourceTree = SOURCE_ROOT; };
@@ -362,6 +402,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				66B1523B1C0689620069D15D /* IOpenStack.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66C5BD921CEE3A0F003D5CFF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66C5BD931CEE3A0F003D5CFF /* IOpenStack.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66C5BDAF1CEE3A24003D5CFF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66C5BDB01CEE3A24003D5CFF /* IOpenStack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,6 +494,7 @@
 				6678F9EB1C63FDC500E47F91 /* README.md */,
 				66B152321C0689620069D15D /* src */,
 				66B1523E1C0689620069D15D /* test */,
+				66C5BDBA1CEE3A6E003D5CFF /* firstapp */,
 				66B152311C0689620069D15D /* Products */,
 				665FFBED1C0788BF00416342 /* Frameworks */,
 			);
@@ -451,6 +508,8 @@
 				66FF1CC31CDBC22300B8E841 /* IOpenStack.framework */,
 				66FF1CD01CDBC24600B8E841 /* IOpenStack.framework */,
 				66FF1CD91CDBC24600B8E841 /* IOpenStack tvOSTests.xctest */,
+				66C5BD991CEE3A0F003D5CFF /* FirstApp Guide tvOSTests.xctest */,
+				66C5BDB81CEE3A24003D5CFF /* FirstApp Guide iOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -510,6 +569,19 @@
 				66EFEC091C55E50B00D1E909 /* Provider */,
 			);
 			name = Auth;
+			sourceTree = "<group>";
+		};
+		66C5BDBA1CEE3A6E003D5CFF /* firstapp */ = {
+			isa = PBXGroup;
+			children = (
+				66C5BDC41CEE3E16003D5CFF /* DefaultSettingsTests.plist */,
+				66C5BDC51CEE3E16003D5CFF /* SettingsTests.plist */,
+				66C5BDC61CEE3E16003D5CFF /* testkey-id_rsa */,
+				66C5BDC71CEE3E16003D5CFF /* testkey-id_rsa.pub */,
+				66C5BDC11CEE3CE3003D5CFF /* getting_started.m */,
+			);
+			name = firstapp;
+			path = IOpenStackTests;
 			sourceTree = "<group>";
 		};
 		66CE45ED1CAB00C900BAF0DC /* BlockStorage */ = {
@@ -739,6 +811,43 @@
 			productReference = 66B1523A1C0689620069D15D /* IOpenStack iOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		66C5BD7E1CEE3A0F003D5CFF /* FirstApp Guide tvOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66C5BD961CEE3A0F003D5CFF /* Build configuration list for PBXNativeTarget "FirstApp Guide tvOSTests" */;
+			buildPhases = (
+				66C5BD811CEE3A0F003D5CFF /* Sources */,
+				66C5BD921CEE3A0F003D5CFF /* Frameworks */,
+				66C5BD941CEE3A0F003D5CFF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				66C5BD7F1CEE3A0F003D5CFF /* PBXTargetDependency */,
+			);
+			name = "FirstApp Guide tvOSTests";
+			productName = "IOpenStack tvOSTests";
+			productReference = 66C5BD991CEE3A0F003D5CFF /* FirstApp Guide tvOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		66C5BD9B1CEE3A24003D5CFF /* FirstApp Guide iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 66C5BDB51CEE3A24003D5CFF /* Build configuration list for PBXNativeTarget "FirstApp Guide iOSTests" */;
+			buildPhases = (
+				66C5BD9E1CEE3A24003D5CFF /* Sources */,
+				66C5BDAF1CEE3A24003D5CFF /* Frameworks */,
+				66C5BDB11CEE3A24003D5CFF /* Resources */,
+				66C5BDB41CEE3A24003D5CFF /* Copy Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				66C5BD9C1CEE3A24003D5CFF /* PBXTargetDependency */,
+			);
+			name = "FirstApp Guide iOSTests";
+			productName = IOpenStackTests;
+			productReference = 66C5BDB81CEE3A24003D5CFF /* FirstApp Guide iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		66FF1CC21CDBC22300B8E841 /* IOpenStack watchOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 66FF1CC81CDBC22300B8E841 /* Build configuration list for PBXNativeTarget "IOpenStack watchOS" */;
@@ -836,6 +945,8 @@
 				66FF1CC21CDBC22300B8E841 /* IOpenStack watchOS */,
 				66B152391C0689620069D15D /* IOpenStack iOSTests */,
 				66FF1CD81CDBC24600B8E841 /* IOpenStack tvOSTests */,
+				66C5BD9B1CEE3A24003D5CFF /* FirstApp Guide iOSTests */,
+				66C5BD7E1CEE3A0F003D5CFF /* FirstApp Guide tvOSTests */,
 			);
 		};
 /* End PBXProject section */
@@ -845,6 +956,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66C5BDCA1CEE3E16003D5CFF /* testkey-id_rsa in Resources */,
+				66C5BDC81CEE3E16003D5CFF /* DefaultSettingsTests.plist in Resources */,
+				66C5BDC91CEE3E16003D5CFF /* SettingsTests.plist in Resources */,
+				66C5BDCB1CEE3E16003D5CFF /* testkey-id_rsa.pub in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -853,7 +968,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				66CE45EA1CAAD95A00BAF0DC /* SettingsTests.plist in Resources */,
-				66CE45EC1CAAFF7500BAF0DC /* DefaultSettingsTests.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66C5BD941CEE3A0F003D5CFF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66C5BDB11CEE3A24003D5CFF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -919,22 +1047,54 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				660F31461CD7EA73005AF357 /* IOStackBStorage_DreamTests.m in Sources */,
-				6678FA361C6409CD00E47F91 /* IOStackAuthV2Tests.m in Sources */,
-				660F31481CD7EE1D005AF357 /* IOStackOStorage_INAPTests.m in Sources */,
-				6678FA3C1C6409CD00E47F91 /* IOStackComputeV2_1Tests.m in Sources */,
-				66861FB81CDBA0B900BD70AB /* IOStackCompute_Dream.m in Sources */,
-				6678FA371C6409CD00E47F91 /* IOStackAuthV3Tests.m in Sources */,
 				6678FA351C6409CD00E47F91 /* IOpenStackTests.m in Sources */,
-				660F31401CD597BA005AF357 /* IOStackAuth_DreamTests.m in Sources */,
-				660F31421CD59957005AF357 /* IOStackImage_DreamTests.m in Sources */,
-				66A8DFA41C8789420076C9B2 /* IOStackObjectStorageV1Tests.m in Sources */,
-				66CE45F71CAB166500BAF0DC /* IOStackBlockStorageV2Tests.m in Sources */,
-				6678FA3B1C6409CD00E47F91 /* IOStackImageV2Tests.m in Sources */,
-				660F314A1CD7F0AE005AF357 /* IOStackCompute_INAPTests.m in Sources */,
-				660F31441CD7C29F005AF357 /* IOStackBStorage_INAPTests.m in Sources */,
-				660F313F1CD597B4005AF357 /* IOStackAuth_INAPTests.m in Sources */,
-				660F31381CD59646005AF357 /* IOStackImage_INAPTests.m in Sources */,
+				66C5BDC21CEE3CE3003D5CFF /* getting_started.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66C5BD811CEE3A0F003D5CFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66C5BD821CEE3A0F003D5CFF /* IOStackImage_INAPTests.m in Sources */,
+				66C5BD831CEE3A0F003D5CFF /* IOStackAuthV2Tests.m in Sources */,
+				66C5BD841CEE3A0F003D5CFF /* IOStackOStorage_INAPTests.m in Sources */,
+				66C5BD851CEE3A0F003D5CFF /* IOStackBStorage_DreamTests.m in Sources */,
+				66C5BD861CEE3A0F003D5CFF /* IOpenStackTests.m in Sources */,
+				66C5BD871CEE3A0F003D5CFF /* IOStackComputeV2_1Tests.m in Sources */,
+				66C5BD881CEE3A0F003D5CFF /* IOStackBlockStorageV2Tests.m in Sources */,
+				66C5BD891CEE3A0F003D5CFF /* IOStackCompute_INAPTests.m in Sources */,
+				66C5BD8A1CEE3A0F003D5CFF /* IOStackAuth_DreamTests.m in Sources */,
+				66C5BD8B1CEE3A0F003D5CFF /* IOStackAuth_INAPTests.m in Sources */,
+				66C5BD8C1CEE3A0F003D5CFF /* IOStackBStorage_INAPTests.m in Sources */,
+				66C5BD8D1CEE3A0F003D5CFF /* IOStackAuthV3Tests.m in Sources */,
+				66C5BD8E1CEE3A0F003D5CFF /* IOStackCompute_Dream.m in Sources */,
+				66C5BD8F1CEE3A0F003D5CFF /* IOStackImageV2Tests.m in Sources */,
+				66C5BD901CEE3A0F003D5CFF /* IOStackImage_DreamTests.m in Sources */,
+				66C5BD911CEE3A0F003D5CFF /* IOStackObjectStorageV1Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66C5BD9E1CEE3A24003D5CFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66C5BD9F1CEE3A24003D5CFF /* IOStackBStorage_DreamTests.m in Sources */,
+				66C5BDA01CEE3A24003D5CFF /* IOStackAuthV2Tests.m in Sources */,
+				66C5BDA11CEE3A24003D5CFF /* IOStackOStorage_INAPTests.m in Sources */,
+				66C5BDA21CEE3A24003D5CFF /* IOStackComputeV2_1Tests.m in Sources */,
+				66C5BDA31CEE3A24003D5CFF /* IOStackCompute_Dream.m in Sources */,
+				66C5BDA41CEE3A24003D5CFF /* IOStackAuthV3Tests.m in Sources */,
+				66C5BDA51CEE3A24003D5CFF /* IOpenStackTests.m in Sources */,
+				66C5BDA61CEE3A24003D5CFF /* IOStackAuth_DreamTests.m in Sources */,
+				66C5BDA71CEE3A24003D5CFF /* IOStackImage_DreamTests.m in Sources */,
+				66C5BDA81CEE3A24003D5CFF /* IOStackObjectStorageV1Tests.m in Sources */,
+				66C5BDA91CEE3A24003D5CFF /* IOStackBlockStorageV2Tests.m in Sources */,
+				66C5BDAA1CEE3A24003D5CFF /* IOStackImageV2Tests.m in Sources */,
+				66C5BDAB1CEE3A24003D5CFF /* IOStackCompute_INAPTests.m in Sources */,
+				66C5BDAC1CEE3A24003D5CFF /* IOStackBStorage_INAPTests.m in Sources */,
+				66C5BDAD1CEE3A24003D5CFF /* IOStackAuth_INAPTests.m in Sources */,
+				66C5BDAE1CEE3A24003D5CFF /* IOStackImage_INAPTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1008,22 +1168,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				66FF1D621CDBC3AA00B8E841 /* IOStackImage_INAPTests.m in Sources */,
-				66FF1D571CDBC3AA00B8E841 /* IOStackAuthV2Tests.m in Sources */,
-				66FF1D641CDBC3AA00B8E841 /* IOStackOStorage_INAPTests.m in Sources */,
-				66FF1D5F1CDBC3AA00B8E841 /* IOStackBStorage_DreamTests.m in Sources */,
 				66FF1D561CDBC3AA00B8E841 /* IOpenStackTests.m in Sources */,
-				66FF1D5C1CDBC3AA00B8E841 /* IOStackComputeV2_1Tests.m in Sources */,
-				66FF1D5A1CDBC3AA00B8E841 /* IOStackBlockStorageV2Tests.m in Sources */,
-				66FF1D651CDBC3AA00B8E841 /* IOStackCompute_INAPTests.m in Sources */,
-				66FF1D5D1CDBC3AA00B8E841 /* IOStackAuth_DreamTests.m in Sources */,
-				66FF1D611CDBC3AA00B8E841 /* IOStackAuth_INAPTests.m in Sources */,
-				66FF1D631CDBC3AA00B8E841 /* IOStackBStorage_INAPTests.m in Sources */,
-				66FF1D581CDBC3AA00B8E841 /* IOStackAuthV3Tests.m in Sources */,
-				66FF1D601CDBC3AA00B8E841 /* IOStackCompute_Dream.m in Sources */,
-				66FF1D591CDBC3AA00B8E841 /* IOStackImageV2Tests.m in Sources */,
-				66FF1D5E1CDBC3AA00B8E841 /* IOStackImage_DreamTests.m in Sources */,
-				66FF1D5B1CDBC3AA00B8E841 /* IOStackObjectStorageV1Tests.m in Sources */,
+				66C5BDC31CEE3CE3003D5CFF /* getting_started.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1034,6 +1180,16 @@
 			isa = PBXTargetDependency;
 			target = 66B1522F1C0689620069D15D /* IOpenStack iOS */;
 			targetProxy = 66B1523C1C0689620069D15D /* PBXContainerItemProxy */;
+		};
+		66C5BD7F1CEE3A0F003D5CFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 66FF1CCF1CDBC24600B8E841 /* IOpenStack tvOS */;
+			targetProxy = 66C5BD801CEE3A0F003D5CFF /* PBXContainerItemProxy */;
+		};
+		66C5BD9C1CEE3A24003D5CFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 66B1522F1C0689620069D15D /* IOpenStack iOS */;
+			targetProxy = 66C5BD9D1CEE3A24003D5CFF /* PBXContainerItemProxy */;
 		};
 		66FF1CDC1CDBC24600B8E841 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1190,6 +1346,56 @@
 			};
 			name = Release;
 		};
+		66C5BD971CEE3A0F003D5CFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				INFOPLIST_FILE = firstapp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.internap.OSFirstAppGuidetvOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TVOS_DEPLOYMENT_TARGET = 9.2;
+			};
+			name = Debug;
+		};
+		66C5BD981CEE3A0F003D5CFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				INFOPLIST_FILE = firstapp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.internap.OSFirstAppGuidetvOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
+				TVOS_DEPLOYMENT_TARGET = 9.2;
+			};
+			name = Release;
+		};
+		66C5BDB61CEE3A24003D5CFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = firstapp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.internap.OSFirstAppGuideiOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		66C5BDB71CEE3A24003D5CFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = firstapp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.internap.OSFirstAppGuideiOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		66FF1CC91CDBC22300B8E841 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1247,6 +1453,7 @@
 				PRODUCT_NAME = IOpenStack;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
@@ -1267,6 +1474,7 @@
 				PRODUCT_NAME = IOpenStack;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
@@ -1281,6 +1489,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.internap.IOpenStack-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
 			name = Debug;
@@ -1294,6 +1503,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.internap.IOpenStack-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
 			name = Release;
@@ -1324,6 +1534,24 @@
 			buildConfigurations = (
 				66B152481C0689620069D15D /* Debug */,
 				66B152491C0689620069D15D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		66C5BD961CEE3A0F003D5CFF /* Build configuration list for PBXNativeTarget "FirstApp Guide tvOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66C5BD971CEE3A0F003D5CFF /* Debug */,
+				66C5BD981CEE3A0F003D5CFF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		66C5BDB51CEE3A24003D5CFF /* Build configuration list for PBXNativeTarget "FirstApp Guide iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66C5BDB61CEE3A24003D5CFF /* Debug */,
+				66C5BDB71CEE3A24003D5CFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

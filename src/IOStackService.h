@@ -156,7 +156,11 @@
 -( NSUInteger ) serviceDELETE:( nonnull NSString * ) urnResource
              onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
              onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
-
+- ( void ) readRawResource:( nonnull NSString * ) urlResource
+                withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
+              andUrlParams:( nullable NSDictionary * ) paramsURL
+                 insideKey:( nullable NSString * ) nameObjectKey
+                    thenDo:( nullable void ( ^ ) ( NSDictionary * _Nullable dicObjectFound, id _Nullable dataResponse ) ) doWithReadResults;
 - ( void ) readResource:( nonnull NSString * ) urlResource
              withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
            andUrlParams:( nullable NSDictionary * ) paramsURL

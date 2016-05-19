@@ -17,7 +17,7 @@ You can see the support details by clicking the service name.
 
 How to test/develop
 -------------------
-> **Note:** If you have a Dreamhost or Internap public cloud API access, you can modify this file accordingly to your credential to test the framework, see this [guide](/src/Auth/Provider).
+> **Note:** If you have a Dreamhost or Internap public cloud API access, you can test the framework integration, see this [guide](/src/Auth/Provider).
 
 The easiest way to try the framework is to start a fresh devstack instance in a virtual machine locally (or a container if you're feeling brave).
 * Boot up your VM machine with a Linux OS and sufficient RAM (we recommand more than 3 Go)

@@ -105,19 +105,6 @@
           andUrlParams:nil
                 thenDo:^(NSArray * arrFound, id dataResponse)
     {
-        if( arrFound == nil )
-        {
-            if( doAfterList != nil )
-                doAfterList( nil );
-            return;
-        }
-        
-        if( ![arrFound isKindOfClass:[NSArray class]] )
-            [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", @"/"]
-                                    reason:@"response object is not a NSArray"
-                                  userInfo:@{@"account_id": currentAccountID,
-                                             @"returnedValue": dataResponse}];
-        
         if( doAfterList != nil )
             doAfterList( [IOStackOStorageContainerV1 parseFromAPIResponse:arrFound] );
     }];
@@ -149,6 +136,20 @@
     }];
 }
 
+- ( void ) metadataContainerWithName:( NSString * ) strNameContainer
+                              thenDo:( void ( ^ ) ( NSDictionary * dicMetadata ) ) doAfterMetadata
+{
+    NSString * urlContainer = [NSString stringWithFormat:@"%@/%@", currentAccountID, strNameContainer];
+    
+    [self metadataResource:urlContainer
+              withHeader:nil
+              andUrlParams:nil
+     thenDo:^(NSDictionary * _Nullable headerValues, id  _Nullable dataResponse) {
+         if( doAfterMetadata != nil )
+             doAfterMetadata( headerValues );
+     }];
+}
+
 - ( void ) deleteContainerWithName:( NSString * ) strNameContainer
                             thenDo:( void ( ^ ) ( BOOL isDeleted, id idFullResponse ) ) doAfterDelete
 {
@@ -172,23 +173,11 @@
     [self listResource:urlContainer
             withHeader:nil
           andUrlParams:nil
-                thenDo:^(NSArray * arrFound, id dataResponse) {
-                     if( arrFound == nil )
-                     {
-                         if( doAfterList != nil )
-                             doAfterList( nil );
-                         return;
-                     }
-                     
-                     if( ![arrFound isKindOfClass:[NSArray class]] )
-                         [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad return", urlContainer]
-                                                 reason:@"response object is not a NSArray"
-                                               userInfo:@{@"account_id": currentAccountID,
-                                                          @"returnedValue": dataResponse}];
-                     
-                     if( doAfterList != nil )
-                         doAfterList( [IOStackOStorageObjectV1 parseFromAPIResponse:arrFound] );
-                 }];
+                thenDo:^(NSArray * arrFound, id dataResponse)
+    {
+        if( doAfterList != nil )
+            doAfterList( [IOStackOStorageObjectV1 parseFromAPIResponse:arrFound] );
+    }];
 }
 
 - ( void ) createEmptyObjectWithName:( NSString * ) strNameObject
@@ -228,19 +217,19 @@
     }];
 }
 
-- ( void ) uploadObjectWithName:( NSString * ) strNameObject
+- ( void ) uploadObjectWithName:( NSString * ) nameObject
                        fromData:( NSData * ) dataRaw
                     addMetaData:( NSDictionary * ) dicMetadata
-                    inContainer:( NSString * ) strNameContainer
+                    inContainer:( NSString * ) nameContainer
                       keepItFor:( NSTimeInterval ) tiForDelete
                          thenDo:( void ( ^ ) ( BOOL isCreated, id idFullResponse ) ) doAfterCreate
 {
-    if( [strNameObject length] > 256 )
+    if( [nameObject length] > 256 )
         [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad parameter", @"/"]
                                 reason:@"Container name is longer than 256 characters"
                               userInfo:@{@"account_id": currentAccountID}];
     
-    if( [strNameContainer length] > 256 )
+    if( [nameContainer length] > 256 )
         [NSException exceptionWithName:[NSString stringWithFormat:@"Method %@ bad parameter", @"/"]
                                 reason:@"Object name is longer than 256 characters"
                               userInfo:@{@"account_id": currentAccountID}];
@@ -254,7 +243,7 @@
         [dicHeader setObject:[NSNumber numberWithInt:( int )tiForDelete]
                       forKey:@"X-Delete-After" ];
     
-    NSString * urlObject = [NSString stringWithFormat:@"%@/%@/%@", currentAccountID, strNameContainer, strNameObject];
+    NSString * urlObject = [NSString stringWithFormat:@"%@/%@/%@", currentAccountID, nameContainer, nameObject];
     
     [self replaceResource:urlObject
                withHeader:dicHeader
@@ -266,10 +255,10 @@
     }];
 }
 
-- ( void ) uploadObjectWithName:( NSString * ) strNameObject
+- ( void ) uploadObjectWithName:( NSString * ) nameObject
                fromFileWithPath:( NSString * ) pathFileToUpload
                     addMetaData:( NSDictionary * ) dicMetadata
-                    inContainer:( NSString * ) strNameContainer
+                    inContainer:( NSString * ) nameContainer
                       keepItFor:( NSTimeInterval ) tiForDelete
                          thenDo:( void ( ^ ) ( BOOL isCreated, id idFullResponse ) ) doAfterCreate
 {
@@ -278,12 +267,44 @@
                                                                  options:NSUTF8StringEncoding
                                                                    error:&errRead];
     
-    [self uploadObjectWithName:strNameObject
+    [self uploadObjectWithName:nameObject
                       fromData:datRawFile
                    addMetaData:dicMetadata
-                   inContainer:strNameContainer
+                   inContainer:nameContainer
                      keepItFor:tiForDelete
                         thenDo:doAfterCreate];
+}
+
+- ( void ) getdetailObjectWithName:( NSString * ) nameObject
+                       inContainer:( NSString * ) nameContainer
+                            thenDo:( void ( ^ ) ( NSData * dataResponse ) ) doAfterGetDetail
+{
+    NSString * urlObject = [NSString stringWithFormat:@"%@/%@/%@", currentAccountID, nameContainer, nameObject];
+
+    [self readRawResource:urlObject
+               withHeader:nil
+             andUrlParams:nil
+                insideKey:nil
+                   thenDo:^(NSDictionary * dicObjectFound, id dataResponse)
+     {
+         if( doAfterGetDetail != nil )
+             doAfterGetDetail( dataResponse );
+     }];
+}
+
+- ( void ) metadataObjectWithName:( NSString * ) nameObject
+                      inContainer:( NSString * ) nameContainer
+                              thenDo:( void ( ^ ) ( NSDictionary * dicMetadata ) ) doAfterMetadata
+{
+    NSString * urlObject = [NSString stringWithFormat:@"%@/%@/%@", currentAccountID, nameContainer, nameObject];
+
+    [self metadataResource:urlObject
+                withHeader:nil
+              andUrlParams:nil
+                    thenDo:^(NSDictionary * _Nullable headerValues, id  _Nullable dataResponse) {
+                        if( doAfterMetadata != nil )
+                            doAfterMetadata( headerValues );
+                    }];
 }
 
 - ( void ) deleteObjectWithName:( NSString * ) strNameObject

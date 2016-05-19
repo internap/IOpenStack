@@ -731,11 +731,11 @@
 
 
 #pragma mark - RESTful calls management
-- ( void ) readResource:( NSString * ) urlResource
-             withHeader:( NSDictionary * ) dicHeaderFieldValue
-           andUrlParams:( NSDictionary * ) paramsURL
-              insideKey:( NSString * ) nameObjectKey
-                 thenDo:( void ( ^ ) ( NSDictionary * dicObjectFound, id dataResponse ) ) doWithReadResults
+- ( void ) readRawResource:( NSString * ) urlResource
+                withHeader:( NSDictionary * ) dicHeaderFieldValue
+              andUrlParams:( NSDictionary * ) paramsURL
+                 insideKey:( NSString * ) nameObjectKey
+                    thenDo:( void ( ^ ) ( NSDictionary * dicObjectFound, id dataResponse ) ) doWithReadResults
 {
     [self setHTTPHeaderWithValues:dicHeaderFieldValue];
     
@@ -748,13 +748,13 @@
                 doWithReadResults( nil, nil );
             
             else if( nameObjectKey == nil &&
-                [responseObject isKindOfClass:[NSDictionary class]] &&
-                [responseObject count] == 1)
+                    [responseObject isKindOfClass:[NSDictionary class]] &&
+                    [responseObject count] == 1)
                 doWithReadResults( responseObject, responseObject );
             
             else if( [responseObject isKindOfClass:[NSDictionary class]] &&
-                [responseObject count] == 1 &&
-                [responseObject valueForKey:nameObjectKey] != nil )
+                    [responseObject count] == 1 &&
+                    [responseObject valueForKey:nameObjectKey] != nil )
                 doWithReadResults( [responseObject valueForKey:nameObjectKey], responseObject );
             
             else
@@ -766,6 +766,19 @@
         if( doWithReadResults != nil )
             doWithReadResults( nil, nil );
     }];
+}
+
+- ( void ) readResource:( NSString * ) urlResource
+             withHeader:( NSDictionary * ) dicHeaderFieldValue
+           andUrlParams:( NSDictionary * ) paramsURL
+              insideKey:( NSString * ) nameObjectKey
+                 thenDo:( void ( ^ ) ( NSDictionary * dicObjectFound, id dataResponse ) ) doWithReadResults
+{
+    [self readRawResource:urlResource
+               withHeader:dicHeaderFieldValue
+             andUrlParams:paramsURL
+                insideKey:nameObjectKey
+                   thenDo:doWithReadResults];
 }
 
 - ( void ) readResource:( NSString * ) urlResource
