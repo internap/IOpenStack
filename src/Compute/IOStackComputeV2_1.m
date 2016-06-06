@@ -128,12 +128,13 @@
         if( bWaitActive )
             [self waitServerWithID:newServer.uniqueID
                          forStatus:IOStackServerStatusActive
-                            thenDo:^( bool isWithStatus )
+                            thenDo:^( bool isWithStatus, id dicObjectValues )
              {
+                 IOStackComputeServerV2_1 * updatedServer = [IOStackComputeServerV2_1 initFromAPIGETResponse:dicObjectValues];
                  if( doAfterCreate != nil )
                  {
                      if( isWithStatus )
-                         doAfterCreate( newServer, idFullResponse );
+                         doAfterCreate( updatedServer, idFullResponse );
                      
                      else
                      {
@@ -233,7 +234,7 @@
         if( bWaitDeleted)
             [self waitServerWithID:uidServer
                          forStatus:IOStackServerStatusDeleted
-                            thenDo:^(bool isWithStatus)
+                            thenDo:^(bool isWithStatus, id dicObjectValues)
         {
             if( doAfterDelete != nil )
                 doAfterDelete( isWithStatus, idFullResponse );
@@ -258,7 +259,7 @@
 #pragma mark - Refresh status info loop mechanism
 - ( void ) waitServerWithID:( NSString * ) uidServer
                   forStatus:( NSString * ) statusServer
-                     thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
+                     thenDo:( void ( ^ ) ( bool isWithStatus, id dicObjectValues ) ) doAfterWait
 {
     NSString * urlServer = [NSString stringWithFormat:@"%@/%@", COMPUTEV2_1_SERVER_URN, uidServer];
     if( [statusServer isEqualToString:IOStackServerStatusDeleted] )

@@ -88,6 +88,13 @@
         ![self.uniqueID isEqualToString:dicAPIGETResponse[ @"id" ]] ) )
         return;
     
+    else
+    {
+        self.objectType     = IOStackObjectTypeSnapshot;
+        if( dicAPIGETResponse[ @"id" ] != nil )
+            self.uniqueID       = dicAPIGETResponse[ @"id" ];
+    }
+    
     uidVolumeFrom       = dicAPIGETResponse[ @"volume_id" ];
     nameSnapshot        = dicAPIGETResponse[ @"name" ];
     descriptionSnapshot = dicAPIGETResponse[ @"description" ];

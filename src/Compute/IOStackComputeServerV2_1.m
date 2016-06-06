@@ -19,16 +19,22 @@
 @synthesize uidTenant;
 @synthesize uidUser;
 @synthesize nameKeypair;
-@synthesize created;
 @synthesize status;
 @synthesize statusHost;
+
+@synthesize dateCreated;
+@synthesize dateUpdated;
 
 @synthesize progress;
 
 @synthesize metadata;
 
+@synthesize accessIPv4;
+@synthesize accessIPv6;
 @synthesize arrIPsPrivate;
 @synthesize arrIPsPublic;
+
+@synthesize useConfigDrive;
 
 //Extensions
 @synthesize OSDCFDiskConfig;
@@ -75,7 +81,8 @@
 {
     IOStackComputeServerV2_1 * servResult = [[self alloc] init];
     
-    [servResult refreshServerFromAPIGETResponse:dicAPIGETResponse andCheckConsistency:NO];
+    [servResult refreshServerFromAPIGETResponse:dicAPIGETResponse
+                            andCheckConsistency:NO];
     
     return servResult;
 }
@@ -89,9 +96,11 @@
     {
         self.objectType     = IOStackObjectTypeServer;
         self.uniqueID       = dicAPIResponse[ @"id" ];
-        name                = dicAPIResponse[ @"name" ];
         adminPassword       = dicAPIResponse[ @"adminPass" ];
-        securityGroups      = dicAPIResponse[ @"security_groups" ];
+        //name                = dicAPIResponse[ @"name" ];
+        //securityGroups      = dicAPIResponse[ @"security_groups" ];
+        [self refreshServerFromAPIGETResponse:dicAPIResponse
+                          andCheckConsistency:NO];
     }
     return self;
 }
@@ -105,14 +114,15 @@
         return;
     
     name                = dicAPIGETResponse[ @"name" ];
-    created             = dicAPIGETResponse[ @"created" ];
+    dateCreated         = dicAPIGETResponse[ @"created" ];
     uidTenant           = dicAPIGETResponse[ @"tenant_id" ];
     uidUser             = dicAPIGETResponse[ @"user_id" ];
+    uidHost             = dicAPIGETResponse[ @"hostId" ];
+    
     if( dicAPIGETResponse[ @"flavor" ] != nil )
         uidFlavor       = dicAPIGETResponse[ @"flavor" ][ @"id" ];
     
-    uidHost = dicAPIGETResponse[ @"image" ];
-    if( dicAPIGETResponse[ @"flavor" ] != nil )
+    if( dicAPIGETResponse[ @"image" ] != nil )
         uidImage        = dicAPIGETResponse[ @"image" ][ @"id" ];
     
     nameKeypair         = dicAPIGETResponse[ @"key_name" ];
@@ -122,7 +132,11 @@
     statusHost          = dicAPIGETResponse[ @"host_status" ];
     
     metadata = dicAPIGETResponse[ @"metadata" ];
-
+    
+    useConfigDrive = dicAPIGETResponse[ @"config_drive" ];
+    
+    accessIPv4 = dicAPIGETResponse[ @"accessIPv4" ];
+    accessIPv6 = dicAPIGETResponse[ @"accessIPv6" ];
     if( dicAPIGETResponse[ @"addresses" ] != nil )
     {
         NSDictionary * dicAddresses = dicAPIGETResponse[ @"addresses" ];
@@ -144,9 +158,10 @@
     OSEXTSTSTask_state                  = dicAPIGETResponse[ @"OS-EXT-STS:task_state" ];
     OSEXTSTSVm_state                    = dicAPIGETResponse[ @"OS-EXT-STS:vm_state" ];
     OSEXTENDEDVOLUMESVolumes_attached   = dicAPIGETResponse[ @"os-extended-volumes:volumes_attached" ];
-    OSSRVUSGLaunched_at                 = dicAPIGETResponse[ @"OS-SRV-USG:launched_at	plain" ];
+    OSSRVUSGLaunched_at                 = dicAPIGETResponse[ @"OS-SRV-USG:launched_at" ];
     OSSRVUSGTerminated_at               = dicAPIGETResponse[ @"OS-SRV-USG:terminated_at" ];
 }
+
 
 - ( void ) refreshServerFromAPIGETResponse:( NSDictionary * ) dicAPIGETResponse
 {

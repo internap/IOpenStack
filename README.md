@@ -25,7 +25,7 @@ The easiest way to try the framework is to start a fresh devstack instance in a 
 ```bash
 git clone https://github.com/openstack-dev/devstack
 ```
-* Create/edit your local.conf to activate all the services you want to test (here is an example we use)
+* Create/edit your local.conf to activate all the services you want to test (here is an example we use for a Ubuntu16.04 vm and 2 network interface, enp0s5 and enp0s6)
 ```text
 [[local|localrc]]
 ADMIN_PASSWORD=password
@@ -37,12 +37,12 @@ ADMIN_PASSWORD=password
 SWIFT_PASSWORD=password
 SWIFT_HASH=66a3d1b21c1f479c8b4e70ab5c2000f5
 FLOATING_RANGE=192.168.15.0/27
-FLAT_INTERFACE=eth1
-#HOST_IP=10.0.0.4
+FLAT_INTERFACE=enp0s6
+HOST_IP=10.211.55.20
 Q_FLOATING_ALLOCATION_POOL=start=192.168.15.10,end=192.168.15.20
 PUBLIC_NETWORK_GATEWAY=192.168.15.1
 
-IP_VERSION=4+6
+#IP_VERSION=4+6
 
 disable_service n-net
 enable_service q-svc
@@ -62,9 +62,6 @@ enable_service h-api
 enable_service h-api-cfn 
 enable_service h-api-cw 
 enable_service h-eng
-
-# fin :)
-# Optional, to enable tempest configuration as part of devstack
 
 #OFFLINE=True
 VERBOSE=True

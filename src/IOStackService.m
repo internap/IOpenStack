@@ -1046,7 +1046,7 @@
           orErrorValues:( NSArray * ) arrErrorValues
           withFrequency:( NSTimeInterval ) tiFrequency
              andTimeout:( NSTimeInterval ) tiTimeout
-                 thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
+                 thenDo:( void ( ^ ) ( bool isWithStatus, id dicObjectValues ) ) doAfterWait
 {
     NSMutableDictionary * dicUserInfo = [NSMutableDictionary dictionaryWithObject:urlResource forKey:@"urlResource"];
     
@@ -1088,7 +1088,7 @@
                forField:( NSString * ) strFieldName
            toEqualValue:( id ) valToEqual
           orErrorValues:( NSArray * ) arrErrorValues
-                 thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
+                 thenDo:( void ( ^ ) ( bool isWithStatus, id dicObjectValues ) ) doAfterWait
 {
     [self waitResource:urlResource
          withUrlParams:paramsURL
@@ -1120,7 +1120,8 @@
     NSDate * dateStarted                            = dicUserInfo[ @"dateStartedLooping" ];
     NSTimeInterval tiFrequency                      = [( NSNumber * )dicUserInfo[ @"tiFrequency" ] doubleValue];
     NSTimeInterval tiTimeout                        = [( NSNumber * )dicUserInfo[ @"tiTimeout" ] doubleValue];
-    void ( ^doAfterWaitBlock )( bool isWithStatus ) = dicUserInfo[ @"blockAfterWait" ];
+    
+    void ( ^doAfterWaitBlock )( bool isWithStatus, id dicObjectValues ) = dicUserInfo[ @"blockAfterWait" ];
     
     [timerLoopServerRefresh invalidate];
 
@@ -1133,60 +1134,51 @@
         //  ...if that's what we expect, then we're good
         if( strFieldName == nil && objResult == nil )
         {
-            doAfterWaitBlock( YES );
+            doAfterWaitBlock( YES, objResult );
             return;
         }
         
         if( objResult == nil ||
-            ![objResult isKindOfClass:[NSDictionary class]] )
+           ( strFieldName != nil &&
+            ( ![objResult isKindOfClass:[NSDictionary class]] &&
+             ![objResult isKindOfClass:[NSArray class]] ) ) )
         {
-            doAfterWaitBlock( NO );
+            doAfterWaitBlock( NO, objResult );
             return;
         }
         
-        id valRetrieved = [objResult valueForKey:strFieldName];
+        id valRetrievedToCheck = objResult;
+        
+        //we retrieve the first value if we get an array
+        if( strFieldName != nil &&
+           [objResult isKindOfClass:[NSArray class]] &&
+           [objResult count] >= 1 )
+            valRetrievedToCheck = [objResult objectAtIndex:0];
+        
+        //if we are supposed to retrieve a specific field
+        //and we get a NSDictionary, we retrieve the value
+        if( strFieldName != nil &&
+           [valRetrievedToCheck isKindOfClass:[NSDictionary class]] )
+            valRetrievedToCheck = [valRetrievedToCheck valueForKey:strFieldName];
+        
         if( arrErrorValues != nil &&
-           [arrErrorValues containsObject:valRetrieved] )
+           [arrErrorValues containsObject:valRetrievedToCheck] )
         {
-            doAfterWaitBlock( NO );
+            doAfterWaitBlock( NO, objResult );
             return;
         }
         
         BOOL bHasReachedEquality = NO;
         
-        if( [valRetrieved isKindOfClass:[NSString class]] )
-            bHasReachedEquality = [(( NSString * ) valRetrieved) isEqualToString:valueToCheck];
+        //paradoxaly, if we have a [NSNull null],
+        //it means, we just want something not nil
+        if( [valueToCheck isKindOfClass:[NSNull class]] &&
+           valRetrievedToCheck != nil )
+            bHasReachedEquality = YES;
         
-        else if( [valRetrieved isKindOfClass:[NSNumber class]] )
-            bHasReachedEquality = [(( NSNumber * ) valRetrieved) isEqualToNumber:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSDate class]] )
-            bHasReachedEquality = [(( NSDate * ) valRetrieved) isEqualToDate:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSTimeZone class]] )
-            bHasReachedEquality = [(( NSTimeZone * ) valRetrieved) isEqualToTimeZone:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSData class]] )
-            bHasReachedEquality = [(( NSData * ) valRetrieved) isEqualToData:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSHashTable class]] )
-            bHasReachedEquality = [(( NSHashTable * ) valRetrieved) isEqualToHashTable:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSIndexSet class]] )
-            bHasReachedEquality = [(( NSIndexSet * ) valRetrieved) isEqualToIndexSet:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSOrderedSet class]] )
-            bHasReachedEquality = [(( NSOrderedSet * ) valRetrieved) isEqualToOrderedSet:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSDictionary class]] )
-            bHasReachedEquality = [(( NSDictionary * ) valRetrieved) isEqualToDictionary:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSSet class]] )
-            bHasReachedEquality = [(( NSSet * ) valRetrieved) isEqualToSet:valueToCheck];
-        
-        else if( [valRetrieved isKindOfClass:[NSValue class]] )
-            bHasReachedEquality = [(( NSValue * ) valRetrieved) isEqualToValue:valueToCheck];
-        
+        else
+            bHasReachedEquality = [self object:valRetrievedToCheck
+                                     isEqualTo:valueToCheck];
         
         if( [dateStarted timeIntervalSinceNow] < tiTimeout &&
             !bHasReachedEquality )
@@ -1204,10 +1196,10 @@
         }
         
         if( bHasReachedEquality )
-            doAfterWaitBlock( YES );
+            doAfterWaitBlock( YES, objResult );
         
         else
-            doAfterWaitBlock( NO );
+            doAfterWaitBlock( NO, objResult );
     }];
 }
 
@@ -1226,6 +1218,59 @@
          if( doAfterRefresh != nil )
              doAfterRefresh( objResult, dataResponse );
      }];
+}
+
+#pragma mark - Equality functional helper
+- ( BOOL ) object:( id ) firstObject
+        isEqualTo:( id ) secondObject
+{
+    BOOL bHasReachedEquality = NO;
+    
+    if( [firstObject isKindOfClass:[NSString class]] &&
+        [secondObject isKindOfClass:[NSString class]])
+        bHasReachedEquality = [(( NSString * ) firstObject) isEqualToString:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSNumber class]] &&
+            [secondObject isKindOfClass:[NSNumber class]] )
+        bHasReachedEquality = [(( NSNumber * ) firstObject) isEqualToNumber:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSDate class]] &&
+            [secondObject isKindOfClass:[NSDate class]] )
+        bHasReachedEquality = [(( NSDate * ) firstObject) isEqualToDate:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSTimeZone class]] &&
+            [secondObject isKindOfClass:[NSTimeZone class]] )
+        bHasReachedEquality = [(( NSTimeZone * ) firstObject) isEqualToTimeZone:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSData class]] &&
+            [secondObject isKindOfClass:[NSData class]] )
+        bHasReachedEquality = [(( NSData * ) firstObject) isEqualToData:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSHashTable class]] &&
+            [secondObject isKindOfClass:[NSHashTable class]] )
+        bHasReachedEquality = [(( NSHashTable * ) firstObject) isEqualToHashTable:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSIndexSet class]] &&
+            [secondObject isKindOfClass:[NSIndexSet class]] )
+        bHasReachedEquality = [(( NSIndexSet * ) firstObject) isEqualToIndexSet:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSOrderedSet class]] &&
+            [secondObject isKindOfClass:[NSOrderedSet class]] )
+        bHasReachedEquality = [(( NSOrderedSet * ) firstObject) isEqualToOrderedSet:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSDictionary class]] &&
+            [secondObject isKindOfClass:[NSDictionary class]] )
+        bHasReachedEquality = [(( NSDictionary * ) firstObject) isEqualToDictionary:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSSet class]] &&
+            [secondObject isKindOfClass:[NSSet class]] )
+        bHasReachedEquality = [(( NSSet * ) firstObject) isEqualToSet:secondObject];
+    
+    else if( [firstObject isKindOfClass:[NSValue class]] &&
+            [secondObject isKindOfClass:[NSValue class]] )
+        bHasReachedEquality = [(( NSValue * ) firstObject) isEqualToValue:secondObject];
+    
+    return bHasReachedEquality;
 }
 
 

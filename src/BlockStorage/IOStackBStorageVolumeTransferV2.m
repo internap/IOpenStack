@@ -79,6 +79,13 @@
         ![self.uniqueID isEqualToString:dicAPIGETResponse[ @"id" ]] ) )
         return;
     
+    else
+    {
+        self.objectType     = IOStackObjectTypeVolumeTransfer;
+        if( dicAPIGETResponse[ @"id" ] != nil )
+            self.uniqueID       = dicAPIGETResponse[ @"id" ];
+    }
+    
     uidVolumeToTransfer = dicAPIGETResponse[ @"volume_id" ];
     nameVolumeTransfer  = dicAPIGETResponse[ @"name" ];
     created_at          = dicAPIGETResponse[ @"created_at" ];

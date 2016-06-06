@@ -38,6 +38,16 @@
                ReferencedContainer = "container:IOpenStack.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "66C5BD9B1CEE3A24003D5CFF"
+               BuildableName = "FirstApp Guide iOSTests.xctest"
+               BlueprintName = "FirstApp Guide iOSTests"
+               ReferencedContainer = "container:IOpenStack.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

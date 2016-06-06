@@ -35,7 +35,7 @@
 
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         adminPassword;
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         name;
-@property (readonly, strong, nonatomic) NSArray * _Nonnull                          securityGroups;
+@property (readonly, strong, nonatomic) NSArray<NSDictionary *> * _Nonnull          securityGroups;
 
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         uidFlavor;
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         uidHost;
@@ -43,10 +43,16 @@
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         uidTenant;
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         uidUser;
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         nameKeypair;
-@property (readonly, strong, nonatomic) NSString * _Nonnull                         created;
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         status;
 @property (readonly, strong, nonatomic) NSString * _Nonnull                         statusHost;
 
+@property (readonly, strong, nonatomic) NSDate * _Nonnull                           dateCreated;
+@property (readonly, strong, nonatomic) NSDate * _Nonnull                           dateUpdated;
+
+@property (readonly, strong, nonatomic) NSString * _Nonnull                         accessIPv4;
+@property (readonly, strong, nonatomic) NSString * _Nonnull                         accessIPv6;
+
+@property (readonly, strong, nonatomic) NSNumber * _Nonnull                         useConfigDrive;
 @property (readonly, strong, nonatomic) NSNumber * _Nonnull                         progress;
 
 @property (readonly, strong, nonatomic) NSDictionary * _Nonnull                     metadata;

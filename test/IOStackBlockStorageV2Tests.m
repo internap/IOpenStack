@@ -103,6 +103,7 @@
 {
     __weak XCTestExpectation * expectation     = [self expectationWithDescription:@"Block Storage - volume exist"];
     
+    [bstorageV2Test activateDebug:YES];
     [bstorageV2Test createVolumeWithSize:@1
                     waitUntilIsAvailable:YES
                                   thenDo:^(IOStackBStorageVolumeV2 * volumeCreated, NSDictionary * dicFullResponse )
@@ -127,7 +128,7 @@
         
     }];
     
-    [self waitForExpectationsWithTimeout:30.0 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:3000.0 handler:^(NSError *error) {
         if( error ) NSLog(@"Timeout Error: %@", error);
     }];
 }

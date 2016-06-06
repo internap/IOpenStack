@@ -218,14 +218,14 @@
           orErrorValues:( nullable NSArray * ) arrErrorValues
           withFrequency:( NSTimeInterval ) tiFrequency
              andTimeout:( NSTimeInterval ) tiTimeout
-                 thenDo:( nullable void ( ^ ) ( bool isWithStatus ) ) doAfterWait;
+                 thenDo:( nullable void ( ^ ) ( bool isWithStatus, id _Nullable dicObjectValues ) ) doAfterWait;
 - ( void ) waitResource:( nonnull NSString * ) urlResource
           withUrlParams:( nullable NSDictionary * ) urlParams
               insideKey:( nullable NSString * ) nameObjectKey
                forField:( nullable NSString * ) strFieldName
            toEqualValue:( nullable id ) valToEqual
           orErrorValues:( nullable NSArray * ) arrErrorValues
-                 thenDo:( nullable void ( ^ ) ( bool isWithStatus ) ) doAfterWait;
+                 thenDo:( nullable void ( ^ ) ( bool isWithStatus, id _Nullable dicObjectValues ) ) doAfterWait;
 
 
 @end

@@ -56,9 +56,6 @@
                      andImageID:( nonnull NSString * ) uuidImage
               waitUntilIsActive:( BOOL ) bWaitActive
                          thenDo:( nullable void ( ^ ) ( IOStackComputeServerV2_1 * _Nullable serverCreated,  NSDictionary * _Nullable dicFullResponse ) ) doAfterCreate;
-- ( void ) waitServerWithID:( nonnull NSString * ) uidServer
-                  forStatus:( nonnull NSString * ) statusServer
-                     thenDo:( nullable void ( ^ ) ( bool isWithStatus ) ) doAfterWait;
 - ( void ) deleteServerWithID:( nonnull NSString * ) uuidServer
            waitUntilIsDeleted:( BOOL ) bWaitDeleted
                        thenDo:( nullable void ( ^ ) ( bool isDeleted, id _Nullable idFullResponse ) ) doAfterDelete;

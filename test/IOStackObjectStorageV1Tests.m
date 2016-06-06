@@ -105,7 +105,7 @@
         }];
     }];
     
-    [self waitForExpectationsWithTimeout:500.0 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:50.0 handler:^(NSError *error) {
         if( error ) NSLog(@"Timeout Error: %@", error);
     }];
 }

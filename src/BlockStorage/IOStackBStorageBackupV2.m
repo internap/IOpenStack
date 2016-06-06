@@ -96,6 +96,13 @@
         ![self.uniqueID isEqualToString:dicAPIGETResponse[ @"id" ]] ) )
         return;
     
+    else
+    {
+        self.objectType     = IOStackObjectTypeBackup;
+        if( dicAPIGETResponse[ @"id" ] != nil )
+            self.uniqueID       = dicAPIGETResponse[ @"id" ];
+    }
+    
     uidVolumeFrom       = dicAPIGETResponse[ @"volume_id" ];
     nameContainer       = dicAPIGETResponse[ @"container" ];
     availability_zone   = dicAPIGETResponse[ @"availability_zone" ];

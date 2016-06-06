@@ -146,15 +146,16 @@
          if( bWaitAvailable )
              [self waitVolumeWithID:newVolume.uniqueID
                           forStatus:IOStackVolumeStatusAvailable
-                             thenDo:^( bool isWithStatus )
+                             thenDo:^( bool isWithStatus, id dicObjectValues )
               {
+                  IOStackBStorageVolumeV2 * updatednewVolume = [IOStackBStorageVolumeV2 initFromAPIGETResponse:dicObjectValues];
                   if( isWithStatus )
-                      [newVolume setAvailable:YES];
+                      [updatednewVolume setAvailable:YES];
                   
                   if( doAfterCreate != nil )
                   {
                       if( isWithStatus )
-                          doAfterCreate( newVolume, idFullResponse );
+                          doAfterCreate( updatednewVolume, idFullResponse );
                       
                       else
                       {
@@ -323,7 +324,7 @@
         if( bWaitDeleted )
             [self waitVolumeWithID:uidVolume
                          forStatus:IOStackVolumeStatusDeleting
-                            thenDo:^(bool isWithStatus)
+                            thenDo:^(bool isWithStatus, id dicObjectValues)
              {
                  if( doAfterDelete != nil )
                      doAfterDelete( isWithStatus, idFullResponse );
@@ -339,7 +340,7 @@
 #pragma mark - Refresh Volume status info loop mechanism
 - ( void ) waitVolumeWithID:( NSString * ) uidVolume
                   forStatus:( NSString * ) statusVolume
-                     thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
+                     thenDo:( void ( ^ ) ( bool isWithStatus, id dicObjectValues ) ) doAfterWait
 {
     NSString * urlVolume = [NSString stringWithFormat:@"%@/%@", BLOCKSTORAGEV2_VOLUMES_URN, uidVolume];
     if( [statusVolume isEqualToString:IOStackVolumeStatusDeleting] )
@@ -585,10 +586,10 @@
         if( statusToWaitFor != nil )
             [self waitVolumeWithID:uidVolume
                          forStatus:statusToWaitFor
-                            thenDo:^(bool isWithStatus)
+                            thenDo:^(bool isWithStatus, id dicObjectValues )
              {
                  if( doAfterUpdate != nil )
-                     doAfterUpdate( isWithStatus, idFullResponse );
+                     doAfterUpdate( isWithStatus, dicObjectValues );
              }];
         else if( doAfterUpdate )
             doAfterUpdate( dicResults != nil, idFullResponse );
@@ -758,15 +759,16 @@
         if( bWaitAvailable )
             [self waitBackupWithID:newBackup.uniqueID
                          forStatus:IOStackBackupStatusAvailable
-                            thenDo:^( bool isWithStatus )
+                            thenDo:^( bool isWithStatus, id dicObjectValues )
              {
+                 IOStackBStorageBackupV2 * updatedBackup = [IOStackBStorageBackupV2 initFromAPIGETResponse:dicObjectValues];
                  if( isWithStatus )
-                     [newBackup setAvailable:YES];
+                     [updatedBackup setAvailable:YES];
                  
                  if( doAfterCreate != nil )
                  {
                      if( isWithStatus )
-                         doAfterCreate( newBackup, idFullResponse );
+                         doAfterCreate( updatedBackup, idFullResponse );
                      
                      else
                      {
@@ -832,10 +834,10 @@
         if( bWaitDeleted )
             [self waitBackupWithID:uidBackup
                          forStatus:IOStackBackupStatusDeleting
-                            thenDo:^(bool isWithStatus)
+                            thenDo:^(bool isWithStatus, id dicObjectValues )
              {
                  if( doAfterDelete != nil )
-                     doAfterDelete( isWithStatus, idFullResponse );
+                     doAfterDelete( isWithStatus, dicObjectValues );
              }];
         
         else if( doAfterDelete != nil )
@@ -874,15 +876,12 @@
          if( bWaitAvailable )
              [self waitVolumeWithID:uidRestoredVolumeID
                           forStatus:IOStackVolumeStatusAvailable
-                             thenDo:^(bool isWithStatus)
+                             thenDo:^(bool isWithStatus, id dicObjectValues )
               {
-                  if( isWithStatus )
-                      [self getdetailForVolumeWithID:uidRestoredVolumeID
-                                              thenDo:^(IOStackBStorageVolumeV2 * volDetails)
-                       {
-                           if( doAfterCreate != nil )
-                               doAfterCreate( volDetails );
-                       }];
+                  IOStackBStorageVolumeV2 * restoredVolume = [IOStackBStorageVolumeV2 initFromAPIGETResponse:dicObjectValues];
+                  if( isWithStatus &&
+                        doAfterCreate != nil )
+                      doAfterCreate( restoredVolume );
               }];
          
          else
@@ -915,7 +914,7 @@
 #pragma mark - Refresh Backup status info loop mechanism
 - ( void ) waitBackupWithID:( NSString * ) uidBackup
                   forStatus:( NSString * ) statusBackup
-                     thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
+                     thenDo:( void ( ^ ) ( bool isWithStatus, id dicObjectValues ) ) doAfterWait
 {
     NSString * urlBackup = [NSString stringWithFormat:@"%@/%@", BLOCKSTORAGEV2_BACKUPS_URN, uidBackup];
     if( [statusBackup isEqualToString:IOStackBackupStatusDeleting] )
@@ -1172,15 +1171,16 @@
          if( bWaitAvailable )
              [self waitSnapshotWithID:newSnapshot.uniqueID
                           forStatus:IOStackSnapshotStatusAvailable
-                             thenDo:^( bool isWithStatus )
+                             thenDo:^( bool isWithStatus, id dicObjectValues )
               {
+                  IOStackBStorageSnapshotV2 * updatedSnapshot = [IOStackBStorageSnapshotV2 initFromAPIGETResponse:dicObjectValues];
                   if( isWithStatus )
-                      [newSnapshot setAvailable:YES];
+                      [updatedSnapshot setAvailable:YES];
                   
                   if( doAfterCreate != nil )
                   {
                       if( isWithStatus )
-                          doAfterCreate( newSnapshot, idFullResponse );
+                          doAfterCreate( updatedSnapshot, idFullResponse );
                       
                       else
                       {
@@ -1280,10 +1280,10 @@
          if( bWaitDeleted )
              [self waitSnapshotWithID:uidSnapshot
                           forStatus:IOStackSnapshotStatusDeleting
-                             thenDo:^(bool isWithStatus)
+                             thenDo:^(bool isWithStatus, id dicObjectValues)
               {
                   if( doAfterDelete != nil )
-                      doAfterDelete( isWithStatus, idFullResponse );
+                      doAfterDelete( isWithStatus, dicObjectValues );
               }];
          
          else if( doAfterDelete != nil )
@@ -1329,7 +1329,7 @@
 #pragma mark - Refresh Snapshot status info loop mechanism
 - ( void ) waitSnapshotWithID:( NSString * ) uidSnapshot
                     forStatus:( NSString * ) statusSnapshot
-                       thenDo:( void ( ^ ) ( bool isWithStatus ) ) doAfterWait
+                       thenDo:( void ( ^ ) ( bool isWithStatus, id dicObjectValues ) ) doAfterWait
 {
     NSString * urlSnapshot = [NSString stringWithFormat:@"%@/%@", BLOCKSTORAGEV2_SNAPSHOTS_URN, uidSnapshot];
     if( [statusSnapshot isEqualToString:IOStackSnapshotStatusDeleting] )
