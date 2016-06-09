@@ -16,6 +16,7 @@ FOUNDATION_EXPORT const unsigned char IOpenStackVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <IOpenStack/PublicHeader.h>
 
+#import <IOpenStack/IOStackResponse.h>
 #import <IOpenStack/IOStackService.h>
 #import <IOpenStack/IOStackObject.h>
 

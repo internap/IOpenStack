@@ -590,6 +590,7 @@
                              [computeV2_1Test listIPsForServerWithID:serverCreated.uniqueID
                                                               thenDo:^(NSArray * arrPrivateIPs, NSArray * arrPublicIPs, id idFullResponse)
                               {
+                                  BOOL blu = ( arrPrivateIPs != nil ) && ( [arrPrivateIPs count] > 0 ) || ( arrPublicIPs != nil ) && ( [arrPublicIPs count] > 0 );
                                   XCTAssertTrue( ( arrPrivateIPs != nil ) && ( [arrPrivateIPs count] > 0 ) || ( arrPublicIPs != nil ) && ( [arrPublicIPs count] > 0 ) );
                                   
                                   [computeV2_1Test deleteKeypairWithName:strKeypairNameRandom

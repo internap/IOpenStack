@@ -8,13 +8,13 @@
 
 #import "IOStackService.h"
 
+
 //TODO : Make a factory to allow auto-discovery of service provider and type and trigger instanciation of a child automatically from init of the parent object IOStackService
 @implementation IOStackService
 {
     NSURLSession *          _httpSession;
     NSMutableDictionary *   _dicActiveTasks;
-    NSMutableDictionary *   _dicActiveSuccessBlocks;
-    NSMutableDictionary *   _dicActiveFailureBlocks;
+    NSMutableDictionary *   _dicActiveAnswerBlocks;
     NSMutableDictionary *   _cacheResponseData;
     NSMutableDictionary *   _dicHeadersValues;
     NSOperationQueue *      serviceQueue;
@@ -41,8 +41,7 @@
         debugON = NO;
         
         _dicActiveTasks         = [NSMutableDictionary dictionary];
-        _dicActiveSuccessBlocks = [NSMutableDictionary dictionary];
-        _dicActiveFailureBlocks = [NSMutableDictionary dictionary];
+        _dicActiveAnswerBlocks  = [NSMutableDictionary dictionary];
         _cacheResponseData      = [NSMutableDictionary dictionary];
         _dicHeadersValues       = [NSMutableDictionary dictionary];
         serviceQueue            = [[NSOperationQueue alloc] init];
@@ -149,17 +148,12 @@
 }
 
 - ( void ) setResponseBlocksFor:( NSURLSessionDataTask * ) taskSessionData
-          onServiceSuccessBlock:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-          onServiceFailureBlock:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+               onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSString * uidDataTask = [self taskUUIDForTask:taskSessionData inSession:nil];
-    if( doOnSuccess != nil )
-        [_dicActiveSuccessBlocks setValue:doOnSuccess
-                                   forKey:uidDataTask];
-    
-    if( doOnFailure != nil )
-        [_dicActiveFailureBlocks setValue:doOnFailure
-                                   forKey:uidDataTask];
+    if( doOnAnswer != nil )
+        [_dicActiveAnswerBlocks setValue:doOnAnswer
+                                  forKey:uidDataTask];
     
     [_dicActiveTasks setValue:self forKey:uidDataTask];
 }
@@ -230,15 +224,13 @@
 
 -( NSUInteger ) serviceGET:( NSString * ) urnResource
                 withParams:( NSDictionary * ) dicParams
-          onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-          onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+          onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSURLSessionDataTask * taskSessionData = [self serviceGET:urnResource
                                                    withParams:dicParams];
     
     [self setResponseBlocksFor:taskSessionData
-         onServiceSuccessBlock:doOnSuccess
-         onServiceFailureBlock:doOnFailure];
+              onServiceAnswers:doOnAnswer];
     
     [taskSessionData resume];
     
@@ -290,15 +282,13 @@
 
 -( NSUInteger ) serviceHEAD:( NSString * ) urnResource
                  withParams:( NSDictionary * ) dicParams
-           onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-           onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+           onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSURLSessionDataTask * taskSessionData = [self serviceHEAD:urnResource
                                                     withParams:dicParams];
     
     [self setResponseBlocksFor:taskSessionData
-         onServiceSuccessBlock:doOnSuccess
-         onServiceFailureBlock:doOnFailure];
+              onServiceAnswers:doOnAnswer];
     
     [taskSessionData resume];
     
@@ -347,15 +337,13 @@
 
 -( NSUInteger ) servicePOST:( NSString * ) urnResource
                 withRawData:( NSData * ) datRaw
-           onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-           onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+           onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSURLSessionDataTask * taskSessionData = [self servicePOST:urnResource
                                                       withData:datRaw];
     
     [self setResponseBlocksFor:taskSessionData
-         onServiceSuccessBlock:doOnSuccess
-         onServiceFailureBlock:doOnFailure];
+              onServiceAnswers:doOnAnswer];
     
     [taskSessionData resume];
     
@@ -378,8 +366,7 @@
 
 -( NSUInteger ) servicePOST:( NSString * ) urnResource
                  withParams:( NSDictionary * ) dicParams
-           onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-           onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+           onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSError * error;
     NSData * jsonData = nil;
@@ -393,8 +380,7 @@
     
     return [self servicePOST:urnResource
                  withRawData:jsonData
-            onServiceSuccess:doOnSuccess
-            onServiceFailure:doOnFailure];
+            onServiceAnswers:doOnAnswer];
 }
 
 -( NSUInteger ) servicePOST:( NSString * ) urnResource
@@ -459,15 +445,13 @@
 
 -( NSUInteger ) servicePUT:( NSString * ) urnResource
                withRawData:( NSData * ) datRaw
-          onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-          onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+          onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSURLSessionDataTask * taskSessionData = [self servicePUT:urnResource
                                                      withData:datRaw];
     
     [self setResponseBlocksFor:taskSessionData
-         onServiceSuccessBlock:doOnSuccess
-         onServiceFailureBlock:doOnFailure];
+              onServiceAnswers:doOnAnswer];
     
     [taskSessionData resume];
     
@@ -495,8 +479,7 @@
 
 -( NSUInteger ) servicePUT:( NSString * ) urnResource
                 withParams:( NSDictionary * ) dicParams
-          onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-          onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+          onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSError * error;
     NSData * jsonData = nil;
@@ -511,8 +494,7 @@
     
     return [self servicePUT:urnResource
                 withRawData:jsonData
-           onServiceSuccess:doOnSuccess
-           onServiceFailure:doOnFailure];
+           onServiceAnswers:doOnAnswer];
 }
 
 -( NSURLSessionDataTask * ) servicePATCH:( NSString * ) urnResource
@@ -558,15 +540,13 @@
 
 -( NSUInteger ) servicePATCH:( NSString * ) urnResource
                  withRawData:( NSData * ) datRaw
-            onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-            onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+            onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSURLSessionDataTask * taskSessionData = [self servicePATCH:urnResource
                                                        withData:datRaw];
     
     [self setResponseBlocksFor:taskSessionData
-         onServiceSuccessBlock:doOnSuccess
-         onServiceFailureBlock:doOnFailure];
+              onServiceAnswers:doOnAnswer];
     
     [taskSessionData resume];
     
@@ -594,8 +574,7 @@
 
 -( NSUInteger ) servicePATCH:( NSString * ) urnResource
                   withParams:( NSDictionary * ) dicParams
-            onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-            onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+            onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSError * error;
     NSData * jsonData = nil;
@@ -610,8 +589,7 @@
     
     return [self servicePATCH:urnResource
                   withRawData:jsonData
-             onServiceSuccess:doOnSuccess
-             onServiceFailure:doOnFailure];
+             onServiceAnswers:doOnAnswer];
 }
 
 -( NSURLSessionDataTask * ) serviceDELETE:( NSString * ) urnResource
@@ -643,14 +621,12 @@
 }
 
 -( NSUInteger ) serviceDELETE:( NSString * ) urnResource
-             onServiceSuccess:( void ( ^ ) ( NSString * uidTaskService, id responseObject, NSDictionary * dicResponseHeaders ) ) doOnSuccess
-             onServiceFailure:( void ( ^ ) ( NSString * uidTaskService, NSError * error, NSUInteger nHTTPStatus ) ) doOnFailure
+             onServiceAnswers:( void ( ^ ) ( NSString * uidTaskService, IOStackResponse * response ) ) doOnAnswer
 {
     NSURLSessionDataTask * taskSessionData = [self serviceDELETE:urnResource];
     
     [self setResponseBlocksFor:taskSessionData
-         onServiceSuccessBlock:doOnSuccess
-         onServiceFailureBlock:doOnFailure];
+              onServiceAnswers:doOnAnswer];
     
     [taskSessionData resume];
     
@@ -684,20 +660,23 @@
     NSString * uidTaskSession = [self taskUUIDForTask:taskSession inSession:session];
     id<IOStackServiceDelegate> idDelegate = [_dicActiveTasks valueForKey:uidTaskSession];
     
-    NSHTTPURLResponse * response = ( NSHTTPURLResponse * )taskSession.response;
-    if( error != nil )
-    {
-        if( idDelegate != nil )
-            [idDelegate onServiceFailure:uidTaskSession
-                               withError:error
-                       andResponseStatus:[response statusCode]];
-        //NSLog(@"%@ failed: %@", taskSession.originalRequest.URL, error);
-        return;
-    }
+    NSHTTPURLResponse * responseHTTP = ( NSHTTPURLResponse * )taskSession.response;
     
     NSMutableData * cachedResponseData = [_cacheResponseData valueForKey:uidTaskSession];
     if( !cachedResponseData )
         NSLog(@"No data in response");
+    
+    if( error != nil )
+    {
+        if( idDelegate != nil )
+            [idDelegate onServiceAnswers:uidTaskSession
+                            withResponse:[IOStackResponse initWithNonHTTPError:error
+                                                                    andHeaders:[responseHTTP allHeaderFields]
+                                                                    andContent:cachedResponseData]];
+        //NSLog(@"%@ failed: %@", taskSession.originalRequest.URL, error);
+        return;
+    }
+    
     
     NSDictionary * dicResponseSerialized = nil;
     if( cachedResponseData != nil )
@@ -705,26 +684,27 @@
                                                                 options:0
                                                                   error:nil];
     
-    if( debugON ) NSLog( @"-[IOStackFramework DEBUG]- HTTP response for %@ - with data : %@", [response URL], dicResponseSerialized );
-    
-    if( [response statusCode] < 200 ||
-       [response statusCode] >= 300 )
-    {
-        if( idDelegate != nil )
-            [idDelegate onServiceFailure:uidTaskSession
-                               withError:error
-                       andResponseStatus:[response statusCode]];
-        return;
-    }
+    if( debugON ) NSLog( @"-[IOStackFramework DEBUG]- HTTP response for %@ - with data : %@", [responseHTTP URL], dicResponseSerialized );
     
     if( dicResponseSerialized == nil )
         dicResponseSerialized = @{ @"response" : [[NSString alloc] initWithData:cachedResponseData
-                                                    encoding:NSUTF8StringEncoding] };
+                                                                       encoding:NSUTF8StringEncoding] };
+    
+    IOStackResponse * responseService = [IOStackResponse initWithStatus:[responseHTTP statusCode]
+                                                             andHeaders:[responseHTTP allHeaderFields]
+                                                             andContent:dicResponseSerialized];
+    if( [responseHTTP statusCode] < 200 ||
+        [responseHTTP statusCode] >= 300 )
+    {
+        if( idDelegate != nil )
+            [idDelegate onServiceAnswers:uidTaskSession
+                            withResponse:responseService];
+        return;
+    }
     
     if( idDelegate != nil )
-        [idDelegate onServiceSuccess:uidTaskSession
-                        withResponse:dicResponseSerialized
-                  andResponseHeaders:[response allHeaderFields]];
+        [idDelegate onServiceAnswers:uidTaskSession
+                        withResponse:responseService];
     
     [_dicActiveTasks removeObjectForKey:uidTaskSession];
 }
@@ -741,31 +721,32 @@
     
     [self serviceGET:urlResource
           withParams:paramsURL
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicHeaderResponse ) {
-        if( doWithReadResults != nil )
-        {
-            if( responseObject == nil )
-                doWithReadResults( nil, nil );
-            
-            else if( nameObjectKey == nil &&
-                    [responseObject isKindOfClass:[NSDictionary class]] &&
-                    [responseObject count] == 1)
-                doWithReadResults( responseObject, responseObject );
-            
-            else if( [responseObject isKindOfClass:[NSDictionary class]] &&
-                    [responseObject count] == 1 &&
-                    [responseObject valueForKey:nameObjectKey] != nil )
-                doWithReadResults( [responseObject valueForKey:nameObjectKey], responseObject );
-            
-            else
-                doWithReadResults( nil, responseObject );
-        }
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
-        if( doWithReadResults != nil )
-            doWithReadResults( nil, nil );
-    }];
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response ) {
+         if( doWithReadResults == nil )
+             return;
+         
+         if( [response failed] )
+         {
+             doWithReadResults( nil, nil );
+             return;
+         }
+         
+         if( response.responseContent == nil )
+             doWithReadResults( nil, nil );
+         
+         else if( nameObjectKey == nil &&
+                 [response.responseContent isKindOfClass:[NSDictionary class]] &&
+                 [response.responseContent count] == 1)
+             doWithReadResults( response.responseContent, response.responseContent );
+         
+         else if( [response.responseContent isKindOfClass:[NSDictionary class]] &&
+                 [response.responseContent count] == 1 &&
+                 [response.responseContent valueForKey:nameObjectKey] != nil )
+             doWithReadResults( [response.responseContent valueForKey:nameObjectKey], response.responseContent );
+         
+         else
+             doWithReadResults( nil, response.responseContent );
+     }];
 }
 
 - ( void ) readResource:( NSString * ) urlResource
@@ -801,24 +782,18 @@
     [self setHTTPHeaderWithValues:dicHeaderFieldValue];
     
     [self serviceHEAD:urlResource
-     withParams:paramsURL
-     onServiceSuccess:^(NSString * _Nonnull uidTaskService, id  _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders)
-    {
-        if( doWithMetadata != nil )
-        {
-            if( responseObject == nil )
-                doWithMetadata( nil, nil );
-            
-            else
-                doWithMetadata( dicResponseHeaders, responseObject );
-        }
-
-     }
-     onServiceFailure:^(NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus)
-    {
-        //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
-        if( doWithMetadata != nil )
-            doWithMetadata( nil, nil );
+           withParams:paramsURL
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithMetadata == nil )
+             return ;
+         
+         if( [response failed] )
+         {
+             doWithMetadata( nil, nil );
+             return;
+         }
+         
+         doWithMetadata( response.responseHeaders, response.responseContent );
      }];
 }
 
@@ -832,34 +807,34 @@
     
     [self serviceGET:urlResource
           withParams:paramsURL
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicHeaderResponse ) {
-        if( doWithListResults != nil &&
-           responseObject != nil )
-        {
-            NSArray * arrResponseConverted = nil;
-            
-            if( nameObjectKey == nil &&
-                [responseObject isKindOfClass:[NSArray class]] )
-                arrResponseConverted = responseObject;
-            
-            else if( [responseObject isKindOfClass:[NSDictionary class]] &&
-                    [responseObject count] >= 1 &&
-                    [responseObject valueForKey:nameObjectKey] != nil )
-                    arrResponseConverted = [responseObject valueForKey:nameObjectKey];
-                
-            else
-                arrResponseConverted = nil;
-            
-            doWithListResults( arrResponseConverted, responseObject );
-        }
-        else if( doWithListResults != nil )
-            doWithListResults( nil, nil );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
-        if( doWithListResults != nil )
-            doWithListResults( nil, nil );
-    }];
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithListResults == nil )
+             return;
+         
+         if( [response failed] ||
+                response.responseContent == nil )
+         {
+             doWithListResults( nil, nil );
+             return;
+         }
+         
+         NSArray * arrResponseConverted = nil;
+             
+         if( nameObjectKey == nil &&
+            [response.responseContent isKindOfClass:[NSArray class]] )
+             arrResponseConverted = response.responseContent;
+         
+         else if( [response.responseContent isKindOfClass:[NSDictionary class]] &&
+                 [response.responseContent count] >= 1 &&
+                 [response.responseContent valueForKey:nameObjectKey] != nil )
+             arrResponseConverted = [response.responseContent valueForKey:nameObjectKey];
+         
+         else
+             arrResponseConverted = nil;
+         
+         doWithListResults( arrResponseConverted, response.responseContent );
+         
+     }];
 
 }
 
@@ -884,14 +859,17 @@
     
     [self servicePOST:urlResource
           withRawData:datRaw
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeader ) {
-         if( doWithCreateResults )
-             doWithCreateResults( dicResponseHeader, responseObject );
-     }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
-         if( doWithCreateResults != nil )
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithCreateResults == nil )
+             return;
+         
+         if( [response failed] )
+         {
              doWithCreateResults( nil, nil );
+             return;
+         }
+         
+         doWithCreateResults( response.responseHeaders, response.responseContent );
      }];
 }
 
@@ -904,96 +882,109 @@
     
     [self servicePOST:urlResource
            withParams:paramsURL
-     onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeader ) {
-         if( doWithCreateResults )
-             doWithCreateResults( dicResponseHeader, responseObject );
-     }
-     onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-         //NSLog( @"task %@ failed with error : %@", uidServiceTask, error );
-         if( doWithCreateResults != nil )
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithCreateResults == nil )
+             return;
+         
+         if( [response failed] )
+         {
              doWithCreateResults( nil, nil );
+             return;
+         }
+         
+         
+         doWithCreateResults( response.responseHeaders, response.responseContent );
      }];
 }
 
 - ( void ) replaceResource:( NSString * ) urlResource
                 withHeader:( NSDictionary * ) dicHeaderFieldValue
                 andRawData:( NSData * ) datRaw
-                    thenDo:( void ( ^ ) ( NSDictionary * dicResponseHeader, id idFullResponse ) ) doWithCreateResults
+                    thenDo:( void ( ^ ) ( NSDictionary * dicResponseHeader, id idFullResponse ) ) doWithReplaceResults
 {
     [self setHTTPHeaderWithValues:dicHeaderFieldValue];
     
     [self servicePUT:urlResource
          withRawData:datRaw
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeader ) {
-        if( doWithCreateResults )
-            doWithCreateResults( dicResponseHeader, responseObject );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        //NSLog( @"task not valid : %@", error );
-        if( doWithCreateResults != nil )
-            doWithCreateResults( nil, nil );
-    }];
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithReplaceResults == nil )
+             return;
+         
+         if( [response failed] )
+             doWithReplaceResults( nil, nil );
+         
+         doWithReplaceResults( response.responseHeaders, response.responseContent );
+     }];
 }
 
 - ( void ) replaceResource:( NSString * ) urlResource
                 withHeader:( NSDictionary * ) dicHeaderFieldValue
               andUrlParams:( NSDictionary * ) paramsURL
-                    thenDo:( void ( ^ ) ( NSDictionary * dicResponseHeader, id idFullResponse ) ) doWithCreateResults
+                    thenDo:( void ( ^ ) ( NSDictionary * dicResponseHeader, id idFullResponse ) ) doWithReplaceResults
 {
     [self setHTTPHeaderWithValues:dicHeaderFieldValue];
     
     [self servicePUT:urlResource
           withParams:paramsURL
-    onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeader ) {
-        if( doWithCreateResults )
-            doWithCreateResults( dicResponseHeader, responseObject );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        //NSLog( @"task not valid : %@", error );
-        if( doWithCreateResults != nil )
-            doWithCreateResults( nil, nil );
-    }];
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithReplaceResults == nil )
+             return;
+         
+         if( [response failed ] )
+         {
+             doWithReplaceResults( nil, nil );
+             return;
+         }
+         
+         doWithReplaceResults( response.responseHeaders, response.responseContent );
+     }];
 }
 
 
 - ( void ) updateResource:( NSString * ) urlResource
                withHeader:( NSDictionary * ) dicHeaderFieldValue
                andRawData:( NSData * ) datRaw
-                   thenDo:( void ( ^ ) ( NSDictionary * dicResponseHeader, id idFullResponse ) ) doWithCreateResults
+                   thenDo:( void ( ^ ) ( NSDictionary * dicResponseHeader, id idFullResponse ) ) doWithUpdateResults
 {
     [self setHTTPHeaderWithValues:dicHeaderFieldValue];
     
     [self servicePATCH:urlResource
            withRawData:datRaw
-      onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeader ) {
-        if( doWithCreateResults )
-            doWithCreateResults( dicResponseHeader, responseObject );
-    }
-    onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        //NSLog( @"task not valid : %@", error );
-        if( doWithCreateResults != nil )
-            doWithCreateResults( nil, nil );
-    }];
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithUpdateResults == nil )
+             return;
+         
+         if( [response failed] )
+         {
+             doWithUpdateResults( nil, nil );
+             return;
+         }
+         
+         doWithUpdateResults( response.responseHeaders, response.responseContent );
+     }];
 }
 
 - ( void ) updateResource:( NSString * ) urlResource
                withHeader:( NSDictionary * ) dicHeaderFieldValue
              andUrlParams:( NSDictionary * ) paramsURL
-                   thenDo:( void ( ^ ) ( NSDictionary * dicResponseHeader, id idFullResponse ) ) doWithCreateResults
+                   thenDo:( void ( ^ ) ( NSDictionary * dicResponseHeader, id idFullResponse ) ) doWithUpdateResults
 {
     [self setHTTPHeaderWithValues:dicHeaderFieldValue];
     
     [self servicePATCH:urlResource
             withParams:paramsURL
-      onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeader ) {
-        if( doWithCreateResults )
-            doWithCreateResults( dicResponseHeader, responseObject );
-    }
-      onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-        //NSLog( @"task not valid : %@", error );
-        if( doWithCreateResults != nil )
-            doWithCreateResults( nil, nil );
-    }];
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithUpdateResults == nil )
+             return;
+         
+         if( [response failed] )
+         {
+             doWithUpdateResults( nil, nil );
+             return;
+         }
+         
+         doWithUpdateResults( response.responseHeaders, response.responseContent );
+     }];
 }
 
 - ( void ) deleteResource:( NSString * ) urlResource
@@ -1003,37 +994,29 @@
     [self setHTTPHeaderWithValues:dicHeaderFieldValue];
     
     [self serviceDELETE:urlResource
-       onServiceSuccess:^( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) {
-           if( doWithDeleteResults )
-               doWithDeleteResults( dicResponseHeaders, responseObject );
-       }
-       onServiceFailure:^( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) {
-           //NSLog( @"task not valid : %@", error );
-           if( doWithDeleteResults != nil )
-               doWithDeleteResults( nil, nil );
-       }];
+     onServiceAnswers:^(NSString * uidTaskService, IOStackResponse * response) {
+         if( doWithDeleteResults == nil )
+             return;
+         
+         if( [response failed] )
+         {
+             doWithDeleteResults( nil, nil );
+             return;
+         }
+         
+         doWithDeleteResults( response.responseHeaders, response.responseContent );
+     }];
 }
 
 
 #pragma mark - IOStackServiceDelegate
-- ( void ) onServiceSuccess:( nonnull NSString * ) uidServiceTask
-               withResponse:( nonnull id ) idResponse
-         andResponseHeaders:( NSDictionary * ) dicReponseHeaders
+- ( void ) onServiceAnswers:( NSString * ) uidServiceTask
+               withResponse:( IOStackResponse * ) response
 {
-    void ( ^ doOnSuccess ) ( NSString * uidServiceTask, id responseObject, NSDictionary * dicResponseHeaders ) = [_dicActiveSuccessBlocks valueForKey:uidServiceTask];
+    void ( ^ doOnAnswer ) ( NSString * uidServiceTask, IOStackResponse * response ) = [_dicActiveAnswerBlocks valueForKey:uidServiceTask];
     
-    if( doOnSuccess != nil )
-        doOnSuccess( uidServiceTask, idResponse, dicReponseHeaders );
-}
-
-- ( void ) onServiceFailure:( nonnull NSString * ) uidServiceTask
-                  withError:( nonnull NSError * ) error
-          andResponseStatus:( NSUInteger ) nHTTPStatus
-{
-    void ( ^ doOnFailure ) ( NSString * uidServiceTask, NSError * error, NSUInteger nHTTPStatus ) = [_dicActiveFailureBlocks valueForKey:uidServiceTask];
-    
-    if( doOnFailure != nil )
-        doOnFailure( uidServiceTask, error, nHTTPStatus );
+    if( doOnAnswer != nil )
+        doOnAnswer( uidServiceTask, response );
 }
 
 

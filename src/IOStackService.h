@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 
+#import "IOStackResponse.h"
+
 
 #define IDENTITY_SERVICE        @"identity"
 #define IMAGESTORAGE_SERVICE    @"image"
@@ -31,12 +33,9 @@
 
 @protocol IOStackServiceDelegate
 @required
-- ( void ) onServiceSuccess:( nonnull NSString * ) uidServiceTask
-               withResponse:( nonnull id ) idResponse
-         andResponseHeaders:( nullable NSDictionary * ) dicReponseHeaders;
-- ( void ) onServiceFailure:( nonnull NSString * ) uidServiceTask
-                  withError:( nonnull NSError * ) error
-          andResponseStatus:( NSUInteger ) nHTTPStatus;
+- ( void ) onServiceAnswers:( nonnull NSString * ) uidServiceTask
+               withResponse:( nonnull IOStackResponse * ) response;
+
 @end
 
 
@@ -97,29 +96,25 @@
 - ( void ) setHTTPHeaderWithValues:( nullable NSDictionary * ) dicHeaderValues;
 -( NSUInteger ) serviceGET:( nonnull NSString * ) urnResource
                 withParams:( nullable NSDictionary * ) dicParams
-          onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-          onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+          onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 -( NSUInteger ) serviceGET:( nonnull NSString * ) urnResource
                 withParams:( nullable NSDictionary * ) dicParams
                andDelegate:( nullable id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) serviceHEAD:( nonnull NSString * ) urnResource
                  withParams:( nullable NSDictionary * ) dicParams
-           onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-           onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+           onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 -( NSUInteger ) serviceHEAD:( nonnull NSString * ) urnResource
                  withParams:( nullable NSDictionary * ) dicParams
                 andDelegate:( nullable id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) servicePOST:( nonnull NSString * ) urnResource
                 withRawData:( nullable NSData * ) datRaw
-           onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-           onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+           onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 -( NSUInteger ) servicePOST:( nonnull NSString * ) urnResource
                 withRawData:( nullable NSData * ) datRaw
                 andDelegate:( nonnull id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) servicePOST:( nonnull NSString * ) urnResource
                  withParams:( nullable NSDictionary * ) dicParams
-           onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-           onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+           onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 -( NSUInteger ) servicePOST:( nonnull NSString * ) urnResource
                  withParams:( nullable NSDictionary * ) dicParams
                 andDelegate:( nonnull id<IOStackServiceDelegate> ) idDelegate;
@@ -128,34 +123,29 @@
                andDelegate:( nullable id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) servicePUT:( nonnull NSString * ) urnResource
                withRawData:( nonnull NSData * ) datRaw
-          onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-          onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+          onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 -( NSUInteger ) servicePUT:( nonnull NSString * ) urnResource
                 withParams:( nullable NSDictionary * ) dicParams
                andDelegate:( nonnull id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) servicePUT:( nonnull NSString * ) urnResource
                 withParams:( nullable NSDictionary * ) dicParams
-          onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-          onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+          onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 -( NSUInteger ) servicePATCH:( nonnull NSString * ) urnResource
                  withRawData:( nonnull NSData * ) datRaw
                  andDelegate:( nullable id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) servicePATCH:( nonnull NSString * ) urnResource
                  withRawData:( nonnull NSData * ) datRaw
-            onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-            onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+            onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 -( NSUInteger ) servicePATCH:( nonnull NSString * ) urnResource
                   withParams:( nullable NSDictionary * ) dicParams
                  andDelegate:( nonnull id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) servicePATCH:( nonnull NSString * ) urnResource
                   withParams:( nullable NSDictionary * ) dicParams
-            onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-            onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+            onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 -( NSUInteger ) serviceDELETE:( nonnull NSString * ) urnResource
                   andDelegate:( nonnull id<IOStackServiceDelegate> ) idDelegate;
 -( NSUInteger ) serviceDELETE:( nonnull NSString * ) urnResource
-             onServiceSuccess:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, id _Nullable responseObject, NSDictionary * _Nullable dicResponseHeaders ) ) doOnSuccess
-             onServiceFailure:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, NSError * _Nullable error, NSUInteger nHTTPStatus ) ) doOnFailure;
+             onServiceAnswers:( nullable void ( ^ ) ( NSString * _Nonnull uidTaskService, IOStackResponse * _Nonnull response ) ) doOnAnswer;
 - ( void ) readRawResource:( nonnull NSString * ) urlResource
                 withHeader:( nullable NSDictionary * ) dicHeaderFieldValue
               andUrlParams:( nullable NSDictionary * ) paramsURL
